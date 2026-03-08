@@ -1776,7 +1776,7 @@ onValue(matchesRef, (snapshot) => {
     state.matches = data;
     renderAll();
   } else {
-    // Firebase ফাঁকা থাকলে
+    // Firebase 
     state.matches = generateFixtures();
     set(matchesRef, state.matches);
     renderAll();
