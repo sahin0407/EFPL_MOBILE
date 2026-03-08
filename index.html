@@ -1787,32 +1787,6 @@ window.saveState = function() {
   set(matchesRef, state.matches);
 };
   <script>
-const SITE_VERSION = "2.0.0"; // change on every update
-
-async function forceUpdate() {
-  if ('serviceWorker' in navigator) {
-    const registrations = await navigator.serviceWorker.getRegistrations();
-    for (let reg of registrations) {
-      await reg.unregister();
-    }
-  }
-
-  if ('caches' in window) {
-    const keys = await caches.keys();
-    for (let key of keys) {
-      await caches.delete(key);
-    }
-  }
-
-  const current = localStorage.getItem("site_version");
-  if (current !== SITE_VERSION) {
-    localStorage.setItem("site_version", SITE_VERSION);
-    window.location.href = window.location.href + "?v=" + Date.now();
-  }
-}
-
-forceUpdate();
-
 
 
 </body>
