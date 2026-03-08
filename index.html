@@ -1788,11 +1788,21 @@ window.saveState = function() {
 };
 </script>
   <script>
-const SITE_VERSION = "1.0.1";
+const SITE_VERSION = "1.0.2";
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(registrations => {
+    registrations.forEach(reg => reg.unregister());
+  });
+}
 
 if (localStorage.getItem("site_version") !== SITE_VERSION) {
   localStorage.setItem("site_version", SITE_VERSION);
-  location.reload();
+  caches.keys().then(keys => {
+    keys.forEach(key => caches.delete(key));
+  }).then(() => {
+    location.reload();
+  });
 }
 </script>
 
