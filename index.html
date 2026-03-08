@@ -1788,22 +1788,32 @@ window.saveState = function() {
 };
 </script>
   <script>
-const SITE_VERSION = "1.0.2";
+const SITE_VERSION = "2.0.0"; // change on every update
 
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(registrations => {
-    registrations.forEach(reg => reg.unregister());
-  });
+async function forceUpdate() {
+  if ('serviceWorker' in navigator) {
+    const registrations = await navigator.serviceWorker.getRegistrations();
+    for (let reg of registrations) {
+      await reg.unregister();
+    }
+  }
+
+  if ('caches' in window) {
+    const keys = await caches.keys();
+    for (let key of keys) {
+      await caches.delete(key);
+    }
+  }
+
+  const current = localStorage.getItem("site_version");
+  if (current !== SITE_VERSION) {
+    localStorage.setItem("site_version", SITE_VERSION);
+    window.location.href = window.location.href + "?v=" + Date.now();
+  }
 }
 
-if (localStorage.getItem("site_version") !== SITE_VERSION) {
-  localStorage.setItem("site_version", SITE_VERSION);
-  caches.keys().then(keys => {
-    keys.forEach(key => caches.delete(key));
-  }).then(() => {
-    location.reload();
-  });
-}
+forceUpdate();
+</script>
 </script>
 
 </body>
