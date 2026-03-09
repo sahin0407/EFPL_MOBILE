@@ -1773,7 +1773,8 @@ onValue(matchesRef, (snapshot) => {
   const data = snapshot.val();
 
   if (data) {
-    state.matches = Object.values(data);
+    state.matches = Object.values(data).sort((a,b)=>a.id-b.id);
+    console.log("Matches loaded:", state.matches);
     renderAll();
   } else {
     console.log("No data found in Firebase");
