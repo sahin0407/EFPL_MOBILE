@@ -1767,17 +1767,19 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const matchesRef = ref(db);
+const matchesRef = ref(db);   // IMPORTANT
 
 onValue(matchesRef, (snapshot) => {
   const data = snapshot.val();
+
+  console.log("FULL DB:", data);   // <-- এটা খুব important
 
   if (data) {
     state.matches = Object.values(data).sort((a,b)=>a.id-b.id);
     console.log("Matches loaded:", state.matches);
     renderAll();
   } else {
-    console.log("No data found in Firebase");
+    console.log("No data in DB");
   }
 });
 
