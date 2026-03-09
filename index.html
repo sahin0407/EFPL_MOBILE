@@ -1767,7 +1767,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const matchesRef = ref(db, "matches");
+const matchesRef = ref(db);
 
 onValue(matchesRef, (snapshot) => {
   const data = snapshot.val();
