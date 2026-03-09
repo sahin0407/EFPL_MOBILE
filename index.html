@@ -1773,13 +1773,10 @@ onValue(matchesRef, (snapshot) => {
   const data = snapshot.val();
 
   if (data) {
-    state.matches = data;
+    state.matches = Object.values(data);
     renderAll();
   } else {
-    // Firebase 
-    state.matches = generateFixtures();
-    set(matchesRef, state.matches);
-    renderAll();
+    console.log("No data found in Firebase");
   }
 });
 
