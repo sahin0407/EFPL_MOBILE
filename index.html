@@ -152,20 +152,20 @@
   /* ── Bottom mobile nav ── */
   #bottom-nav {
     position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
-    background: rgba(8,8,16,0.95);
+    background: rgba(8,8,16,0.97);
     border-top: 1px solid var(--border);
     backdrop-filter: blur(24px);
     display: flex;
-    padding: 0.5rem 0 calc(0.5rem + env(safe-area-inset-bottom));
+    padding: 0.4rem 0 calc(0.4rem + env(safe-area-inset-bottom));
   }
   .bnav-item {
     flex: 1; display: flex; flex-direction: column; align-items: center;
-    gap: 2px; cursor: pointer; padding: 0.4rem 0;
-    color: var(--muted); font-size: 0.6rem; letter-spacing: 0.06em; text-transform: uppercase;
-    transition: color 0.2s;
+    gap: 2px; cursor: pointer; padding: 0.35rem 0;
+    color: var(--muted); font-size: 0.55rem; letter-spacing: 0.04em; text-transform: uppercase;
+    transition: color 0.2s; background: none; border: none; outline: none;
   }
   .bnav-item.active { color: var(--indigo); }
-  .bnav-item svg { width: 20px; height: 20px; }
+  .bnav-item svg { width: 18px; height: 18px; }
 
   /* ── Sections ── */
   .section { display: none; }
@@ -349,12 +349,20 @@
 
   /* ── Toast ── */
   #toast {
-    position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(20px);
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
     background: #1e1e2e; border: 1px solid var(--indigo); color: var(--white);
     padding: 0.7rem 1.5rem; border-radius: 30px; font-size: 0.8rem; font-weight: 500;
     z-index: 500; opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap;
+    box-shadow: 0 4px 24px rgba(99,102,241,0.25);
   }
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  @media(min-width:768px) { #toast { bottom: 32px; } }
+
+  /* ── Focus visible (keyboard accessibility) ── */
+  button:focus-visible, input:focus-visible {
+    outline: 2px solid var(--indigo);
+    outline-offset: 2px;
+  }
 
   /* ── Number input (score) ── */
   input[type=number]::-webkit-inner-spin-button { opacity: 1; }
@@ -404,28 +412,30 @@
   @media(max-width:767px) {
     #top-nav .nav-links { display: none; }
     main { padding-bottom: 80px; }
-@media (max-width: 768px) {
-  #hero-section {
-    min-height: 100vh;
-    padding-top: 60px;
-    align-items: center;
-    justify-content: center;
-    background: #000;
   }
 
-  .hero-img {
-    object-fit: cover;
-    object-position: center 15%;
-    width: 100%;
-    height: 100%;
-  }
+  @media (max-width: 768px) {
+    #hero-section {
+      min-height: 100vh;
+      padding-top: 60px;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+    }
 
-  .hero-content {
-    margin-top: 100px;
-    padding: 0 16px;
-    z-index: 3;
+    .hero-img {
+      object-fit: cover;
+      object-position: center 15%;
+      width: 100%;
+      height: 100%;
+    }
+
+    .hero-content {
+      margin-top: 80px;
+      padding: 0 16px;
+      z-index: 3;
+    }
   }
-}
 
   /* ── Table scroll wrapper ── */
   .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
@@ -460,7 +470,10 @@
       </button>
     </div>
     <div class="flex items-center gap-3">
-      <div class="w-2 h-2 rounded-full pulse-dot" style="background:var(--success)"></div>
+      <div class="flex items-center gap-1.5">
+        <div class="w-2 h-2 rounded-full pulse-dot" style="background:var(--success)" title="Live data"></div>
+        <span class="text-xs font-semibold" style="color:var(--muted)" id="nav-live-label">LIVE</span>
+      </div>
     </div>
   </div>
 </nav>
@@ -505,7 +518,7 @@
 
     <!-- HERO -->
     <section id="hero-section">
-      <img src="players.jpg?v=11" class="hero-img">
+      <img src="players.jpg?v=11" class="hero-img" alt="Ratataa League players" loading="eager">
       <div class="orb-container">
         <div class="orb orb-1"></div>
         <div class="orb orb-2"></div>
@@ -627,7 +640,7 @@
     <div class="space-y-3 text-left">
       <div>
         <label class="block text-xs font-semibold tracking-wider uppercase mb-1.5" style="color:var(--muted)">Username</label>
-        <input id="login-user" type="text" class="input-field" placeholder="Username" autocomplete="off" />
+        <input id="login-user" type="text" class="input-field" placeholder="Username" autocomplete="off" onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()" />
       </div>
       <div>
         <label class="block text-xs font-semibold tracking-wider uppercase mb-1.5" style="color:var(--muted)">Password</label>
@@ -832,16 +845,16 @@
     <div class="grid grid-cols-3 items-center gap-4 mb-6">
       <div class="text-center">
         <p id="score-modal-p1" class="font-display text-xl mb-2"></p>
-        <input id="score-p1" type="number" min="0" max="99" class="input-field text-center text-2xl font-display" placeholder="0" />
+        <input id="score-p1" type="number" min="0" max="99" class="input-field text-center text-2xl font-display" placeholder="0" onkeydown="if(event.key==='Enter')document.getElementById('score-p2').focus()" />
       </div>
       <div class="text-center font-display text-2xl" style="color:var(--muted)">VS</div>
       <div class="text-center">
         <p id="score-modal-p2" class="font-display text-xl mb-2"></p>
-        <input id="score-p2" type="number" min="0" max="99" class="input-field text-center text-2xl font-display" placeholder="0" />
+        <input id="score-p2" type="number" min="0" max="99" class="input-field text-center text-2xl font-display" placeholder="0" onkeydown="if(event.key==='Enter')saveScore()" />
       </div>
     </div>
     <button onclick="saveScore()" class="btn-indigo w-full py-3 rounded-xl text-sm font-semibold tracking-wider uppercase">Save Score</button>
-    <button onclick="clearScore()" class="btn-ghost w-full py-2.5 rounded-xl text-sm tracking-wider mt-2">Clear Result</button>
+    <button id="score-clear-btn" onclick="clearScore()" class="btn-ghost w-full py-2.5 rounded-xl text-sm tracking-wider mt-2">Clear Result</button>
   </div>
 </div>
 
@@ -972,11 +985,26 @@ function generateFixtures() {
 // ============================================================
 
 /** loadState(): reads from localStorage, falls back to fresh state */
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed.matches && Array.isArray(parsed.matches)) {
+        state.matches = parsed.matches;
+        return;
+      }
+    }
+  } catch(e) { console.warn('loadState error', e); }
+  state.matches = generateFixtures();
+}
 
-  
-/** saveState(): persists current matches to localStorage */
-
- 
+/** saveState(): persists current matches to localStorage (overridden by Firebase module) */
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ matches: state.matches }));
+  } catch(e) { console.warn('saveState error', e); }
+}
 
 // ============================================================
 // CALCULATION ENGINE
@@ -1051,7 +1079,7 @@ function computeLeagueStats() {
     }
   });
 
-  return { played: played.length, total: 18, totalGoals, avgGoals, biggestWin };
+  return { played: played.length, total: state.matches.length || 18, totalGoals, avgGoals, biggestWin };
 }
 
 /**
@@ -1078,14 +1106,14 @@ function headToHead(p1, p2) {
 // ============================================================
 
 function showSection(id) {
-  // If admin is viewing, just return
+  // If admin view is active, do nothing
   if (document.getElementById('admin-view').classList.contains('active')) return;
 
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   const target = document.getElementById('section-' + id);
   if (target) {
     target.classList.add('active');
-    // add fade animation
+    // re-trigger fade animation
     target.style.animation = 'none';
     requestAnimationFrame(() => { target.style.animation = 'fadeUp 0.35s ease'; });
   }
@@ -1095,8 +1123,8 @@ function showSection(id) {
     el.classList.toggle('active', el.dataset.section === id);
   });
 
-  // Scroll to top of public view
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  // Scroll to very top
+  window.scrollTo({ top: 0, behavior: 'instant' });
 
   renderAll();
 }
@@ -1207,6 +1235,13 @@ function renderLeagueStatsBoxes() {
 function renderFixtures() {
   const el = document.getElementById('fixtures-list');
   if (!el) return;
+  if (!state.matches || state.matches.length === 0) {
+    el.innerHTML = `<div class="text-center py-16" style="color:var(--muted)">
+      <div class="font-display text-3xl mb-2">LOADING...</div>
+      <p class="text-sm">Fixtures will appear shortly</p>
+    </div>`;
+    return;
+  }
   el.innerHTML = state.matches.map((m, idx) => {
     const label = m.played
       ? `<span class="pill pill-played">✓ Played</span>`
@@ -1214,8 +1249,9 @@ function renderFixtures() {
     const scoreHTML = m.played
       ? `<div class="score-badge text-center"><span>${m.player1Goals}</span><span style="color:var(--muted);font-size:0.9rem">:</span><span>${m.player2Goals}</span></div>`
       : `<div class="text-center text-xs font-semibold tracking-widest uppercase" style="color:var(--muted);min-width:60px">Match ${m.id}</div>`;
+    const clickHandler = m.played ? `onclick="openReportModal(${m.id})"` : '';
     return `
-      <div class="fixture-card fade-up" style="animation-delay:${idx * 0.03}s" onclick="${m.played ? 'openReportModal(' + m.id + ')' : ''}">
+      <div class="fixture-card fade-up" style="animation-delay:${idx * 0.03}s;${m.played ? 'cursor:pointer' : 'cursor:default'}" ${clickHandler}>
         <div class="flex items-center gap-2.5 justify-end">
           <span class="font-semibold text-sm text-right">${m.player1}</span>
           ${avatarHTML(m.player1)}
@@ -1249,20 +1285,24 @@ function renderResults() {
   rl.innerHTML = played.map((m, idx) => {
     const g1 = Number(m.player1Goals), g2 = Number(m.player2Goals);
     const winner = g1 > g2 ? m.player1 : g2 > g1 ? m.player2 : null;
+    const isDraw = g1 === g2;
     return `
       <div class="fixture-card fade-up" style="animation-delay:${idx * 0.03}s;cursor:pointer" onclick="openReportModal(${m.id})">
         <div class="flex items-center gap-2.5 justify-end">
-          <span class="font-semibold text-sm text-right ${winner === m.player1 ? '' : 'opacity-50'}">${m.player1}</span>
+          <span class="font-semibold text-sm text-right ${!winner ? '' : winner === m.player1 ? '' : 'opacity-40'}">${m.player1}</span>
           ${avatarHTML(m.player1)}
         </div>
-        <div class="score-badge text-center">
-          <span class="${winner === m.player1 ? 'gold-shimmer' : ''}">${g1}</span>
-          <span style="color:var(--muted);font-size:0.9rem">–</span>
-          <span class="${winner === m.player2 ? 'gold-shimmer' : ''}">${g2}</span>
+        <div class="flex flex-col items-center gap-1">
+          <div class="score-badge text-center">
+            <span class="${winner === m.player1 ? 'gold-shimmer' : ''}">${g1}</span>
+            <span style="color:var(--muted);font-size:0.9rem">–</span>
+            <span class="${winner === m.player2 ? 'gold-shimmer' : ''}">${g2}</span>
+          </div>
+          ${isDraw ? '<span class="pill" style="background:rgba(100,116,139,0.2);color:#94a3b8;font-size:0.55rem">DRAW</span>' : ''}
         </div>
         <div class="flex items-center gap-2.5 justify-start">
           ${avatarHTML(m.player2)}
-          <span class="font-semibold text-sm ${winner === m.player2 ? '' : 'opacity-50'}">${m.player2}</span>
+          <span class="font-semibold text-sm ${!winner ? '' : winner === m.player2 ? '' : 'opacity-40'}">${m.player2}</span>
         </div>
       </div>`;
   }).join('');
@@ -1412,7 +1452,7 @@ function openPlayerModal(name) {
         <p class="text-sm mt-0.5" style="color:var(--muted)">Rank #${rank} · ${s.pts} points</p>
       </div>
     </div>
-    <div class="grid grid-cols-4 gap-3 mb-6">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
       ${[['Played',s.played,'var(--white)'],['Wins',s.won,'var(--success)'],['Goals For',s.gf,'var(--gold)'],['Points',s.pts,'var(--indigo)']].map(([l,v,col]) =>
         `<div class="text-center glass rounded-xl p-3"><p class="font-display text-2xl" style="color:${col}">${v}</p><p class="text-xs mt-0.5" style="color:var(--muted)">${l}</p></div>`
       ).join('')}
@@ -1503,10 +1543,10 @@ function enterAdminView() {
 
 function adminLogout() {
   document.getElementById('admin-view').classList.remove('active');
-  document.getElementById('public-view').style.display = 'block';
-  document.getElementById('top-nav').style.display = 'block';
-  if (window.innerWidth < 768) document.getElementById('bottom-nav').style.display = 'flex';
-  renderAll();
+  document.getElementById('public-view').style.display = '';
+  document.getElementById('top-nav').style.display = '';
+  document.getElementById('bottom-nav').style.display = '';
+  showSection('home');
 }
 
 /**
@@ -1530,8 +1570,9 @@ function adminShowPanel(id, triggerEl) {
   const tabEl = document.getElementById('atab-' + id);
   if (tabEl) tabEl.classList.add('active');
 
-  // Re-render standings if needed
+  // Re-render based on active panel
   if (id === 'standings') renderStandings('admin-standings-table');
+  if (id === 'matches') renderAdminMatches();
 
   // Scroll content to top on mobile
   const wrap = document.getElementById('admin-content-wrap');
@@ -1550,11 +1591,12 @@ function renderAdminMatches() {
 
   // Update progress bar
   const playedCount = state.matches.filter(m => m.played).length;
-  const pct = Math.round((playedCount / 18) * 100);
+  const total = state.matches.length || 18;
+  const pct = total > 0 ? Math.round((playedCount / total) * 100) : 0;
   const pb = document.getElementById('admin-progress-bar');
   const pl = document.getElementById('admin-progress-label');
   if (pb) pb.style.width = pct + '%';
-  if (pl) pl.textContent = playedCount + ' / 18';
+  if (pl) pl.textContent = `${playedCount} / ${total}`;
 
   el.innerHTML = state.matches.map((m, idx) => {
     const g1 = m.played ? m.player1Goals : '–';
@@ -1615,6 +1657,9 @@ function openScoreModal(matchId) {
   document.getElementById('score-modal-match').textContent = `Match #${m.id}`;
   document.getElementById('score-p1').value = m.played ? m.player1Goals : '';
   document.getElementById('score-p2').value = m.played ? m.player2Goals : '';
+  // Show/hide clear button based on whether match has been played
+  const clearBtn = document.getElementById('score-clear-btn');
+  if (clearBtn) clearBtn.style.display = m.played ? '' : 'none';
   document.getElementById('score-modal').classList.add('open');
   setTimeout(() => document.getElementById('score-p1').focus(), 100);
 }
@@ -1715,7 +1760,8 @@ function revealDebug(btn) {
 
 /** markAllPlayed(): debug — randomizes all scores 0–5 */
 function markAllPlayed() {
-  if (!confirm('Mark all 18 matches as played with random scores?')) return;
+  const total = state.matches.length;
+  if (!confirm(`Mark all ${total} matches as played with random scores?`)) return;
   state.matches.forEach(m => {
     m.player1Goals = Math.floor(Math.random() * 6);
     m.player2Goals = Math.floor(Math.random() * 6);
@@ -1730,10 +1776,16 @@ function markAllPlayed() {
 // ============================================================
 // MODAL BACKDROP CLICK — close on outside click
 // ============================================================
-['report-modal', 'player-modal'].forEach(id => {
+['report-modal', 'player-modal', 'score-modal', 'login-modal'].forEach(id => {
   document.getElementById(id)?.addEventListener('click', function(e) {
     if (e.target === this) {
       this.classList.remove('open');
+      if (id === 'score-modal') { currentScoreMatchId = null; }
+      if (id === 'login-modal') {
+        document.getElementById('login-error').classList.add('hidden');
+        document.getElementById('login-user').value = '';
+        document.getElementById('login-pass').value = '';
+      }
     }
   });
 });
@@ -1744,7 +1796,7 @@ function markAllPlayed() {
 
 /** init(): load state and render everything */
 function init() {
-  
+  loadState();
   renderAll();
   showSection('home');
 }
@@ -1771,22 +1823,28 @@ const matchesRef = ref(db, "matches");
 
 onValue(matchesRef, (snapshot) => {
   const data = snapshot.val();
-
-  if (data) {
+  if (data && Array.isArray(data) && data.length > 0) {
     state.matches = data;
-    renderAll();
   } else {
-    // Firebase 
+    // No data in Firebase yet — push the locally generated fixtures
     state.matches = generateFixtures();
     set(matchesRef, state.matches);
-    renderAll();
+  }
+  // Persist locally for offline resilience
+  try { localStorage.setItem('ratataaLeagueData', JSON.stringify({ matches: state.matches })); } catch(e) {}
+  renderAll();
+  // Keep admin in sync if it's currently open
+  if (document.getElementById('admin-view').classList.contains('active')) {
+    renderAdminMatches();
+    renderStandings('admin-standings-table');
   }
 });
 
 window.saveState = function() {
   set(matchesRef, state.matches);
+  try { localStorage.setItem('ratataaLeagueData', JSON.stringify({ matches: state.matches })); } catch(e) {}
 };
-</script> 
+</script>
 
 </body>
 </html>
