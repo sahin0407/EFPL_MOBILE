@@ -12,12 +12,12 @@
 <title>RATATAA LEAGUE — Where Legends Collide</title>
 <script src="https://cdn.tailwindcss.com?v=2"></script>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&display=swap');
+
   /* ============================================================
      RATATAA LEAGUE — Core CSS
      Custom properties, animations, glassmorphism, typography
      ============================================================ */
-
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&display=swap');
 
   :root {
     --bg-base:       #080810;
@@ -169,7 +169,7 @@
 
   /* ── Sections ── */
   .section { display: none; }
-  .section.active { display: block; }
+  .section.active { display: block; animation: fadeUp 0.35s ease both; }
 
   /* ── Table ── */
   .league-table { width: 100%; border-collapse: collapse; }
@@ -201,6 +201,9 @@
     background: var(--bg-card);
   }
   .fixture-card:hover { border-color: var(--border-hover); background: var(--bg-card-hover); transform: translateY(-1px); }
+  .fixture-card-played:hover { border-color: rgba(234,179,8,0.3); box-shadow: 0 4px 20px rgba(234,179,8,0.08); }
+  .fixture-card-upcoming { cursor: default !important; }
+  .fixture-card-upcoming:hover { transform: none !important; }
 
   /* ── Score badge ── */
   .score-badge {
@@ -304,8 +307,10 @@
     display: flex; align-items: center; gap: 0.75rem;
     padding: 0.7rem 1.25rem; width: 100%;
     cursor: pointer; color: var(--muted); font-size: 0.85rem; font-weight: 500;
-    transition: all 0.2s; border-left: 2px solid transparent;
-    background: none; border-right:none; border-top:none; border-bottom:none;
+    transition: all 0.2s;
+    background: none;
+    border: none;
+    border-left: 2px solid transparent;
     text-decoration: none; text-align: left;
   }
   .sidebar-item:hover { color: var(--white); background: rgba(255,255,255,0.04); }
@@ -356,6 +361,9 @@
     box-shadow: 0 4px 24px rgba(99,102,241,0.25);
   }
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  #toast.toast-error { border-color: var(--danger); box-shadow: 0 4px 24px rgba(239,68,68,0.25); }
+  #toast.toast-success { border-color: var(--success); box-shadow: 0 4px 24px rgba(34,197,94,0.2); }
+  /* On desktop, show toast above bottom edge; in admin, stay near bottom */
   @media(min-width:768px) { #toast { bottom: 32px; } }
 
   /* ── Focus visible (keyboard accessibility) ── */
@@ -515,7 +523,7 @@
     <div class="flex items-center gap-3">
       <div class="flex items-center gap-1.5">
         <div class="w-2 h-2 rounded-full pulse-dot" style="background:var(--success)" title="Live data"></div>
-        <span class="text-xs font-semibold" style="color:var(--muted)" id="nav-live-label">LIVE</span>
+        <span class="text-xs font-semibold" style="color:var(--muted)" id="nav-live-label" title="Matches played / total">LIVE</span>
       </div>
     </div>
   </div>
@@ -648,7 +656,7 @@
         <h2 class="font-display text-5xl" style="color:var(--white)">RESULTS</h2>
       </div>
       <div id="results-list" class="space-y-3"></div>
-      <div id="no-results" class="text-center py-20" style="color:var(--muted)">
+      <div id="no-results" class="text-center py-20 hidden" style="color:var(--muted)">
         <p class="font-display text-3xl mb-2">NO RESULTS YET</p>
         <p class="text-sm">Matches will appear here once played</p>
       </div>
@@ -702,6 +710,7 @@
       <button onclick="closeLoginModal()" class="btn-ghost w-full py-2.5 rounded-xl text-sm tracking-wider">
         Cancel
       </button>
+      <p class="text-xs mt-3" style="color:var(--muted);opacity:0.5">Tip: press <kbd style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;font-family:monospace">A</kbd> anywhere to open this panel</p>
     </div>
   </div>
 </div>
@@ -888,18 +897,22 @@
   <div class="modal-box p-7 max-w-sm">
     <div class="flex items-center justify-between mb-6">
       <h3 class="font-display text-2xl">ENTER SCORE</h3>
-      <button onclick="closeScoreModal()" style="color:var(--muted);cursor:pointer;font-size:1.5rem;line-height:1">&times;</button>
+      <button onclick="closeScoreModal()" aria-label="Close" style="color:var(--muted);cursor:pointer;font-size:1.5rem;line-height:1">&times;</button>
     </div>
     <p id="score-modal-match" class="text-sm mb-6 font-semibold text-center" style="color:var(--muted)"></p>
     <div class="grid grid-cols-3 items-center gap-4 mb-6">
       <div class="text-center">
         <p id="score-modal-p1" class="font-display text-xl mb-2"></p>
-        <input id="score-p1" type="number" min="0" max="99" class="input-field text-center text-2xl font-display" placeholder="0" onkeydown="if(event.key==='Enter')document.getElementById('score-p2').focus()" />
+        <input id="score-p1" type="number" min="0" max="99" step="1" class="input-field text-center text-2xl font-display" placeholder="0"
+               oninput="this.value=Math.max(0,parseInt(this.value)||0)"
+               onkeydown="if(event.key==='Enter')document.getElementById('score-p2').focus()" />
       </div>
       <div class="text-center font-display text-2xl" style="color:var(--muted)">VS</div>
       <div class="text-center">
         <p id="score-modal-p2" class="font-display text-xl mb-2"></p>
-        <input id="score-p2" type="number" min="0" max="99" class="input-field text-center text-2xl font-display" placeholder="0" onkeydown="if(event.key==='Enter')saveScore()" />
+        <input id="score-p2" type="number" min="0" max="99" step="1" class="input-field text-center text-2xl font-display" placeholder="0"
+               oninput="this.value=Math.max(0,parseInt(this.value)||0)"
+               onkeydown="if(event.key==='Enter')saveScore()" />
       </div>
     </div>
     <button onclick="saveScore()" class="btn-indigo w-full py-3 rounded-xl text-sm font-semibold tracking-wider uppercase">Save Score</button>
@@ -914,7 +927,7 @@
   <div class="modal-box p-7">
     <div class="flex items-center justify-between mb-4">
       <span class="pill pill-played">Match Report</span>
-      <button onclick="closeReportModal()" style="color:var(--muted);cursor:pointer;font-size:1.5rem;line-height:1">&times;</button>
+      <button onclick="closeReportModal()" aria-label="Close" style="color:var(--muted);cursor:pointer;font-size:1.5rem;line-height:1">&times;</button>
     </div>
     <div id="report-modal-content"></div>
   </div>
@@ -927,7 +940,7 @@
   <div class="modal-box p-7">
     <div class="flex items-center justify-between mb-6">
       <h3 class="font-display text-2xl">PLAYER PROFILE</h3>
-      <button onclick="closePlayerModal()" style="color:var(--muted);cursor:pointer;font-size:1.5rem;line-height:1">&times;</button>
+      <button onclick="closePlayerModal()" aria-label="Close" style="color:var(--muted);cursor:pointer;font-size:1.5rem;line-height:1">&times;</button>
     </div>
     <div id="player-modal-content"></div>
   </div>
@@ -1012,7 +1025,7 @@ function generateFixtures() {
         for (let k = i + 2; k < matches.length; k++) {
           if (!sharesPlayer(matches[i], matches[k]) &&
               !sharesPlayer(matches[k], matches[i + 1]) &&
-              (k + 1 >= matches.length || !sharesPlayer(matches[i + 1 - 1], matches[k]))) {
+              (k + 1 >= matches.length || !sharesPlayer(matches[k], matches[k + 1]))) {
             [matches[i + 1], matches[k]] = [matches[k], matches[i + 1]];
             changed = true;
             break;
@@ -1161,10 +1174,12 @@ function showSection(id) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
   const target = document.getElementById('section-' + id);
   if (target) {
-    target.classList.add('active');
-    // re-trigger fade animation
+    // Force animation replay by briefly removing the class
     target.style.animation = 'none';
-    requestAnimationFrame(() => { target.style.animation = 'fadeUp 0.35s ease'; });
+    requestAnimationFrame(() => {
+      target.style.animation = '';
+      target.classList.add('active');
+    });
   }
 
   // Update nav active states
@@ -1209,17 +1224,20 @@ function renderHeroStats() {
   el.innerHTML = `
     <div class="text-center">
       <p class="font-display text-3xl" style="color:var(--indigo)">${lgs.played}</p>
-      <p class="text-xs mt-1" style="color:var(--muted)">Matches Played</p>
+      <p class="text-xs mt-1" style="color:var(--muted)">Played</p>
     </div>
     <div class="text-center border-x" style="border-color:var(--border)">
       <p class="font-display text-3xl" style="color:var(--gold)">${lgs.totalGoals}</p>
-      <p class="text-xs mt-1" style="color:var(--muted)">Total Goals</p>
+      <p class="text-xs mt-1" style="color:var(--muted)">Goals</p>
     </div>
     <div class="text-center">
       <p class="font-display text-3xl" style="color:var(--success)">${lgs.avgGoals}</p>
-      <p class="text-xs mt-1" style="color:var(--muted)">Avg Goals</p>
+      <p class="text-xs mt-1" style="color:var(--muted)">Avg/Match</p>
     </div>
   `;
+  // Update nav live label with progress
+  const navLabel = document.getElementById('nav-live-label');
+  if (navLabel) navLabel.textContent = `${lgs.played}/${lgs.total}`;
 }
 
 /** renderStandings(containerId) — reusable for public + admin */
@@ -1231,24 +1249,26 @@ function renderStandings(containerId) {
 
   el.innerHTML = `
     <div class="table-scroll">
-    <table class="league-table" style="min-width:480px">
+    <table class="league-table" style="min-width:420px">
       <thead>
         <tr>
           <th style="min-width:140px">Player</th>
-          <th>P</th><th>W</th><th>D</th><th>L</th>
-          <th>GF</th><th>GA</th><th class="hide-mobile">GD</th>
-          <th style="color:var(--indigo)">PTS</th>
+          <th title="Played">P</th><th title="Won">W</th><th title="Drawn">D</th><th title="Lost">L</th>
+          <th title="Goals For">GF</th><th title="Goals Against">GA</th><th title="Goal Difference">GD</th>
+          <th style="color:var(--indigo)" title="Points">PTS</th>
         </tr>
       </thead>
       <tbody>
         ${rows.map((r, i) => {
           const c = PLAYER_COLORS[r.name];
-          return `<tr>
+          const isLeader = i === 0 && r.pts > 0;
+          return `<tr${isLeader ? ' style="background:rgba(234,179,8,0.04)"' : ''}>
             <td>
               <div class="flex items-center gap-2.5">
                 <span class="font-display text-sm ${rankColors[i]}">${i + 1}</span>
                 <div style="width:8px;height:8px;border-radius:50%;background:${c.dot};flex-shrink:0"></div>
                 <span class="font-semibold">${r.name}</span>
+                ${isLeader ? '<span style="font-size:0.6rem;color:var(--gold);margin-left:2px">👑</span>' : ''}
               </div>
             </td>
             <td>${r.played}</td>
@@ -1257,7 +1277,7 @@ function renderStandings(containerId) {
             <td style="color:var(--danger)">${r.lost}</td>
             <td>${r.gf}</td>
             <td>${r.ga}</td>
-            <td class="hide-mobile">${r.gd > 0 ? '+' + r.gd : r.gd}</td>
+            <td>${r.gd > 0 ? '+' + r.gd : r.gd}</td>
             <td><span class="font-display text-lg" style="color:var(--indigo)">${r.pts}</span></td>
           </tr>`;
         }).join('')}
@@ -1299,8 +1319,9 @@ function renderFixtures() {
       ? `<div class="score-badge text-center"><span>${m.player1Goals}</span><span style="color:var(--muted);font-size:0.9rem">:</span><span>${m.player2Goals}</span></div>`
       : `<div class="text-center text-xs font-semibold tracking-widest uppercase" style="color:var(--muted);min-width:60px">Match ${m.id}</div>`;
     const clickHandler = m.played ? `onclick="openReportModal(${m.id})"` : '';
+    const hoverClass = m.played ? 'fixture-card-played' : 'fixture-card-upcoming';
     return `
-      <div class="fixture-card fade-up" style="animation-delay:${idx * 0.03}s;${m.played ? 'cursor:pointer' : 'cursor:default'}" ${clickHandler}>
+      <div class="fixture-card ${hoverClass} fade-up" style="animation-delay:${idx * 0.03}s;${m.played ? 'cursor:pointer' : 'cursor:default'}" ${clickHandler}>
         <div class="flex items-center gap-2.5 justify-end">
           <span class="font-semibold text-sm text-right">${m.player1}</span>
           ${avatarHTML(m.player1)}
@@ -1326,10 +1347,10 @@ function renderResults() {
 
   if (played.length === 0) {
     rl.innerHTML = '';
-    nr && (nr.style.display = 'block');
+    if (nr) nr.classList.remove('hidden');
     return;
   }
-  nr && (nr.style.display = 'none');
+  if (nr) nr.classList.add('hidden');
 
   rl.innerHTML = played.map((m, idx) => {
     const g1 = Number(m.player1Goals), g2 = Number(m.player2Goals);
@@ -1520,14 +1541,29 @@ function copyStandings() {
   const rows = computeStandings();
   const txt = `RATATAA LEAGUE — STANDINGS\n${'─'.repeat(50)}\n` +
     rows.map((r, i) => `${i+1}. ${r.name.padEnd(10)} ${r.pts}pts  ${r.played}P ${r.won}W ${r.drawn}D ${r.lost}L  GF:${r.gf} GA:${r.ga} GD:${r.gd > 0 ? '+'+r.gd : r.gd}`).join('\n');
-  navigator.clipboard.writeText(txt).then(() => showToast('Standings copied!')).catch(() => showToast('Copy failed'));
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(txt)
+      .then(() => showToast('✓ Standings copied!', 'success'))
+      .catch(() => fallbackCopy(txt));
+  } else {
+    fallbackCopy(txt);
+  }
+}
+function fallbackCopy(txt) {
+  const ta = document.createElement('textarea');
+  ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); showToast('✓ Copied!', 'success'); }
+  catch { showToast('Copy failed', 'error'); }
+  document.body.removeChild(ta);
 }
 
-function showToast(msg) {
+function showToast(msg, type = '') {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+  t.className = 'show' + (type ? ' toast-' + type : '');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.className = ''; }, 2800);
 }
 
 // ============================================================
@@ -1579,6 +1615,7 @@ function doLogin() {
 // ============================================================
 
 function enterAdminView() {
+  state.adminLoggedIn = true;
   document.getElementById('public-view').style.display = 'none';
   document.getElementById('top-nav').style.display = 'none';
   document.getElementById('bottom-nav').style.display = 'none';
@@ -1591,10 +1628,13 @@ function enterAdminView() {
 }
 
 function adminLogout() {
+  state.adminLoggedIn = false;
   document.getElementById('admin-view').classList.remove('active');
   document.getElementById('public-view').style.display = '';
   document.getElementById('top-nav').style.display = '';
-  document.getElementById('bottom-nav').style.display = '';
+  // Restore bottom-nav: only show on mobile (media query handles desktop)
+  const bn = document.getElementById('bottom-nav');
+  bn.style.display = '';  // let CSS media query take over
   showSection('home');
 }
 
@@ -1701,8 +1741,14 @@ function openScoreModal(matchId) {
   const m = state.matches.find(x => x.id === matchId);
   if (!m) return;
   currentScoreMatchId = matchId;
-  document.getElementById('score-modal-p1').textContent = m.player1.toUpperCase();
-  document.getElementById('score-modal-p2').textContent = m.player2.toUpperCase();
+  const c1 = PLAYER_COLORS[m.player1];
+  const c2 = PLAYER_COLORS[m.player2];
+  const p1El = document.getElementById('score-modal-p1');
+  const p2El = document.getElementById('score-modal-p2');
+  p1El.textContent = m.player1.toUpperCase();
+  p1El.style.color = c1.dot;
+  p2El.textContent = m.player2.toUpperCase();
+  p2El.style.color = c2.dot;
   document.getElementById('score-modal-match').textContent = `Match #${m.id}`;
   document.getElementById('score-p1').value = m.played ? m.player1Goals : '';
   document.getElementById('score-p2').value = m.played ? m.player2Goals : '';
@@ -1720,10 +1766,12 @@ function closeScoreModal() {
 /** saveScore(): writes goals to state and persists */
 function saveScore() {
   if (!currentScoreMatchId) return;
-  const g1 = parseInt(document.getElementById('score-p1').value);
-  const g2 = parseInt(document.getElementById('score-p2').value);
-  if (isNaN(g1) || isNaN(g2) || g1 < 0 || g2 < 0) {
-    showToast('Enter valid scores!'); return;
+  const g1Raw = document.getElementById('score-p1').value;
+  const g2Raw = document.getElementById('score-p2').value;
+  const g1 = parseInt(g1Raw);
+  const g2 = parseInt(g2Raw);
+  if (g1Raw === '' || g2Raw === '' || isNaN(g1) || isNaN(g2) || g1 < 0 || g2 < 0) {
+    showToast('Enter valid scores!', 'error'); return;
   }
   const m = state.matches.find(x => x.id === currentScoreMatchId);
   m.player1Goals = g1;
@@ -1733,7 +1781,7 @@ function saveScore() {
   closeScoreModal();
   renderAdminMatches();
   renderStandings('admin-standings-table');
-  showToast('Score saved!');
+  showToast('✓ Score saved!', 'success');
 }
 
 /** clearScore(): removes result from a match */
@@ -1745,7 +1793,7 @@ function clearScore() {
   closeScoreModal();
   renderAdminMatches();
   renderStandings('admin-standings-table');
-  showToast('Result cleared');
+  showToast('Result cleared', 'default');
 }
 
 // ============================================================
@@ -1759,7 +1807,7 @@ function confirmReset() {
   saveState();
   renderAdminMatches();
   renderStandings('admin-standings-table');
-  showToast('Tournament reset!');
+  showToast('Tournament reset!', 'error');
 }
 
 /** exportData(): downloads full state as JSON */
@@ -1769,7 +1817,7 @@ function exportData() {
   a.href = URL.createObjectURL(blob);
   a.download = 'ratataa-league-data.json';
   a.click();
-  showToast('Exported!');
+  showToast('✓ Exported!', 'success');
 }
 
 /** importData(): reads JSON file and restores state */
@@ -1785,11 +1833,12 @@ function importData(event) {
         saveState();
         renderAdminMatches();
         renderStandings('admin-standings-table');
-        showToast('Imported!');
+        renderAll(); // keep public view in sync too
+        showToast('✓ Imported!', 'success');
       } else {
-        showToast('Invalid file format');
+        showToast('Invalid file format', 'error');
       }
-    } catch { showToast('Parse error'); }
+    } catch { showToast('Parse error', 'error'); }
   };
   reader.readAsText(file);
   event.target.value = '';
@@ -1819,7 +1868,7 @@ function markAllPlayed() {
   saveState();
   renderAdminMatches();
   renderStandings('admin-standings-table');
-  showToast('All matches marked played!');
+  showToast('✓ All matches marked played!', 'success');
 }
 
 // ============================================================
@@ -1873,7 +1922,8 @@ const matchesRef = ref(db, "matches");
 onValue(matchesRef, (snapshot) => {
   const data = snapshot.val();
   if (data && Array.isArray(data) && data.length > 0) {
-    state.matches = data;
+    // Ensure every match has a stable numeric id
+    state.matches = data.map((m, idx) => ({ id: m.id ?? idx + 1, ...m }));
   } else {
     // No data in Firebase yet — push the locally generated fixtures
     state.matches = generateFixtures();
