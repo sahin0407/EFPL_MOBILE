@@ -490,6 +490,23 @@
 
   /* ── Table scroll wrapper ── */
   .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+  /* ── Avatar tab buttons ── */
+  .avatar-tab-btn { background: transparent; border: none; color: var(--muted); cursor: pointer; }
+  .avatar-tab-btn.active-tab { background: var(--indigo-dim); color: var(--indigo); }
+
+  /* ── Avatar card in admin panel ── */
+  .avatar-admin-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: border-color 0.2s;
+  }
+  .avatar-admin-card:hover { border-color: var(--border-hover); }
 </style>
 </head>
 <body>
@@ -764,6 +781,12 @@
         </svg>
         Tools
       </button>
+      <button class="sidebar-item" onclick="adminShowPanel('avatars',this)">
+        <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        Players
+      </button>
     </aside>
 
     <!-- Main Content Area -->
@@ -863,6 +886,15 @@
         </div>
       </div>
 
+      <!-- ── AVATARS PANEL ── -->
+      <div id="admin-panel-avatars" class="admin-panel hidden">
+        <div class="mb-6">
+          <h2 class="font-display" style="font-size:2rem;color:var(--white)">PLAYER AVATARS</h2>
+          <p class="text-xs mt-0.5" style="color:var(--muted)">Upload a photo, pick an emoji, or set custom initials for each player.</p>
+        </div>
+        <div id="admin-avatars-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+      </div>
+
     </div>
   </div>
 
@@ -886,8 +918,85 @@
       </svg>
       Tools
     </button>
+    <button class="admin-tab" onclick="adminShowPanel('avatars',this)" id="atab-avatars">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      Players
+    </button>
   </div>
 
+</div>
+
+<!-- ============================================================
+     AVATAR EDIT MODAL (Admin)
+     ============================================================ -->
+<div id="avatar-modal" class="modal-backdrop">
+  <div class="modal-box p-7 max-w-sm">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="font-display text-2xl">EDIT AVATAR</h3>
+      <button onclick="closeAvatarModal()" aria-label="Close" style="color:var(--muted);cursor:pointer;font-size:1.5rem;line-height:1">&times;</button>
+    </div>
+
+    <!-- Preview -->
+    <div class="flex flex-col items-center gap-2 mb-6">
+      <div id="avatar-preview-wrap"></div>
+      <p id="avatar-editing-name" class="font-display text-xl" style="color:var(--white)"></p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex rounded-xl overflow-hidden mb-5" style="border:1px solid var(--border)">
+      <button class="avatar-tab-btn flex-1 py-2.5 text-xs font-semibold tracking-wider uppercase transition-all active-tab" data-tab="photo" onclick="switchAvatarTab('photo',this)">📷 Photo</button>
+      <button class="avatar-tab-btn flex-1 py-2.5 text-xs font-semibold tracking-wider uppercase transition-all" data-tab="emoji" onclick="switchAvatarTab('emoji',this)" style="border-left:1px solid var(--border);border-right:1px solid var(--border)">😀 Emoji</button>
+      <button class="avatar-tab-btn flex-1 py-2.5 text-xs font-semibold tracking-wider uppercase transition-all" data-tab="initials" onclick="switchAvatarTab('initials',this)">AB Text</button>
+    </div>
+
+    <!-- Photo Tab -->
+    <div id="avatar-tab-photo" class="avatar-tab-content">
+      <label class="block w-full py-10 rounded-xl text-center cursor-pointer transition-all"
+             style="border:2px dashed var(--border);color:var(--muted)"
+             onmouseover="this.style.borderColor='var(--indigo)';this.style.color='var(--white)'"
+             onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'"
+             id="avatar-drop-zone">
+        <div class="text-3xl mb-2">📁</div>
+        <p class="text-sm font-semibold">Tap to upload photo</p>
+        <p class="text-xs mt-1">JPG, PNG, WEBP — max 2MB</p>
+        <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="hidden" id="avatar-file-input" onchange="handleAvatarPhotoUpload(event)" />
+      </label>
+      <p id="avatar-photo-error" class="text-xs mt-2 hidden" style="color:var(--danger)"></p>
+    </div>
+
+    <!-- Emoji Tab -->
+    <div id="avatar-tab-emoji" class="avatar-tab-content hidden">
+      <p class="text-xs mb-3" style="color:var(--muted)">Pick an emoji:</p>
+      <div class="grid grid-cols-7 gap-1.5 mb-4" id="emoji-grid"></div>
+      <div class="flex gap-2">
+        <input id="avatar-emoji-input" type="text" maxlength="2" class="input-field text-center text-2xl" placeholder="😀"
+               oninput="updateAvatarPreview()" />
+        <button onclick="applyEmoji()" class="btn-indigo px-5 py-2.5 rounded-xl text-sm font-semibold flex-shrink-0">Use</button>
+      </div>
+    </div>
+
+    <!-- Initials Tab -->
+    <div id="avatar-tab-initials" class="avatar-tab-content hidden">
+      <p class="text-xs mb-3" style="color:var(--muted)">Enter up to 2 characters:</p>
+      <div class="flex gap-2">
+        <input id="avatar-initials-input" type="text" maxlength="2" class="input-field text-center text-2xl font-display tracking-widest uppercase"
+               placeholder="SK" oninput="updateAvatarPreview()" />
+        <button onclick="applyInitials()" class="btn-indigo px-5 py-2.5 rounded-xl text-sm font-semibold flex-shrink-0">Use</button>
+      </div>
+    </div>
+
+    <!-- Remove button -->
+    <div class="mt-5 pt-4" style="border-top:1px solid var(--border)">
+      <button onclick="removeAvatar()" class="w-full py-2.5 rounded-xl text-sm font-semibold transition-all"
+              style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--danger);cursor:pointer"
+              onmouseover="this.style.background='rgba(239,68,68,0.2)'"
+              onmouseout="this.style.background='rgba(239,68,68,0.1)'">
+        Remove Avatar (reset to default)
+      </button>
+    </div>
+  </div>
 </div>
 
 <!-- ============================================================
@@ -966,14 +1075,25 @@ const PLAYER_COLORS = {
 };
 
 const STORAGE_KEY = 'ratataaLeagueData';
+const AVATAR_STORAGE_KEY = 'ratataaAvatars';
 
 /** App state — loaded from or saved to localStorage */
 let state = {
-  matches: [],     // [{id, player1, player2, player1Goals, player2Goals, played}]
+  matches: [],
   adminLoggedIn: false,
 };
 
-let currentScoreMatchId = null; // which match is open in score modal
+/**
+ * avatarState — { PlayerName: { type: 'photo'|'emoji'|'initials', value: '...' } }
+ * type 'photo'    -> value is a data: URL (base64)
+ * type 'emoji'    -> value is an emoji string e.g. '🦁'
+ * type 'initials' -> value is up to 2 chars e.g. 'SK'
+ * No entry -> falls back to colored letter circle
+ */
+let avatarState = {};
+
+let currentScoreMatchId = null;
+let avatarEditingPlayer = null;
 
 // ============================================================
 // FIXTURE GENERATION
@@ -1066,6 +1186,21 @@ function saveState() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ matches: state.matches }));
   } catch(e) { console.warn('saveState error', e); }
+}
+
+/** loadAvatars(): reads avatarState from localStorage */
+function loadAvatars() {
+  try {
+    const raw = localStorage.getItem(AVATAR_STORAGE_KEY);
+    if (raw) avatarState = JSON.parse(raw);
+  } catch(e) { avatarState = {}; }
+}
+
+/** saveAvatars(): persists avatarState to localStorage + Firebase */
+function saveAvatars() {
+  try { localStorage.setItem(AVATAR_STORAGE_KEY, JSON.stringify(avatarState)); } catch(e) {}
+  // Firebase sync handled by module below (window.saveAvatarsToFirebase)
+  if (typeof window.saveAvatarsToFirebase === 'function') window.saveAvatarsToFirebase();
 }
 
 // ============================================================
@@ -1208,11 +1343,30 @@ function renderAll() {
   renderPlayers();
 }
 
-/** player avatar HTML */
+/** avatarHTML(name, size) — renders the correct avatar for a player */
 function avatarHTML(name, size = 42) {
   const c = PLAYER_COLORS[name];
-  return `<div class="player-avatar" style="width:${size}px;height:${size}px;background:${c.bg};border:1px solid ${c.border}">
-    <span style="color:${c.dot};font-size:${size * 0.38}px">${name[0]}</span>
+  const av = avatarState[name];
+  const fontSize = size * 0.38;
+
+  if (av && av.type === 'photo' && av.value) {
+    return `<div class="player-avatar" style="width:${size}px;height:${size}px;border:2px solid ${c.border};overflow:hidden;flex-shrink:0">
+      <img src="${av.value}" alt="${name}" style="width:100%;height:100%;object-fit:cover;display:block" />
+    </div>`;
+  }
+  if (av && av.type === 'emoji' && av.value) {
+    return `<div class="player-avatar" style="width:${size}px;height:${size}px;background:${c.bg};border:1px solid ${c.border};flex-shrink:0">
+      <span style="font-size:${size * 0.52}px;line-height:1">${av.value}</span>
+    </div>`;
+  }
+  if (av && av.type === 'initials' && av.value) {
+    return `<div class="player-avatar" style="width:${size}px;height:${size}px;background:${c.bg};border:1px solid ${c.border};flex-shrink:0">
+      <span style="color:${c.dot};font-size:${size * 0.32}px;font-weight:700;letter-spacing:-0.02em">${av.value.toUpperCase().slice(0,2)}</span>
+    </div>`;
+  }
+  // Default: colored letter circle
+  return `<div class="player-avatar" style="width:${size}px;height:${size}px;background:${c.bg};border:1px solid ${c.border};flex-shrink:0">
+    <span style="color:${c.dot};font-size:${fontSize}px">${name[0]}</span>
   </div>`;
 }
 
@@ -1252,7 +1406,7 @@ function renderStandings(containerId) {
     <table class="league-table" style="min-width:420px">
       <thead>
         <tr>
-          <th style="min-width:140px">Player</th>
+          <th style="min-width:160px">Player</th>
           <th title="Played">P</th><th title="Won">W</th><th title="Drawn">D</th><th title="Lost">L</th>
           <th title="Goals For">GF</th><th title="Goals Against">GA</th><th title="Goal Difference">GD</th>
           <th style="color:var(--indigo)" title="Points">PTS</th>
@@ -1264,9 +1418,9 @@ function renderStandings(containerId) {
           const isLeader = i === 0 && r.pts > 0;
           return `<tr${isLeader ? ' style="background:rgba(234,179,8,0.04)"' : ''}>
             <td>
-              <div class="flex items-center gap-2.5">
-                <span class="font-display text-sm ${rankColors[i]}">${i + 1}</span>
-                <div style="width:8px;height:8px;border-radius:50%;background:${c.dot};flex-shrink:0"></div>
+              <div class="flex items-center gap-2">
+                <span class="font-display text-sm ${rankColors[i]}" style="min-width:16px;text-align:center">${i + 1}</span>
+                ${avatarHTML(r.name, 28)}
                 <span class="font-semibold">${r.name}</span>
                 ${isLeader ? '<span style="font-size:0.6rem;color:var(--gold);margin-left:2px">👑</span>' : ''}
               </div>
@@ -1535,6 +1689,190 @@ function openPlayerModal(name) {
 function closePlayerModal() { document.getElementById('player-modal').classList.remove('open'); }
 
 // ============================================================
+// AVATAR PANEL — ADMIN
+// ============================================================
+
+const EMOJI_PRESETS = [
+  '🦁','🐯','🦊','🐺','🦅','🐲','👑','⚡','🔥','💎',
+  '🏆','⚽','🎯','🗡️','🛡️','🤺','💪','🥊','🚀','🌟',
+  '😈','👿','🤖','👾','🎭','🦄','🐉','🌊','⚔️','🎪'
+];
+
+/** renderAdminAvatars() — shows all 4 player cards in avatars panel */
+function renderAdminAvatars() {
+  const el = document.getElementById('admin-avatars-grid');
+  if (!el) return;
+  el.innerHTML = PLAYERS.map(name => {
+    const c = PLAYER_COLORS[name];
+    const av = avatarState[name];
+    const hasCustom = av && av.value;
+    const typeLabel = hasCustom
+      ? (av.type === 'photo' ? '📷 Photo' : av.type === 'emoji' ? '😀 Emoji' : 'AB Initials')
+      : 'Default';
+    return `
+      <div class="avatar-admin-card">
+        <div style="flex-shrink:0">${avatarHTML(name, 64)}</div>
+        <div class="flex-1 min-w-0">
+          <p class="font-display text-xl" style="color:${c.dot}">${name.toUpperCase()}</p>
+          <p class="text-xs mt-0.5" style="color:var(--muted)">${typeLabel}</p>
+        </div>
+        <button onclick="openAvatarModal('${name}')" class="btn-indigo px-4 py-2 rounded-xl text-xs font-semibold flex-shrink-0">Edit</button>
+      </div>`;
+  }).join('');
+}
+
+/** openAvatarModal(name) */
+function openAvatarModal(name) {
+  avatarEditingPlayer = name;
+  document.getElementById('avatar-editing-name').textContent = name.toUpperCase();
+  document.getElementById('avatar-editing-name').style.color = PLAYER_COLORS[name].dot;
+
+  // Reset tabs to photo
+  switchAvatarTab('photo', document.querySelector('[data-tab="photo"]'));
+  document.getElementById('avatar-emoji-input').value = '';
+  document.getElementById('avatar-initials-input').value = '';
+  document.getElementById('avatar-photo-error').classList.add('hidden');
+
+  // Populate emoji grid
+  const grid = document.getElementById('emoji-grid');
+  grid.innerHTML = EMOJI_PRESETS.map(e =>
+    `<button onclick="selectEmojiPreset('${e}')" class="text-2xl p-1 rounded-lg hover:bg-white/10 transition-all" style="cursor:pointer;border:none;background:transparent;line-height:1">${e}</button>`
+  ).join('');
+
+  // Pre-fill current values
+  const av = avatarState[name];
+  if (av) {
+    if (av.type === 'emoji') document.getElementById('avatar-emoji-input').value = av.value;
+    if (av.type === 'initials') document.getElementById('avatar-initials-input').value = av.value;
+  }
+
+  refreshAvatarPreview();
+  document.getElementById('avatar-modal').classList.add('open');
+}
+
+function closeAvatarModal() {
+  document.getElementById('avatar-modal').classList.remove('open');
+  avatarEditingPlayer = null;
+}
+
+/** switchAvatarTab(tab, btn) */
+function switchAvatarTab(tab, btn) {
+  document.querySelectorAll('.avatar-tab-content').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.avatar-tab-btn').forEach(el => el.classList.remove('active-tab'));
+  document.getElementById('avatar-tab-' + tab)?.classList.remove('hidden');
+  if (btn) btn.classList.add('active-tab');
+}
+
+/** refreshAvatarPreview() — re-renders the large preview at top of modal */
+function refreshAvatarPreview() {
+  const wrap = document.getElementById('avatar-preview-wrap');
+  if (wrap && avatarEditingPlayer) wrap.innerHTML = avatarHTML(avatarEditingPlayer, 90);
+}
+
+/** updateAvatarPreview() — live preview while typing emoji/initials */
+function updateAvatarPreview() {
+  if (!avatarEditingPlayer) return;
+  const emojiVal = document.getElementById('avatar-emoji-input').value.trim();
+  const initialsVal = document.getElementById('avatar-initials-input').value.trim();
+  const activeTab = document.querySelector('.avatar-tab-btn.active-tab')?.dataset?.tab;
+
+  // Temporarily set avatarState for preview
+  const original = avatarState[avatarEditingPlayer];
+  if (activeTab === 'emoji' && emojiVal) {
+    avatarState[avatarEditingPlayer] = { type: 'emoji', value: emojiVal };
+  } else if (activeTab === 'initials' && initialsVal) {
+    avatarState[avatarEditingPlayer] = { type: 'initials', value: initialsVal };
+  }
+  refreshAvatarPreview();
+  // Restore original so we don't accidentally commit an empty value
+  if (!emojiVal && !initialsVal) avatarState[avatarEditingPlayer] = original;
+}
+
+/** selectEmojiPreset(emoji) */
+function selectEmojiPreset(emoji) {
+  document.getElementById('avatar-emoji-input').value = emoji;
+  updateAvatarPreview();
+  applyEmoji();
+}
+
+/** applyEmoji() */
+function applyEmoji() {
+  const val = document.getElementById('avatar-emoji-input').value.trim();
+  if (!val || !avatarEditingPlayer) return;
+  avatarState[avatarEditingPlayer] = { type: 'emoji', value: val };
+  saveAvatars();
+  refreshAvatarPreview();
+  renderAdminAvatars();
+  renderAll();
+  showToast('✓ Emoji set!', 'success');
+}
+
+/** applyInitials() */
+function applyInitials() {
+  const val = document.getElementById('avatar-initials-input').value.trim().toUpperCase().slice(0,2);
+  if (!val || !avatarEditingPlayer) return;
+  avatarState[avatarEditingPlayer] = { type: 'initials', value: val };
+  saveAvatars();
+  refreshAvatarPreview();
+  renderAdminAvatars();
+  renderAll();
+  showToast('✓ Initials set!', 'success');
+}
+
+/** handleAvatarPhotoUpload(event) — reads file, validates, compresses to base64 */
+function handleAvatarPhotoUpload(event) {
+  const file = event.target.files[0];
+  const errEl = document.getElementById('avatar-photo-error');
+  errEl.classList.add('hidden');
+  if (!file) return;
+
+  if (file.size > 2 * 1024 * 1024) {
+    errEl.textContent = 'File too large (max 2MB). Please choose a smaller image.';
+    errEl.classList.remove('hidden');
+    event.target.value = '';
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    const dataUrl = e.target.result;
+    // Compress via canvas
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 320;
+      const ratio = Math.min(MAX / img.width, MAX / img.height, 1);
+      canvas.width  = Math.round(img.width  * ratio);
+      canvas.height = Math.round(img.height * ratio);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      const compressed = canvas.toDataURL('image/jpeg', 0.82);
+      avatarState[avatarEditingPlayer] = { type: 'photo', value: compressed };
+      saveAvatars();
+      refreshAvatarPreview();
+      renderAdminAvatars();
+      renderAll();
+      showToast('✓ Photo uploaded!', 'success');
+      closeAvatarModal();
+    };
+    img.src = dataUrl;
+  };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
+/** removeAvatar() — resets to colored letter default */
+function removeAvatar() {
+  if (!avatarEditingPlayer) return;
+  delete avatarState[avatarEditingPlayer];
+  saveAvatars();
+  refreshAvatarPreview();
+  renderAdminAvatars();
+  renderAll();
+  showToast('Avatar removed', 'default');
+  closeAvatarModal();
+}
+
+// ============================================================
 // COPY STANDINGS
 // ============================================================
 function copyStandings() {
@@ -1581,7 +1919,7 @@ document.addEventListener('keydown', e => {
     }
   }
   if (e.key === 'Escape') {
-    closeLoginModal(); closeScoreModal(); closeReportModal(); closePlayerModal();
+    closeLoginModal(); closeScoreModal(); closeReportModal(); closePlayerModal(); closeAvatarModal();
   }
 });
 
@@ -1662,6 +2000,7 @@ function adminShowPanel(id, triggerEl) {
   // Re-render based on active panel
   if (id === 'standings') renderStandings('admin-standings-table');
   if (id === 'matches') renderAdminMatches();
+  if (id === 'avatars') renderAdminAvatars();
 
   // Scroll content to top on mobile
   const wrap = document.getElementById('admin-content-wrap');
@@ -1874,7 +2213,7 @@ function markAllPlayed() {
 // ============================================================
 // MODAL BACKDROP CLICK — close on outside click
 // ============================================================
-['report-modal', 'player-modal', 'score-modal', 'login-modal'].forEach(id => {
+['report-modal', 'player-modal', 'score-modal', 'login-modal', 'avatar-modal'].forEach(id => {
   document.getElementById(id)?.addEventListener('click', function(e) {
     if (e.target === this) {
       this.classList.remove('open');
@@ -1895,6 +2234,7 @@ function markAllPlayed() {
 /** init(): load state and render everything */
 function init() {
   loadState();
+  loadAvatars();
   renderAll();
   showSection('home');
 }
@@ -1918,30 +2258,46 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const matchesRef = ref(db, "matches");
+const avatarsRef = ref(db, "avatars");
 
+// ── Matches sync ──
 onValue(matchesRef, (snapshot) => {
   const data = snapshot.val();
   if (data && Array.isArray(data) && data.length > 0) {
-    // Ensure every match has a stable numeric id
     state.matches = data.map((m, idx) => ({ id: m.id ?? idx + 1, ...m }));
   } else {
-    // No data in Firebase yet — push the locally generated fixtures
     state.matches = generateFixtures();
     set(matchesRef, state.matches);
   }
-  // Persist locally for offline resilience
   try { localStorage.setItem('ratataaLeagueData', JSON.stringify({ matches: state.matches })); } catch(e) {}
   renderAll();
-  // Keep admin in sync if it's currently open
   if (document.getElementById('admin-view').classList.contains('active')) {
     renderAdminMatches();
     renderStandings('admin-standings-table');
   }
 });
 
+// ── Avatars sync ──
+onValue(avatarsRef, (snapshot) => {
+  const data = snapshot.val();
+  if (data && typeof data === 'object') {
+    avatarState = data;
+    try { localStorage.setItem('ratataaAvatars', JSON.stringify(avatarState)); } catch(e) {}
+    renderAll();
+    if (document.getElementById('admin-panel-avatars') &&
+        !document.getElementById('admin-panel-avatars').classList.contains('hidden')) {
+      renderAdminAvatars();
+    }
+  }
+});
+
 window.saveState = function() {
   set(matchesRef, state.matches);
   try { localStorage.setItem('ratataaLeagueData', JSON.stringify({ matches: state.matches })); } catch(e) {}
+};
+
+window.saveAvatarsToFirebase = function() {
+  set(avatarsRef, avatarState);
 };
 </script>
 
