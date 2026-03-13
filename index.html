@@ -217,10 +217,19 @@
 
   /* ── Score badge ── */
   .score-badge {
-    display: flex; align-items: center; gap: 0.5rem;
+    display: flex; align-items: center; gap: 0.4rem;
     background: rgba(255,255,255,0.06); border-radius: 8px;
-    padding: 0.4rem 0.75rem; font-family: var(--font-display);
+    padding: 0.35rem 0.65rem; font-family: var(--font-display);
     font-size: 1.4rem; letter-spacing: 0.05em; white-space: nowrap;
+  }
+
+  /* ── Fixture center column ── */
+  .fixture-center {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 5px; min-width: 80px;
+  }
+  .fixture-center .pill {
+    white-space: nowrap; flex-shrink: 0;
   }
 
   /* ── Status pill ── */
@@ -241,7 +250,6 @@
     padding: 1rem;
     opacity: 0; transition: opacity 0.25s;
     pointer-events: none;
-    will-change: opacity;
   }
   .modal-backdrop.open { opacity: 1; pointer-events: all; }
   .modal-box {
@@ -251,9 +259,8 @@
     max-width: 520px; width: 100%;
     max-height: 90vh; overflow-y: auto;
     transform: scale(0.92) translateY(20px);
-    transition: transform 0.28s cubic-bezier(0.34, 1.4, 0.64, 1);
+    transition: transform 0.3s ease;
     position: relative;
-    will-change: transform;
   }
   .modal-backdrop.open .modal-box { transform: scale(1) translateY(0); }
 
@@ -302,7 +309,7 @@
 
   /* ── Fade in ── */
   @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
-  .fade-up { animation: fadeUp 0.4s ease forwards; will-change: transform, opacity; }
+  .fade-up { animation: fadeUp 0.4s ease forwards; }
 
   @keyframes pulse-dot { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
   .pulse-dot { animation: pulse-dot 1.5s ease-in-out infinite; }
@@ -798,7 +805,7 @@
 <!-- ============================================================
      ADMIN LOGIN MODAL
      ============================================================ -->
-<div id="login-modal" class="modal-backdrop" onclick="if(event.target===this)closeLoginModal()">
+<div id="login-modal" class="modal-backdrop">
   <div class="modal-box p-8 max-w-sm" style="text-align:center">
     <p class="text-xs tracking-widest uppercase mb-1" style="color:var(--indigo)">Access Control</p>
     <h2 class="font-display text-3xl mb-6">ADMIN PORTAL</h2>
@@ -1022,7 +1029,7 @@
 <!-- ============================================================
      AVATAR EDIT MODAL (Admin)
      ============================================================ -->
-<div id="avatar-modal" class="modal-backdrop" onclick="if(event.target===this)closeAvatarModal()">
+<div id="avatar-modal" class="modal-backdrop">
   <div class="modal-box p-7 max-w-sm">
     <div class="flex items-center justify-between mb-5">
       <h3 class="font-display text-2xl">EDIT AVATAR</h3>
@@ -1093,7 +1100,7 @@
 <!-- ============================================================
      MATCH SCORE MODAL (Admin)
      ============================================================ -->
-<div id="score-modal" class="modal-backdrop" onclick="if(event.target===this)closeScoreModal()">
+<div id="score-modal" class="modal-backdrop">
   <div class="modal-box p-7 max-w-sm">
     <div class="flex items-center justify-between mb-6">
       <h3 class="font-display text-2xl">ENTER SCORE</h3>
@@ -1103,15 +1110,15 @@
     <div class="grid grid-cols-3 items-center gap-4 mb-6">
       <div class="text-center">
         <p id="score-modal-p1" class="font-display text-xl mb-2"></p>
-        <input id="score-p1" type="number" min="0" max="20" step="1" inputmode="numeric" class="input-field text-center text-2xl font-display" placeholder="0"
-               oninput="this.value=Math.min(20,Math.max(0,parseInt(this.value)||0))"
+        <input id="score-p1" type="number" min="0" max="99" step="1" class="input-field text-center text-2xl font-display" placeholder="0"
+               oninput="this.value=Math.max(0,parseInt(this.value)||0)"
                onkeydown="if(event.key==='Enter')document.getElementById('score-p2').focus()" />
       </div>
       <div class="text-center font-display text-2xl" style="color:var(--muted)">VS</div>
       <div class="text-center">
         <p id="score-modal-p2" class="font-display text-xl mb-2"></p>
-        <input id="score-p2" type="number" min="0" max="20" step="1" inputmode="numeric" class="input-field text-center text-2xl font-display" placeholder="0"
-               oninput="this.value=Math.min(20,Math.max(0,parseInt(this.value)||0))"
+        <input id="score-p2" type="number" min="0" max="99" step="1" class="input-field text-center text-2xl font-display" placeholder="0"
+               oninput="this.value=Math.max(0,parseInt(this.value)||0)"
                onkeydown="if(event.key==='Enter')saveScore()" />
       </div>
     </div>
@@ -1123,7 +1130,7 @@
 <!-- ============================================================
      MATCH REPORT MODAL (Public)
      ============================================================ -->
-<div id="report-modal" class="modal-backdrop" onclick="if(event.target===this)closeReportModal()">
+<div id="report-modal" class="modal-backdrop">
   <div class="modal-box p-7">
     <div class="flex items-center justify-between mb-4">
       <span class="pill pill-played">Match Report</span>
@@ -1136,7 +1143,7 @@
 <!-- ============================================================
      PLAYER PROFILE MODAL
      ============================================================ -->
-<div id="player-modal" class="modal-backdrop" onclick="if(event.target===this)closePlayerModal()">
+<div id="player-modal" class="modal-backdrop">
   <div class="modal-box p-7">
     <div class="flex items-center justify-between mb-6">
       <h3 class="font-display text-2xl">PLAYER PROFILE</h3>
@@ -1434,20 +1441,6 @@ function renderAll() {
   renderPlayers();
 }
 
-/** renderActive(): only re-renders the currently visible section — faster */
-function renderActive() {
-  const active = document.querySelector('.section.active');
-  const id = active?.id?.replace('section-', '');
-  renderHeroStats();
-  renderStandings('standings-table');
-  renderLeagueStatsBoxes();
-  if (id === 'fixtures') renderFixtures();
-  else if (id === 'results') renderResults();
-  else if (id === 'scorers') renderTopScorers();
-  else if (id === 'players') renderPlayers();
-  else { renderFixtures(); renderResults(); renderTopScorers(); renderPlayers(); }
-}
-
 /** avatarHTML(name, size) — renders the correct avatar for a player */
 function avatarHTML(name, size = 42) {
   const c = PLAYER_COLORS[name];
@@ -1572,26 +1565,27 @@ function renderFixtures() {
   }
   el.innerHTML = state.matches.map((m, idx) => {
     const label = m.played
-      ? `<span class="pill pill-played">✓ Played</span>`
-      : `<span class="pill pill-upcoming">Upcoming</span>`;
+    const label = m.played
+      ? `<span class="pill pill-played" style="white-space:nowrap;flex-shrink:0">✓ Played</span>`
+      : `<span class="pill pill-upcoming" style="white-space:nowrap;flex-shrink:0">Upcoming</span>`;
     const scoreHTML = m.played
-      ? `<div class="score-badge text-center"><span>${m.player1Goals}</span><span style="color:var(--muted);font-size:0.9rem">:</span><span>${m.player2Goals}</span></div>`
-      : `<div class="text-center text-xs font-semibold tracking-widest uppercase" style="color:var(--muted);min-width:60px">Match ${m.id}</div>`;
+      ? `<div class="score-badge"><span>${m.player1Goals}</span><span style="color:var(--muted);font-size:0.9rem">:</span><span>${m.player2Goals}</span></div>`
+      : `<div class="font-display text-xs tracking-widest uppercase" style="color:var(--muted)">#${m.id}</div>`;
     const clickHandler = m.played ? `onclick="openReportModal(${m.id})"` : '';
     const hoverClass = m.played ? 'fixture-card-played' : 'fixture-card-upcoming';
     return `
       <div class="fixture-card ${hoverClass} fade-up" style="animation-delay:${idx * 0.03}s;${m.played ? 'cursor:pointer' : 'cursor:default'}" ${clickHandler}>
         <div class="flex items-center gap-2.5 justify-end">
-          <span class="font-semibold text-sm text-right">${m.player1}</span>
+          <span class="font-semibold text-sm text-right" style="white-space:nowrap">${m.player1}</span>
           ${avatarHTML(m.player1)}
         </div>
-        <div class="flex flex-col items-center gap-1">
+        <div class="fixture-center">
           ${scoreHTML}
           ${label}
         </div>
         <div class="flex items-center gap-2.5 justify-start">
           ${avatarHTML(m.player2)}
-          <span class="font-semibold text-sm">${m.player2}</span>
+          <span class="font-semibold text-sm" style="white-space:nowrap">${m.player2}</span>
         </div>
       </div>`;
   }).join('');
@@ -1599,7 +1593,7 @@ function renderFixtures() {
 
 /** renderResults() */
 function renderResults() {
-  const played = state.matches.filter(m => m.played).reverse(); // latest first
+  const played = state.matches.filter(m => m.played);
   const rl = document.getElementById('results-list');
   const nr = document.getElementById('no-results');
   if (!rl) return;
@@ -1618,20 +1612,22 @@ function renderResults() {
     return `
       <div class="fixture-card fade-up" style="animation-delay:${idx * 0.03}s;cursor:pointer" onclick="openReportModal(${m.id})">
         <div class="flex items-center gap-2.5 justify-end">
-          <span class="font-semibold text-sm text-right ${!winner ? '' : winner === m.player1 ? '' : 'opacity-40'}">${m.player1}</span>
+          <span class="font-semibold text-sm text-right ${!winner ? '' : winner === m.player1 ? '' : 'opacity-40'}" style="white-space:nowrap">${m.player1}</span>
           ${avatarHTML(m.player1)}
         </div>
-        <div class="flex flex-col items-center gap-1">
-          <div class="score-badge text-center">
+        <div class="fixture-center">
+          <div class="score-badge">
             <span class="${winner === m.player1 ? 'gold-shimmer' : ''}">${g1}</span>
             <span style="color:var(--muted);font-size:0.9rem">–</span>
             <span class="${winner === m.player2 ? 'gold-shimmer' : ''}">${g2}</span>
           </div>
-          ${isDraw ? '<span class="pill" style="background:rgba(100,116,139,0.2);color:#94a3b8;font-size:0.55rem">DRAW</span>' : ''}
+          ${isDraw
+            ? '<span class="pill" style="background:rgba(100,116,139,0.2);color:#94a3b8;white-space:nowrap">DRAW</span>'
+            : '<span class="pill pill-played" style="white-space:nowrap">✓ Played</span>'}
         </div>
         <div class="flex items-center gap-2.5 justify-start">
           ${avatarHTML(m.player2)}
-          <span class="font-semibold text-sm ${!winner ? '' : winner === m.player2 ? '' : 'opacity-40'}">${m.player2}</span>
+          <span class="font-semibold text-sm ${!winner ? '' : winner === m.player2 ? '' : 'opacity-40'}" style="white-space:nowrap">${m.player2}</span>
         </div>
       </div>`;
   }).join('');
@@ -2218,7 +2214,6 @@ function saveScore() {
     showToast('Enter valid scores!', 'error'); return;
   }
   const m = state.matches.find(x => x.id === currentScoreMatchId);
-  if (!m) { showToast('Match not found!', 'error'); return; }
   m.player1Goals = g1;
   m.player2Goals = g2;
   m.played = true;
@@ -2364,27 +2359,12 @@ function initRealAppFeel() {
   // Block double-tap zoom (but allow normal scrolling)
   let lastTap = 0;
   document.addEventListener('touchend', e => {
+    // Only block double-tap on non-input elements
     if (e.target.closest('input, textarea')) return;
     const now = Date.now();
     if (now - lastTap < 280) e.preventDefault();
     lastTap = now;
   }, { passive: false });
-
-  // Escape key closes any open modal
-  document.addEventListener('keydown', e => {
-    if (e.key !== 'Escape') return;
-    if (document.getElementById('score-modal')?.classList.contains('open')) closeScoreModal();
-    else if (document.getElementById('report-modal')?.classList.contains('open')) closeReportModal();
-    else if (document.getElementById('player-modal')?.classList.contains('open')) closePlayerModal();
-    else if (document.getElementById('avatar-modal')?.classList.contains('open')) closeAvatarModal();
-  });
-
-  // Show active section indicator on nav instantly
-  document.querySelectorAll('.bnav-item, .nav-link').forEach(btn => {
-    btn.addEventListener('click', () => {
-      if (navigator.vibrate) navigator.vibrate(6);
-    });
-  });
 }
 
 // ============================================================
