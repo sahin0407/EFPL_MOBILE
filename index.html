@@ -358,7 +358,7 @@
   /* ── Mobile admin overrides ── */
   @media(max-width:767px) {
     #admin-sidebar { display: none !important; }
-    #admin-tabbar  { display: flex !important; }
+    #admin-view.active #admin-tabbar { display: flex !important; }
     #admin-body    { flex-direction: column !important; }
     #admin-content-wrap { padding: 1rem !important; padding-bottom: 85px !important; }
     #admin-topbar  { padding: 0.6rem 1rem !important; }
@@ -826,7 +826,8 @@
   </div>
 </div>
 
-<!-- share-canvas-source removed — using pure Canvas 2D API instead -->
+<!-- Hidden off-screen div used as canvas source -->
+<div id="share-canvas-source"></div>
 
 <!-- ============================================================
      TOAST NOTIFICATION
@@ -1334,6 +1335,7 @@
         <p id="score-modal-p1" class="font-display text-xl mb-2"></p>
         <input id="score-p1" type="number" min="0" max="99" step="1" class="input-field text-center text-2xl font-display" placeholder="0"
                oninput="this.value=Math.max(0,parseInt(this.value)||0)"
+               onfocus="this.select()"
                onkeydown="if(event.key==='Enter')document.getElementById('score-p2').focus()" />
       </div>
       <div class="text-center font-display text-2xl" style="color:var(--muted)">VS</div>
@@ -1341,11 +1343,12 @@
         <p id="score-modal-p2" class="font-display text-xl mb-2"></p>
         <input id="score-p2" type="number" min="0" max="99" step="1" class="input-field text-center text-2xl font-display" placeholder="0"
                oninput="this.value=Math.max(0,parseInt(this.value)||0)"
+               onfocus="this.select()"
                onkeydown="if(event.key==='Enter')saveScore()" />
       </div>
     </div>
     <button onclick="saveScore()" class="btn-indigo w-full py-3 rounded-xl text-sm font-semibold tracking-wider uppercase">Save Score</button>
-    <button id="score-clear-btn" onclick="clearScore()" class="btn-ghost w-full py-2.5 rounded-xl text-sm tracking-wider mt-2">Clear Result</button>
+    <button id="score-clear-btn" onclick="clearScore()" class="btn-ghost w-full py-2.5 rounded-xl text-sm tracking-wider mt-2" style="display:none">Clear Result</button>
   </div>
 </div>
 
@@ -1776,7 +1779,7 @@ function renderStandings(containerId) {
               <div class="flex items-center gap-1.5 flex-wrap" style="row-gap:3px">
                 <span class="font-display text-xs ${rankColors[i]}" style="min-width:12px;text-align:center">${i + 1}</span>
                 ${avatarHTML(r.name, 24)}
-                <span class="font-semibold text-sm${isLeader ? ' gold-shimmer' : ''}">${r.name}</span>
+                <span class="font-semibold text-sm" style="${isLeader ? 'background:linear-gradient(90deg,#eab308,#fde68a,#eab308);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite' : ''}">${r.name}</span>
                 ${isLeader ? '<span class="leader-crown-badge">👑 Leader</span>' : ''}
               </div>
             </td>
@@ -1858,7 +1861,8 @@ function renderResults() {
   }
   if (nr) nr.classList.add('hidden');
 
-  rl.innerHTML = played.map((m, idx) => {
+  const playedDesc = [...played].reverse();
+  rl.innerHTML = playedDesc.map((m, idx) => {
     const g1 = Number(m.player1Goals), g2 = Number(m.player2Goals);
     const winner = g1 > g2 ? m.player1 : g2 > g1 ? m.player2 : null;
     const isDraw = g1 === g2;
@@ -2292,7 +2296,7 @@ document.addEventListener('keydown', e => {
     }
   }
   if (e.key === 'Escape') {
-    closeLoginModal(); closeScoreModal(); closeReportModal(); closePlayerModal(); closeAvatarModal();
+    closeLoginModal(); closeScoreModal(); closeReportModal(); closePlayerModal(); closeAvatarModal(); closeShareOverlay();
   }
 });
 
@@ -2335,6 +2339,7 @@ function enterAdminView() {
   adminShowPanel('matches', document.getElementById('atab-matches'));
   renderAdminMatches();
   renderStandings('admin-standings-table');
+  renderAdminAvatars();
   window.scrollTo(0, 0);
 }
 
@@ -2416,10 +2421,7 @@ function renderAdminMatches() {
       <!-- Player 1 -->
       <div class="flex items-center gap-1.5 flex-1 min-w-0 justify-end">
         <span class="admin-match-name font-semibold text-sm truncate" style="max-width:70px">${m.player1}</span>
-        <div class="admin-match-avatar flex-shrink-0 rounded-full flex items-center justify-center font-display"
-             style="width:32px;height:32px;background:${c1.bg};border:1px solid ${c1.border};font-size:0.85rem;color:${c1.dot}">
-          ${m.player1[0]}
-        </div>
+${avatarHTML(m.player1, 32)}
       </div>
 
       <!-- Score -->
@@ -2432,10 +2434,7 @@ function renderAdminMatches() {
 
       <!-- Player 2 -->
       <div class="flex items-center gap-1.5 flex-1 min-w-0 justify-start">
-        <div class="admin-match-avatar flex-shrink-0 rounded-full flex items-center justify-center font-display"
-             style="width:32px;height:32px;background:${c2.bg};border:1px solid ${c2.border};font-size:0.85rem;color:${c2.dot}">
-          ${m.player2[0]}
-        </div>
+${avatarHTML(m.player2, 32)}
         <span class="admin-match-name font-semibold text-sm truncate" style="max-width:70px">${m.player2}</span>
       </div>
 
@@ -2677,345 +2676,201 @@ function renderSkeletonScorers(containerId) {
 
 let _shareImageDataUrl = null;
 
-// ── Pure Canvas 2D image builder — works on all browsers including Android Chrome ──
-// No SVG foreignObject, no external libraries. Draws directly with Canvas 2D API.
+// ============================================================
+// SHARE AS IMAGE — Pure Canvas 2D with full avatar support
+// Works on Android Chrome, iOS Safari, all modern browsers.
+// Photo/emoji/initials/letter avatars all supported.
+// No SVG foreignObject. No external libraries.
+// ============================================================
 
-function drawRoundedRect(ctx, x, y, w, h, r, fillColor) {
-  ctx.beginPath();
-  ctx.moveTo(x + r, y);
-  ctx.lineTo(x + w - r, y);
-  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-  ctx.lineTo(x + w, y + h - r);
-  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-  ctx.lineTo(x + r, y + h);
-  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-  ctx.lineTo(x, y + r);
-  ctx.quadraticCurveTo(x, y, x + r, y);
-  ctx.closePath();
-  if (fillColor) { ctx.fillStyle = fillColor; ctx.fill(); }
-}
 
-function drawCircle(ctx, cx, cy, r, fillColor, strokeColor, strokeWidth) {
-  ctx.beginPath();
-  ctx.arc(cx, cy, r, 0, Math.PI * 2);
-  if (fillColor) { ctx.fillStyle = fillColor; ctx.fill(); }
-  if (strokeColor) { ctx.strokeStyle = strokeColor; ctx.lineWidth = strokeWidth || 1; ctx.stroke(); }
-}
-
-function canvasText(ctx, text, x, y, font, color, align) {
-  ctx.font = font;
-  ctx.fillStyle = color;
-  ctx.textAlign = align || 'left';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(text, x, y);
-}
-
-function buildStandingsCanvas() {
-  const rows = computeStandings();
-  const ls = computeLeagueStats();
-  const SC = 2; // scale factor for retina
-  const W = 400, ROW_H = 58, HEADER_H = 72, FOOTER_H = 36;
-  const H = HEADER_H + rows.length * ROW_H + FOOTER_H;
-
-  const canvas = document.createElement('canvas');
-  canvas.width  = W * SC;
-  canvas.height = H * SC;
-  const ctx = canvas.getContext('2d');
-  ctx.scale(SC, SC);
-
-  // Background
-  drawRoundedRect(ctx, 0, 0, W, H, 0, '#080810');
-
-  // Header gradient
-  const hGrad = ctx.createLinearGradient(0, 0, W, HEADER_H);
-  hGrad.addColorStop(0, '#0f0f1f');
-  hGrad.addColorStop(1, '#080810');
-  drawRoundedRect(ctx, 0, 0, W, HEADER_H, 0, null);
-  ctx.fillStyle = hGrad; ctx.fill();
-
-  // Header border bottom
-  ctx.fillStyle = 'rgba(255,255,255,0.08)';
-  ctx.fillRect(0, HEADER_H - 1, W, 1);
-
-  // Header text — "LIVE TABLE"
-  canvasText(ctx, 'LIVE TABLE', 16, 24, '700 9px DM Sans, system-ui', '#6366f1', 'left');
-
-  // Header text — "STANDINGS"
-  ctx.font = '900 28px DM Sans, system-ui';
-  ctx.fillStyle = '#f8fafc';
-  ctx.textAlign = 'left';
-  ctx.textBaseline = 'middle';
-  ctx.fillText('STANDINGS', 16, 52);
-
-  // Header right — season
-  canvasText(ctx, 'RATATAA LEAGUE', W - 16, 30, '600 9px DM Sans, system-ui', '#64748b', 'right');
-  canvasText(ctx, 'Season 2026', W - 16, 50, '700 11px DM Sans, system-ui', '#eab308', 'right');
-
-  const PLAYER_COLORS_LOCAL = {
-    Sahin:    { bg: 'rgba(99,102,241,0.25)',  border: '#6366f1', dot: '#6366f1' },
-    Mahashin: { bg: 'rgba(234,179,8,0.25)',   border: '#eab308', dot: '#eab308' },
-    Nasim:    { bg: 'rgba(34,197,94,0.25)',   border: '#22c55e', dot: '#22c55e' },
-    Khokan:   { bg: 'rgba(239,68,68,0.25)',   border: '#ef4444', dot: '#ef4444' },
-  };
-  const rankEmoji = ['🥇','🥈','🥉','4'];
-
-  rows.forEach((r, i) => {
-    const pc = PLAYER_COLORS_LOCAL[r.name] || { bg: 'rgba(99,102,241,0.2)', border: '#6366f1', dot: '#6366f1' };
-    const rowY = HEADER_H + i * ROW_H;
-    const isLeader = i === 0 && r.pts > 0;
-
-    // Row background
-    if (isLeader) {
-      const leaderGrad = ctx.createLinearGradient(0, rowY, W, rowY);
-      leaderGrad.addColorStop(0, 'rgba(234,179,8,0.12)');
-      leaderGrad.addColorStop(0.5, 'rgba(234,179,8,0.06)');
-      leaderGrad.addColorStop(1, 'transparent');
-      ctx.fillStyle = leaderGrad;
-      ctx.fillRect(0, rowY, W, ROW_H);
-      // Gold left border
-      ctx.fillStyle = '#eab308';
-      ctx.fillRect(0, rowY, 3, ROW_H);
-    }
-
-    // Row separator
-    ctx.fillStyle = 'rgba(255,255,255,0.05)';
-    ctx.fillRect(0, rowY + ROW_H - 1, W, 1);
-
-    const cy = rowY + ROW_H / 2;
-
-    // Rank
-    ctx.font = '14px system-ui';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillStyle = isLeader ? '#eab308' : (i === 1 ? '#94a3b8' : i === 2 ? '#cd7f32' : '#64748b');
-    ctx.fillText(rankEmoji[i], 22, cy);
-
-    // Avatar circle
-    const avX = 48, avR = 14;
-    drawCircle(ctx, avX, cy, avR, pc.bg, pc.border, 1.5);
-    canvasText(ctx, r.name[0], avX, cy + 0.5, `700 ${avR}px DM Sans, system-ui`, pc.dot, 'center');
-
-    // Player name
-    canvasText(ctx, r.name, 70, cy, isLeader ? '700 14px DM Sans, system-ui' : '600 13px DM Sans, system-ui', isLeader ? '#eab308' : '#f8fafc', 'left');
-
-    // Stats — right-aligned columns
-    const statY = cy;
-    const cols = [
-      { val: String(r.played), x: W - 218, color: '#94a3b8' },
-      { val: String(r.won),    x: W - 188, color: '#22c55e' },
-      { val: String(r.drawn),  x: W - 160, color: '#64748b' },
-      { val: String(r.lost),   x: W - 132, color: '#ef4444' },
-      { val: String(r.gf),     x: W - 104, color: '#f8fafc' },
-      { val: String(r.ga),     x: W - 76,  color: '#f8fafc' },
-      { val: (r.gd > 0 ? '+' : '') + r.gd, x: W - 46, color: r.gd > 0 ? '#22c55e' : r.gd < 0 ? '#ef4444' : '#64748b' },
-    ];
-    cols.forEach(col => canvasText(ctx, col.val, col.x, statY, '500 11px DM Sans, system-ui', col.color, 'center'));
-
-    // PTS — bold
-    canvasText(ctx, String(r.pts), W - 14, statY, `800 15px DM Sans, system-ui`, isLeader ? '#eab308' : '#6366f1', 'right');
+function _loadImg(src) {
+  return new Promise(function(res) {
+    var img = new Image();
+    img.onload = function() { res(img); };
+    img.onerror = function() { res(null); };
+    img.src = src;
   });
-
-  // Column headers
-  const hdY = HEADER_H - 10;
-  const hdCols = [
-    { label: 'P', x: W - 218 }, { label: 'W', x: W - 188 }, { label: 'D', x: W - 160 },
-    { label: 'L', x: W - 132 }, { label: 'GF', x: W - 104 }, { label: 'GA', x: W - 76 },
-    { label: 'GD', x: W - 46 }, { label: 'PTS', x: W - 14 },
-  ];
-  hdCols.forEach(h => canvasText(ctx, h.label, h.x, hdY, '700 8px DM Sans, system-ui', '#64748b', h.label === 'PTS' ? 'right' : 'center'));
-
-  // Footer
-  const footY = HEADER_H + rows.length * ROW_H;
-  ctx.fillStyle = 'rgba(255,255,255,0.05)';
-  ctx.fillRect(0, footY, W, 1);
-  canvasText(ctx, `${ls.played}/${ls.total} played · ${ls.totalGoals} goals`, 16, footY + FOOTER_H / 2, '500 10px DM Sans, system-ui', '#64748b', 'left');
-  canvasText(ctx, 'ratataa.app', W - 16, footY + FOOTER_H / 2, '700 10px DM Sans, system-ui', '#6366f1', 'right');
-
-  return canvas.toDataURL('image/png');
 }
 
-function buildMatchCanvas(matchId) {
-  const m = state.matches.find(x => x.id === matchId);
-  if (!m || !m.played) return null;
+async function _drawAv(ctx, name, cx, cy, r) {
+  var av = avatarState[name];
+  var pc = PLAYER_COLORS[name];
 
-  const g1 = Number(m.player1Goals), g2 = Number(m.player2Goals);
-  const winner = g1 > g2 ? m.player1 : g2 > g1 ? m.player2 : null;
-  const isDraw = g1 === g2;
+  if (av && av.type === 'photo' && av.value) {
+    var img = await _loadImg(av.value);
+    if (img) {
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, cy, r + 1.5, 0, Math.PI * 2);
+      ctx.strokeStyle = pc.border; ctx.lineWidth = 2; ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.clip();
+      ctx.drawImage(img, cx - r, cy - r, r * 2, r * 2);
+      ctx.restore(); return;
+    }
+  }
+  if (av && av.type === 'emoji' && av.value) {
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = pc.bg; ctx.fill();
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.strokeStyle = pc.border; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.font = Math.round(r * 1.1) + 'px system-ui';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#fff'; ctx.fillText(av.value, cx, cy + 1); return;
+  }
+  var letter = (av && av.type === 'initials' && av.value) ? av.value.slice(0, 2) : name[0];
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = pc.bg; ctx.fill();
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.strokeStyle = pc.border; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.font = '700 ' + Math.round(r * 0.88) + 'px DM Sans, system-ui';
+  ctx.fillStyle = pc.dot; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(letter, cx, cy + 1);
+}
 
-  const SC = 2;
-  const W = 380, H = 240;
-  const canvas = document.createElement('canvas');
-  canvas.width  = W * SC;
-  canvas.height = H * SC;
-  const ctx = canvas.getContext('2d');
+async function buildStandingsCanvas() {
+  var rows = computeStandings();
+  var ls = computeLeagueStats();
+  var SC = 2, W = 400, ROW_H = 62, HDR_H = 76, FTR_H = 36;
+  var H = HDR_H + rows.length * ROW_H + FTR_H;
+  var cv = document.createElement('canvas');
+  cv.width = W * SC; cv.height = H * SC;
+  var ctx = cv.getContext('2d');
   ctx.scale(SC, SC);
 
-  // Background
-  const bgGrad = ctx.createLinearGradient(0, 0, W, H);
-  bgGrad.addColorStop(0, '#0f0f1f');
-  bgGrad.addColorStop(1, '#080810');
-  ctx.fillStyle = bgGrad;
-  ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = '#080810'; ctx.fillRect(0, 0, W, H);
+  var hg = ctx.createLinearGradient(0, 0, 0, HDR_H);
+  hg.addColorStop(0, '#0f0f1a'); hg.addColorStop(1, '#080810');
+  ctx.fillStyle = hg; ctx.fillRect(0, 0, W, HDR_H);
+  ctx.fillStyle = 'rgba(255,255,255,0.07)'; ctx.fillRect(0, HDR_H - 1, W, 1);
 
-  // Header bar
-  ctx.fillStyle = 'rgba(99,102,241,0.12)';
-  ctx.fillRect(0, 0, W, 36);
-  ctx.fillStyle = 'rgba(255,255,255,0.06)';
-  ctx.fillRect(0, 36, W, 1);
-  canvasText(ctx, `MATCH REPORT · #${m.id}`, 16, 18, '700 9px DM Sans, system-ui', '#6366f1', 'left');
-  canvasText(ctx, 'RATATAA LEAGUE 2026', W - 16, 18, '600 9px DM Sans, system-ui', '#64748b', 'right');
+  ctx.font = '700 8px DM Sans, system-ui'; ctx.fillStyle = '#6366f1';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText('LIVE TABLE', 16, 20);
+  ctx.font = '900 30px DM Sans, system-ui'; ctx.fillStyle = '#f8fafc'; ctx.fillText('STANDINGS', 16, 52);
+  ctx.font = '500 9px DM Sans, system-ui'; ctx.fillStyle = '#64748b';
+  ctx.textAlign = 'right'; ctx.fillText('RATATAA LEAGUE', W - 16, 28);
+  ctx.font = '700 12px DM Sans, system-ui'; ctx.fillStyle = '#eab308'; ctx.fillText('Season 2026', W - 16, 52);
 
-  const PLAYER_COLORS_LOCAL = {
-    Sahin:    { bg: 'rgba(99,102,241,0.3)',  border: '#6366f1', dot: '#6366f1' },
-    Mahashin: { bg: 'rgba(234,179,8,0.3)',   border: '#eab308', dot: '#eab308' },
-    Nasim:    { bg: 'rgba(34,197,94,0.3)',   border: '#22c55e', dot: '#22c55e' },
-    Khokan:   { bg: 'rgba(239,68,68,0.3)',   border: '#ef4444', dot: '#ef4444' },
-  };
+  var hdCols = [{l:'P',x:W-218},{l:'W',x:W-188},{l:'D',x:W-160},{l:'L',x:W-132},{l:'GF',x:W-104},{l:'GA',x:W-76},{l:'GD',x:W-46},{l:'PTS',x:W-14}];
+  var hdY = HDR_H - 9;
+  ctx.font = '700 7.5px DM Sans, system-ui'; ctx.fillStyle = '#475569';
+  hdCols.forEach(function(h) { ctx.textAlign = h.l === 'PTS' ? 'right' : 'center'; ctx.fillText(h.l, h.x, hdY); });
 
-  const drawPlayer = (name, cx, goals, isWin) => {
-    const pc = PLAYER_COLORS_LOCAL[name] || { bg: 'rgba(99,102,241,0.2)', border: '#6366f1', dot: '#6366f1' };
-    drawCircle(ctx, cx, 100, 28, pc.bg, isWin ? pc.border : 'rgba(255,255,255,0.15)', isWin ? 2.5 : 1);
-    canvasText(ctx, name[0], cx, 100.5, `700 20px DM Sans, system-ui`, isWin ? pc.dot : '#94a3b8', 'center');
-    const nameColor = isWin ? '#eab308' : '#f8fafc';
-    canvasText(ctx, name, cx, 140, `${isWin ? '700' : '600'} 14px DM Sans, system-ui`, nameColor, 'center');
-    if (isWin) canvasText(ctx, 'WINNER', cx, 158, '700 8px DM Sans, system-ui', '#eab308', 'center');
-  };
+  for (var i = 0; i < rows.length; i++) {
+    var r = rows[i], pc = PLAYER_COLORS[r.name];
+    var ry = HDR_H + i * ROW_H, cy = ry + ROW_H / 2;
+    var isLeader = i === 0 && r.pts > 0;
 
-  const c1 = m.player1, c2 = m.player2;
-  drawPlayer(c1, 85, g1, winner === c1);
-  drawPlayer(c2, W - 85, g2, winner === c2);
+    if (isLeader) {
+      var lg = ctx.createLinearGradient(0, ry, W, ry);
+      lg.addColorStop(0, 'rgba(234,179,8,0.13)'); lg.addColorStop(0.6, 'rgba(234,179,8,0.05)'); lg.addColorStop(1, 'transparent');
+      ctx.fillStyle = lg; ctx.fillRect(0, ry, W, ROW_H);
+      ctx.fillStyle = '#eab308'; ctx.fillRect(0, ry, 3, ROW_H);
+    }
+    ctx.fillStyle = 'rgba(255,255,255,0.05)'; ctx.fillRect(0, ry + ROW_H - 1, W, 1);
 
-  // Score
-  ctx.font = '900 48px DM Sans, system-ui';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillStyle = '#f8fafc';
-  ctx.fillText(`${g1}`, W/2 - 22, 98);
-  ctx.font = '300 28px DM Sans, system-ui';
-  ctx.fillStyle = '#475569';
-  ctx.fillText('–', W/2, 98);
-  ctx.font = '900 48px DM Sans, system-ui';
-  ctx.fillStyle = '#f8fafc';
-  ctx.fillText(`${g2}`, W/2 + 22, 98);
+    var medals = ['\ud83e\udd47', '\ud83e\udd48', '\ud83e\udd49'];
+    ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
+    if (i < 3) { ctx.font = '14px system-ui'; ctx.fillStyle = '#fff'; ctx.fillText(medals[i], 20, cy); }
+    else { ctx.font = '600 11px DM Sans, system-ui'; ctx.fillStyle = '#64748b'; ctx.fillText('4', 20, cy); }
 
-  // Result label
-  const resultText = isDraw ? 'DRAW' : `${winner.toUpperCase()} WINS`;
-  const resultColor = isDraw ? '#94a3b8' : '#eab308';
-  canvasText(ctx, resultText, W/2, 134, '800 11px DM Sans, system-ui', resultColor, 'center');
+    await _drawAv(ctx, r.name, 50, cy, 16);
 
-  // Footer
-  ctx.fillStyle = 'rgba(255,255,255,0.06)';
-  ctx.fillRect(0, H - 28, W, 1);
-  canvasText(ctx, `GD ${!isDraw ? '+' : ''}${Math.abs(g1-g2)}`, 16, H - 14, '500 10px DM Sans, system-ui', '#64748b', 'left');
-  canvasText(ctx, 'ratataa.app', W - 16, H - 14, '700 10px DM Sans, system-ui', '#6366f1', 'right');
+    ctx.font = isLeader ? '700 14px DM Sans, system-ui' : '600 13px DM Sans, system-ui';
+    ctx.fillStyle = isLeader ? '#eab308' : '#f8fafc';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText(r.name + (isLeader ? ' \ud83d\udc51' : ''), 74, cy);
 
-  return canvas.toDataURL('image/png');
+    var sCols = [
+      {v:r.played,x:W-218,col:'#94a3b8'},{v:r.won,x:W-188,col:'#22c55e'},{v:r.drawn,x:W-160,col:'#64748b'},
+      {v:r.lost,x:W-132,col:'#ef4444'},{v:r.gf,x:W-104,col:'#f8fafc'},{v:r.ga,x:W-76,col:'#f8fafc'},
+      {v:(r.gd>0?'+':'')+r.gd,x:W-46,col:r.gd>0?'#22c55e':r.gd<0?'#ef4444':'#64748b'}
+    ];
+    ctx.font = '500 11px DM Sans, system-ui'; ctx.textBaseline = 'middle';
+    sCols.forEach(function(s){ ctx.fillStyle=s.col; ctx.textAlign='center'; ctx.fillText(String(s.v),s.x,cy); });
+    ctx.font = '800 ' + (isLeader ? 16 : 14) + 'px DM Sans, system-ui';
+    ctx.fillStyle = isLeader ? '#eab308' : '#6366f1';
+    ctx.textAlign = 'right'; ctx.fillText(String(r.pts), W - 14, cy);
+  }
+
+  var fy = HDR_H + rows.length * ROW_H;
+  ctx.fillStyle = 'rgba(255,255,255,0.06)'; ctx.fillRect(0, fy, W, 1);
+  ctx.font = '500 9.5px DM Sans, system-ui'; ctx.fillStyle = '#64748b';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillText(ls.played + '/' + ls.total + ' played  \u00b7  ' + ls.totalGoals + ' goals', 16, fy + FTR_H / 2);
+
+  return cv.toDataURL('image/png');
 }
 
-function buildStandingsHTML() {
-  const rows = computeStandings();
-  const ls   = computeLeagueStats();
-  const rankSymbols = ['🥇','🥈','🥉','4'];
-  const rowsHTML = rows.map((r, i) => {
-    const c = PLAYER_COLORS[r.name];
-    const isLeader = i === 0 && r.pts > 0;
-    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,0.06);background:${isLeader ? 'rgba(234,179,8,0.08)' : 'transparent'}${isLeader ? ';border-left:2px solid #eab308' : ''}">
-      <span style="font-size:1rem;min-width:24px">${rankSymbols[i]}</span>
-      <div style="width:32px;height:32px;border-radius:50%;background:${c.bg};border:1px solid ${c.border};display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:700;color:${c.dot};flex-shrink:0">${r.name[0]}</div>
-      <span style="flex:1;font-weight:600;font-size:0.9rem;color:${isLeader ? '#eab308' : '#f8fafc'}">${r.name}${isLeader ? ' 👑' : ''}</span>
-      <div style="display:flex;gap:14px;font-size:0.78rem;color:#64748b;margin-right:8px">
-        <span>${r.played}P</span><span style="color:#22c55e">${r.won}W</span><span>${r.drawn}D</span><span style="color:#ef4444">${r.lost}L</span>
-      </div>
-      <span style="font-size:1.2rem;font-weight:800;color:${isLeader ? '#eab308' : '#6366f1'};min-width:28px;text-align:right">${r.pts}</span>
-    </div>`;
-  }).join('');
-
-  return `<div style="background:#080810;border-radius:20px;overflow:hidden;font-family:'DM Sans',system-ui,sans-serif">
-    <div style="background:linear-gradient(135deg,#0f0f1f,#080810);padding:20px 16px 14px;border-bottom:1px solid rgba(255,255,255,0.08)">
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <div>
-          <p style="font-size:0.55rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#6366f1;margin-bottom:3px">Live Table</p>
-          <p style="font-size:1.6rem;font-weight:900;letter-spacing:0.04em;color:#f8fafc;line-height:1">STANDINGS</p>
-        </div>
-        <div style="text-align:right">
-          <p style="font-size:0.6rem;color:#64748b;letter-spacing:0.08em;text-transform:uppercase">Ratataa League</p>
-          <p style="font-size:0.7rem;font-weight:600;color:#eab308">Season 2026</p>
-        </div>
-      </div>
-    </div>
-    <div style="padding:6px 0">${rowsHTML}</div>
-    <div style="padding:10px 16px;border-top:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between">
-      <span style="font-size:0.65rem;color:#64748b">${ls.played}/${ls.total} matches played · ${ls.totalGoals} goals</span>
-      <span style="font-size:0.65rem;color:#6366f1;font-weight:600">ratataa.app</span>
-    </div>
-  </div>`;
-}
-
-function buildMatchHTML(matchId) {
-  const m = state.matches.find(x => x.id === matchId);
+async function buildMatchCanvas(matchId) {
+  var m = state.matches.find(function(x){ return x.id === matchId; });
   if (!m || !m.played) return null;
-  const g1 = Number(m.player1Goals), g2 = Number(m.player2Goals);
-  const winner = g1 > g2 ? m.player1 : g2 > g1 ? m.player2 : null;
-  const isDraw = g1 === g2;
-  const c1 = PLAYER_COLORS[m.player1], c2 = PLAYER_COLORS[m.player2];
+  var g1 = Number(m.player1Goals), g2 = Number(m.player2Goals);
+  var winner = g1 > g2 ? m.player1 : g2 > g1 ? m.player2 : null;
+  var isDraw = g1 === g2;
+  var SC = 2, W = 400, H = 260;
+  var cv = document.createElement('canvas');
+  cv.width = W * SC; cv.height = H * SC;
+  var ctx = cv.getContext('2d'); ctx.scale(SC, SC);
 
-  const resultText = isDraw ? 'DRAW' : `${winner.toUpperCase()} WINS`;
-  const resultColor = isDraw ? '#94a3b8' : '#eab308';
+  var bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, '#0f0f1a'); bg.addColorStop(1, '#080810');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
 
-  return `<div style="background:#080810;border-radius:20px;overflow:hidden;font-family:'DM Sans',system-ui,sans-serif">
-    <div style="background:linear-gradient(135deg,#0f0f1f,#080810);padding:16px;border-bottom:1px solid rgba(255,255,255,0.08)">
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <p style="font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#6366f1">Match Report · #${m.id}</p>
-        <p style="font-size:0.6rem;color:#64748b;letter-spacing:0.08em;text-transform:uppercase">Ratataa League 2026</p>
-      </div>
-    </div>
-    <div style="padding:24px 20px">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
-        <div style="text-align:center;flex:1">
-          <div style="width:56px;height:56px;border-radius:50%;background:${c1.bg};border:2px solid ${c1.border};display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:700;color:${c1.dot};margin:0 auto 8px">${m.player1[0]}</div>
-          <p style="font-size:0.95rem;font-weight:700;color:${winner===m.player1?'#eab308':'#f8fafc'}">${m.player1}</p>
-          ${winner===m.player1?'<p style="font-size:0.55rem;font-weight:700;letter-spacing:0.1em;color:#eab308;margin-top:3px">WINNER</p>':''}
-        </div>
-        <div style="text-align:center">
-          <div style="font-size:3rem;font-weight:900;color:#f8fafc;line-height:1;letter-spacing:-0.02em">${g1}<span style="color:#475569;font-size:1.6rem;margin:0 4px">–</span>${g2}</div>
-          <p style="font-size:0.7rem;font-weight:700;color:${resultColor};letter-spacing:0.08em;text-transform:uppercase;margin-top:6px">${resultText}</p>
-        </div>
-        <div style="text-align:center;flex:1">
-          <div style="width:56px;height:56px;border-radius:50%;background:${c2.bg};border:2px solid ${c2.border};display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:700;color:${c2.dot};margin:0 auto 8px">${m.player2[0]}</div>
-          <p style="font-size:0.95rem;font-weight:700;color:${winner===m.player2?'#eab308':'#f8fafc'}">${m.player2}</p>
-          ${winner===m.player2?'<p style="font-size:0.55rem;font-weight:700;letter-spacing:0.1em;color:#eab308;margin-top:3px">WINNER</p>':''}
-        </div>
-      </div>
-    </div>
-    <div style="padding:10px 16px;border-top:1px solid rgba(255,255,255,0.06);display:flex;justify-content:space-between">
-      <span style="font-size:0.65rem;color:#64748b">GD ${!isDraw?'+':''}${Math.abs(g1-g2)}</span>
-      <span style="font-size:0.65rem;color:#6366f1;font-weight:600">ratataa.app</span>
-    </div>
-  </div>`;
+  ctx.fillStyle = 'rgba(99,102,241,0.1)'; ctx.fillRect(0, 0, W, 38);
+  ctx.fillStyle = 'rgba(255,255,255,0.06)'; ctx.fillRect(0, 38, W, 1);
+  ctx.font = '700 8.5px DM Sans, system-ui'; ctx.fillStyle = '#6366f1';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillText('MATCH REPORT \u00b7 #' + m.id, 16, 19);
+  ctx.font = '500 8.5px DM Sans, system-ui'; ctx.fillStyle = '#64748b';
+  ctx.textAlign = 'right'; ctx.fillText('RATATAA LEAGUE 2026', W - 16, 19);
+
+  await _drawAv(ctx, m.player1, 90, 112, 30);
+  await _drawAv(ctx, m.player2, W - 90, 112, 30);
+
+  function drawName(name, cx, isWin) {
+    ctx.font = (isWin ? '700' : '600') + ' 14px DM Sans, system-ui';
+    ctx.fillStyle = isWin ? '#eab308' : '#f8fafc';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(name, cx, 156);
+    if (isWin) { ctx.font = '700 8px DM Sans, system-ui'; ctx.fillStyle = '#eab308'; ctx.fillText('WINNER', cx, 172); }
+  }
+  drawName(m.player1, 90, winner === m.player1);
+  drawName(m.player2, W - 90, winner === m.player2);
+
+  ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
+  ctx.font = '900 54px DM Sans, system-ui'; ctx.fillStyle = '#f8fafc';
+  ctx.fillText(String(g1), W / 2 - 28, 108);
+  ctx.font = '300 30px DM Sans, system-ui'; ctx.fillStyle = '#475569';
+  ctx.fillText('\u2013', W / 2, 108);
+  ctx.font = '900 54px DM Sans, system-ui'; ctx.fillStyle = '#f8fafc';
+  ctx.fillText(String(g2), W / 2 + 28, 108);
+  ctx.font = '800 10px DM Sans, system-ui';
+  ctx.fillStyle = isDraw ? '#94a3b8' : '#eab308';
+  ctx.fillText(isDraw ? 'DRAW' : winner.toUpperCase() + ' WINS', W / 2, 140);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.06)'; ctx.fillRect(0, H - 30, W, 1);
+  ctx.font = '500 9.5px DM Sans, system-ui'; ctx.fillStyle = '#64748b';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillText('GD ' + (!isDraw ? '+' : '') + Math.abs(g1 - g2), 16, H - 15);
+
+  return cv.toDataURL('image/png');
 }
 
-function shareStandingsAsImage() {
-  showToast('⏳ Generating image...', '');
+async function shareStandingsAsImage() {
+  showToast('Generating image...', '');
   try {
-    const dataUrl = buildStandingsCanvas();
+    var dataUrl = await buildStandingsCanvas();
     if (!dataUrl) { showToast('Image failed', 'error'); return; }
     openShareOverlay(dataUrl);
-  } catch(e) {
-    console.error('Share standings error:', e);
-    showToast('Image failed', 'error');
-  }
+  } catch(e) { console.error(e); showToast('Image failed', 'error'); }
 }
 
-function shareMatchAsImage(matchId) {
-  showToast('⏳ Generating image...', '');
+async function shareMatchAsImage(matchId) {
+  showToast('Generating image...', '');
   try {
-    const dataUrl = buildMatchCanvas(matchId);
+    var dataUrl = await buildMatchCanvas(matchId);
     if (!dataUrl) { showToast('Image failed', 'error'); return; }
     openShareOverlay(dataUrl);
-  } catch(e) {
-    console.error('Share match error:', e);
-    showToast('Image failed', 'error');
-  }
+  } catch(e) { console.error(e); showToast('Image failed', 'error'); }
 }
 
 function openShareOverlay(dataUrl) {
@@ -3031,35 +2886,32 @@ function closeShareOverlay() {
 
 function downloadShareImage() {
   if (!_shareImageDataUrl) return;
-  const a = document.createElement('a');
-  a.href = _shareImageDataUrl;
-  a.download = 'ratataa-league.png';
-  a.click();
-  showToast('✓ Downloaded!', 'success');
+  var a = document.createElement('a');
+  a.href = _shareImageDataUrl; a.download = 'ratataa-league.png'; a.click();
+  showToast('Downloaded!', 'success');
 }
 
 function shareToWhatsApp() {
   if (!_shareImageDataUrl) return;
-  // On mobile: try native share API first
   if (navigator.share) {
-    // Convert dataUrl to blob
-    fetch(_shareImageDataUrl).then(r => r.blob()).then(blob => {
-      const file = new File([blob], 'ratataa-league.png', { type: 'image/png' });
-      navigator.share({ files: [file], title: 'Ratataa League', text: '🏆 Ratataa League — Season 2026' })
-        .catch(() => waFallback());
-    }).catch(() => waFallback());
-  } else {
-    waFallback();
-  }
+    fetch(_shareImageDataUrl).then(function(r){ return r.blob(); }).then(function(blob) {
+      var file = new File([blob], 'ratataa-league.png', { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file], title: 'Ratataa League', text: '\ud83c\udfc6 Ratataa League \u2014 Season 2026' })
+          .catch(function(){ waFallback(); });
+      } else { waFallback(); }
+    }).catch(function(){ waFallback(); });
+  } else { waFallback(); }
 }
 
 function waFallback() {
-  // Download image first, then open WhatsApp
   downloadShareImage();
-  setTimeout(() => {
-    window.open('https://wa.me/?text=' + encodeURIComponent('🏆 Ratataa League — Season 2026\nCheck the latest standings!'), '_blank');
-  }, 600);
+  setTimeout(function() {
+    window.open('https://wa.me/?text=' + encodeURIComponent('\ud83c\udfc6 Ratataa League \u2014 Season 2026\nCheck the latest standings!'), '_blank');
+  }, 700);
 }
+
+
 
 // ============================================================
 // BOOT
@@ -3156,11 +3008,14 @@ onValue(matchesRef, (snapshot) => {
     set(matchesRef, state.matches);
   }
   try { localStorage.setItem('ratataaLeagueData', JSON.stringify({ matches: state.matches })); } catch(e) {}
-  renderAll();
-  if (document.getElementById('admin-view').classList.contains('active')) {
-    renderAdminMatches();
-    renderStandings('admin-standings-table');
-  }
+  clearTimeout(window._fbTimer);
+  window._fbTimer = setTimeout(() => {
+    renderAll();
+    if (document.getElementById('admin-view').classList.contains('active')) {
+      renderAdminMatches();
+      renderStandings('admin-standings-table');
+    }
+  }, 80);
 });
 
 // ── Avatars sync ──
