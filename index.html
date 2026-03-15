@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<meta http-equiv="Surrogate-Control" content="no-store">
-<meta name="app-version" content="2.0.1">
+<meta name="app-version" content="2.0.5">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"/>
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -162,7 +161,7 @@ body::before {
   box-shadow: 0 8px 32px var(--accent-glow);
   transform: translateY(-2px);
 }
-.btn-primary:active { transform: translateY(0); }
+.btn-primary:active { transform: scale(0.96); box-shadow: none; }
 
 .btn-ghost {
   background: transparent;
@@ -186,6 +185,7 @@ body::before {
   font-size: 0.7rem;
 }
 .btn-glass:hover { background: var(--surface-3); border-color: rgba(200,255,0,0.3); }
+.btn-glass:active { transform: scale(0.96); transition: transform 0.1s; }
 
 .btn-danger {
   background: rgba(255,59,59,0.1);
@@ -360,7 +360,7 @@ body::before {
   align-items: center;
   gap: 2px;
   cursor: pointer;
-  padding: 0.45rem 0;
+  padding: 0.5rem 0.25rem;
   color: var(--muted);
   font-family: var(--font-ui);
   font-size: 0.48rem;
@@ -372,6 +372,7 @@ body::before {
   border: none;
   outline: none;
   position: relative;
+  -webkit-tap-highlight-color: transparent;
 }
 .bnav-item svg { width: 20px; height: 20px; stroke-width: 1.8; }
 .bnav-item.active { color: var(--accent); }
@@ -447,7 +448,7 @@ body::before {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.5rem 1.25rem 6rem;
+  padding: 1.5rem 1.25rem calc(5rem + env(safe-area-inset-bottom));
   position: relative;
   z-index: 1;
 }
@@ -526,11 +527,13 @@ body::before {
   border-radius: var(--r);
   padding: 0.9rem 0.5rem;
   text-align: center;
+  transition: all 0.2s;
 }
+.hero-stat:hover { background: var(--surface-2); border-color: var(--border-2); }
 .hero-stat .val {
-  font-family: var(--font-head);
+  font-family: var(--font-ui);
   font-size: 1.6rem;
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1;
   margin-bottom: 0.25rem;
 }
@@ -561,7 +564,10 @@ body::before {
   padding: 0.7rem 0.9rem;
   position: relative;
   overflow: hidden;
+  transition: all 0.2s;
+  cursor: default;
 }
+.hero-leader-card:hover { background: var(--surface-2); border-color: rgba(245,200,66,0.2); }
 .hero-leader-card::before {
   content: '';
   position: absolute;
@@ -580,7 +586,10 @@ body::before {
   padding: 0.7rem 0.9rem;
   position: relative;
   overflow: hidden;
+  transition: all 0.2s;
+  cursor: default;
 }
+.hero-fire-card:hover { background: var(--surface-2); border-color: rgba(255,107,53,0.2); }
 .hero-fire-card::before {
   content: '';
   position: absolute;
@@ -604,7 +613,8 @@ body::before {
   border-bottom: 1px solid var(--border);
   white-space: nowrap;
 }
-.league-table th:first-child { text-align: left; padding-left: 1rem; }
+.league-table th:first-child { text-align: left; padding-left: 0.75rem; }
+.league-table td:first-child { padding-left: 0.75rem; }
 .league-table td {
   padding: 0.75rem 0.3rem;
   text-align: center;
@@ -621,9 +631,9 @@ body::before {
 .leader-row td { background: linear-gradient(90deg, rgba(200,255,0,0.04) 0%, transparent 80%); }
 
 .rank-badge {
-  font-family: var(--font-head);
+  font-family: var(--font-ui);
   font-size: 0.75rem;
-  font-weight: 700;
+  font-weight: 800;
   width: 22px;
   text-align: center;
   flex-shrink: 0;
@@ -633,9 +643,9 @@ body::before {
 .rank-3 .rank-badge { color: #cd7f32; }
 
 .pts-cell {
-  font-family: var(--font-head);
+  font-family: var(--font-ui);
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 .leader-pts {
@@ -665,10 +675,10 @@ body::before {
 /* ── FIXTURE / RESULT CARD ── */
 .match-card {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: minmax(0,1fr) auto minmax(0,1fr);
   align-items: center;
-  gap: 0.75rem;
-  padding: 1rem 1rem;
+  gap: 0.5rem;
+  padding: 0.85rem 0.75rem;
   border-radius: var(--r-lg);
   border: 1px solid var(--border);
   background: var(--surface);
@@ -684,6 +694,7 @@ body::before {
   background: var(--surface-2);
   transform: translateY(-1px);
 }
+.match-card-played:active { transform: scale(0.98); transition: transform 0.1s; }
 .match-card-upcoming {
   cursor: default;
 }
@@ -699,21 +710,23 @@ body::before {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
-  min-width: 80px;
+  gap: 4px;
+  min-width: 90px;
+  max-width: 110px;
 }
 
 .score-display {
-  font-family: var(--font-head);
-  font-size: 1.45rem;
+  font-family: var(--font-ui);
+  font-size: 1.3rem;
   font-weight: 800;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   display: flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.3rem;
   color: var(--white);
+  line-height: 1;
 }
-.score-sep { color: var(--muted); font-size: 1rem; font-weight: 300; }
+.score-sep { color: var(--muted); font-size: 0.85rem; font-weight: 300; }
 
 .match-num {
   font-family: var(--font-head);
@@ -741,9 +754,9 @@ body::before {
   padding: 1.1rem 1rem;
 }
 .stat-box .val {
-  font-family: var(--font-head);
+  font-family: var(--font-ui);
   font-size: 1.8rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.02em;
   line-height: 1;
   margin-bottom: 0.3rem;
@@ -777,7 +790,7 @@ body::before {
   border: 1px solid var(--border-2);
   border-radius: var(--r-xl);
   max-width: 480px; width: 100%;
-  max-height: 90svh; overflow-y: auto;
+  max-height: 90svh; overflow-y: auto; scrollbar-width: none;
   transform: scale(0.93) translateY(24px);
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   position: relative;
@@ -821,7 +834,7 @@ body::before {
 
 /* ── TOAST ── */
 #toast {
-  position: fixed; bottom: 90px; left: 50%;
+  position: fixed; bottom: calc(70px + env(safe-area-inset-bottom)); left: 50%;
   transform: translateX(-50%) translateY(16px);
   background: #111120;
   border: 1px solid var(--border-2);
@@ -1083,13 +1096,16 @@ body::before {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--r-lg);
-  padding: 0.75rem 1rem;
+  padding: 0.85rem 1rem;
   display: flex;
   align-items: center;
   gap: 0.6rem;
   cursor: pointer;
   transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  min-height: 56px;
 }
+.admin-match-row:active { transform: scale(0.985); transition: transform 0.1s; }
 .admin-match-row:hover { background: var(--surface-2); border-color: rgba(200,255,0,0.15); }
 .admin-match-row.played { border-color: rgba(0,229,160,0.15); }
 
@@ -1131,6 +1147,7 @@ body::before {
   transform: translateY(-3px);
   box-shadow: 0 12px 40px rgba(0,0,0,0.4);
 }
+.player-card:active { transform: scale(0.97); transition: transform 0.1s; }
 
 /* ── Mobile admin overrides ── */
 @media(max-width: 767px) {
@@ -1162,10 +1179,17 @@ body::before {
 /* Divider */
 .divider { width: 100%; height: 1px; background: var(--border); margin: 1rem 0; }
 
+/* Suppress mobile tap highlight on interactive elements */
+button, a, [onclick] {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+
+
 /* ── Section layout ── */
-.section-wrap { max-width: 720px; margin: 0 auto; padding: 1.5rem 1rem 6rem; padding-top: calc(56px + 1.5rem); }
-.section-wrap-sm { max-width: 560px; margin: 0 auto; padding: 1.5rem 1rem 6rem; padding-top: calc(56px + 1.5rem); }
-.section-wrap-lg { max-width: 960px; margin: 0 auto; padding: 1.5rem 1rem 6rem; padding-top: calc(56px + 1.5rem); }
+.section-wrap { max-width: 720px; margin: 0 auto; padding: 1.5rem 1rem calc(6rem + env(safe-area-inset-bottom)); padding-top: calc(56px + 1.5rem); }
+.section-wrap-sm { max-width: 560px; margin: 0 auto; padding: 1.5rem 1rem calc(6rem + env(safe-area-inset-bottom)); padding-top: calc(56px + 1.5rem); }
+.section-wrap-lg { max-width: 960px; margin: 0 auto; padding: 1.5rem 1rem calc(6rem + env(safe-area-inset-bottom)); padding-top: calc(56px + 1.5rem); }
 
 /* ── Grid decorative number ── */
 .grid-num {
@@ -1308,7 +1332,7 @@ body::before {
     </section>
 
     <!-- STANDINGS SECTION -->
-    <section id="standings-anchor" style="padding: 0 1rem 2rem; max-width: 960px; margin: 0 auto;">
+    <section id="standings-anchor" style="padding: 0 1rem calc(6rem + env(safe-area-inset-bottom)); max-width: 960px; margin: 0 auto;">
       <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1.25rem;gap:1rem;">
         <div>
           <div class="section-label" style="margin-bottom:0.5rem">Live Table</div>
@@ -1349,9 +1373,10 @@ body::before {
         <h2 class="section-title" style="font-size:clamp(1.8rem,7vw,2.8rem)">RESULTS</h2>
       </div>
       <div id="results-list" style="display:flex;flex-direction:column;gap:0.6rem;"></div>
-      <div id="no-results" class="hidden" style="text-align:center;padding:4rem 0;color:var(--muted-2)">
-        <p class="section-title" style="font-size:1.8rem;margin-bottom:0.5rem">NO RESULTS YET</p>
-        <p style="font-size:0.85rem">Matches will appear here once played</p>
+      <div id="no-results" class="hidden" style="text-align:center;padding:4rem 0 2rem;color:var(--muted-2);">
+        <p style="font-size:3rem;margin-bottom:0.75rem;">⚽</p>
+        <p class="section-title" style="font-size:1.6rem;margin-bottom:0.5rem">NO RESULTS YET</p>
+        <p style="font-family:var(--font-body);font-size:0.82rem;color:var(--muted);">Matches will appear here once played</p>
       </div>
     </div>
   </div>
@@ -1621,7 +1646,7 @@ body::before {
     <div class="modal-header">
       <div>
         <p id="score-modal-match" style="font-family:var(--font-body);font-size:0.72rem;color:var(--muted-2);margin-bottom:0.2rem;"></p>
-        <h3 class="section-title" style="font-size:1.4rem;">ENTER SCORE</h3>
+        <h3 class="section-title" style="font-size:1.2rem;">ENTER SCORE</h3>
       </div>
       <button class="modal-close" onclick="closeScoreModal()">×</button>
     </div>
@@ -1629,13 +1654,13 @@ body::before {
       <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1rem;margin-bottom:1.25rem;">
         <div style="text-align:center;">
           <p id="score-modal-p1" class="section-title" style="font-size:1rem;margin-bottom:0.75rem;"></p>
-          <input id="score-p1" type="number" min="0" max="99" step="1" class="input-field" style="text-align:center;font-family:var(--font-head);font-size:2rem;padding:0.6rem;" placeholder="0"
+          <input id="score-p1" type="number" min="0" max="99" step="1" inputmode="numeric" pattern="[0-9]*" class="input-field" style="text-align:center;font-family:var(--font-head);font-size:2rem;padding:0.6rem;" placeholder="0"
                  oninput="this.value=Math.max(0,parseInt(this.value)||0)" onfocus="this.select()" onkeydown="if(event.key==='Enter')document.getElementById('score-p2').focus()"/>
         </div>
         <div style="text-align:center;font-family:var(--font-head);font-size:1.4rem;color:var(--muted);">VS</div>
         <div style="text-align:center;">
           <p id="score-modal-p2" class="section-title" style="font-size:1rem;margin-bottom:0.75rem;"></p>
-          <input id="score-p2" type="number" min="0" max="99" step="1" class="input-field" style="text-align:center;font-family:var(--font-head);font-size:2rem;padding:0.6rem;" placeholder="0"
+          <input id="score-p2" type="number" min="0" max="99" step="1" inputmode="numeric" pattern="[0-9]*" class="input-field" style="text-align:center;font-family:var(--font-head);font-size:2rem;padding:0.6rem;" placeholder="0"
                  oninput="this.value=Math.max(0,parseInt(this.value)||0)" onfocus="this.select()" onkeydown="if(event.key==='Enter')saveScore()"/>
         </div>
       </div>
@@ -1983,17 +2008,17 @@ function renderFixtures() {
     const cardClass = m.played ? 'match-card match-card-played' : 'match-card match-card-upcoming';
     return `
       <div class="${cardClass} fade-up" style="animation-delay:${idx * 0.025}s;" ${clickHandler}>
-        <div style="display:flex;align-items:center;gap:0.6rem;justify-content:flex-end;">
-          <span style="font-family:var(--font-ui);font-weight:600;font-size:0.82rem;text-align:right;white-space:nowrap;">${m.player1}</span>
-          ${avatarHTML(m.player1)}
+        <div style="display:flex;align-items:center;gap:0.5rem;justify-content:flex-end;min-width:0;">
+          <span style="font-family:var(--font-ui);font-weight:600;font-size:0.8rem;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;">${m.player1}</span>
+          ${avatarHTML(m.player1, 38)}
         </div>
         <div class="match-center">
           ${scoreHTML}
           ${tag}
         </div>
-        <div style="display:flex;align-items:center;gap:0.6rem;justify-content:flex-start;">
-          ${avatarHTML(m.player2)}
-          <span style="font-family:var(--font-ui);font-weight:600;font-size:0.82rem;white-space:nowrap;">${m.player2}</span>
+        <div style="display:flex;align-items:center;gap:0.5rem;justify-content:flex-start;min-width:0;">
+          ${avatarHTML(m.player2, 38)}
+          <span style="font-family:var(--font-ui);font-weight:600;font-size:0.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;">${m.player2}</span>
         </div>
       </div>`;
   }).join('');
@@ -2013,9 +2038,9 @@ function renderResults() {
     const isDraw = g1 === g2;
     return `
       <div class="match-card match-card-played fade-up" style="animation-delay:${idx * 0.025}s;cursor:pointer;" onclick="openReportModal(${m.id})">
-        <div style="display:flex;align-items:center;gap:0.6rem;justify-content:flex-end;">
-          <span style="font-family:var(--font-ui);font-weight:600;font-size:0.82rem;text-align:right;white-space:nowrap;${winner && winner !== m.player1 ? 'opacity:0.4;' : ''}">${m.player1}</span>
-          ${avatarHTML(m.player1)}
+        <div style="display:flex;align-items:center;gap:0.5rem;justify-content:flex-end;min-width:0;">
+          <span style="font-family:var(--font-ui);font-weight:600;font-size:0.8rem;text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;${winner && winner !== m.player1 ? 'opacity:0.4;' : ''}">${m.player1}</span>
+          ${avatarHTML(m.player1, 38)}
         </div>
         <div class="match-center">
           <div class="score-display">
@@ -2025,9 +2050,9 @@ function renderResults() {
           </div>
           ${isDraw ? '<span class="tag tag-draw">Draw</span>' : '<span class="tag tag-played">✓ Played</span>'}
         </div>
-        <div style="display:flex;align-items:center;gap:0.6rem;justify-content:flex-start;">
-          ${avatarHTML(m.player2)}
-          <span style="font-family:var(--font-ui);font-weight:600;font-size:0.82rem;white-space:nowrap;${winner && winner !== m.player2 ? 'opacity:0.4;' : ''}">${m.player2}</span>
+        <div style="display:flex;align-items:center;gap:0.5rem;justify-content:flex-start;min-width:0;">
+          ${avatarHTML(m.player2, 38)}
+          <span style="font-family:var(--font-ui);font-weight:600;font-size:0.8rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1;${winner && winner !== m.player2 ? 'opacity:0.4;' : ''}">${m.player2}</span>
         </div>
       </div>`;
   }).join('');
@@ -2091,7 +2116,7 @@ function renderPlayers() {
         <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;text-align:center;">
           ${[['P', s.played, 'var(--muted-2)'], ['W', s.won, 'var(--success)'], ['GF', s.gf, 'var(--gold)'], ['PTS', s.pts, 'var(--accent)']].map(([l, v, col]) => `
             <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:0.5rem 0.25rem;">
-              <p style="font-family:var(--font-head);font-size:1.05rem;font-weight:700;color:${col}">${v}</p>
+              <p style="font-family:var(--font-ui);font-size:1.05rem;font-weight:800;color:${col}">${v}</p>
               <p style="font-family:var(--font-ui);font-size:0.5rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-top:0.1rem;">${l}</p>
             </div>`).join('')}
         </div>
@@ -2179,16 +2204,14 @@ function openReportModal(matchId) {
       <p style="font-family:var(--font-head);font-size:2.2rem;font-weight:700;color:var(--accent);">+${Math.abs(g1 - g2)}</p>
     </div>` : ''}`;
 
+  // Always remove stale share btn and re-add with correct matchId
   const existing = document.getElementById('report-share-btn');
-  if (!existing) {
-    const shareRow = document.createElement('div');
-    shareRow.id = 'report-share-btn';
-    shareRow.style.cssText = 'padding:0 1.5rem 1.5rem;';
-    shareRow.innerHTML = `<button onclick="shareMatchAsImage(${matchId})" class="btn btn-glass" style="width:100%;justify-content:center;gap:0.5rem;padding:0.75rem;"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg> Share Result</button>`;
-    document.querySelector('#report-modal .modal-box').appendChild(shareRow);
-  } else {
-    existing.querySelector('button').onclick = () => shareMatchAsImage(matchId);
-  }
+  if (existing) existing.remove();
+  const shareRow = document.createElement('div');
+  shareRow.id = 'report-share-btn';
+  shareRow.style.cssText = 'padding:0 1.5rem 1.5rem;';
+  shareRow.innerHTML = `<button onclick="shareMatchAsImage(${matchId})" class="btn btn-glass" style="width:100%;justify-content:center;gap:0.5rem;padding:0.75rem;"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg> Share Result</button>`;
+  document.querySelector('#report-modal .modal-box').appendChild(shareRow);
   document.getElementById('report-modal').classList.add('open');
 }
 function closeReportModal() { document.getElementById('report-modal').classList.remove('open'); }
@@ -2224,7 +2247,7 @@ function openPlayerModal(name) {
     </div>
     <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.6rem;margin-bottom:1.25rem;">
       ${[['Played',s.played,'var(--white)'],['Wins',s.won,'var(--success)'],['Goals For',s.gf,'var(--gold)'],['Points',s.pts,'var(--accent)']].map(([l,v,col]) =>
-        `<div style="text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:0.85rem 0.5rem;"><p style="font-family:var(--font-head);font-size:1.7rem;font-weight:700;color:${col}">${v}</p><p style="font-family:var(--font-ui);font-size:0.58rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted-2);margin-top:0.2rem;">${l}</p></div>`
+        `<div style="text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:0.85rem 0.5rem;"><p style="font-family:var(--font-ui);font-size:1.7rem;font-weight:800;color:${col}">${v}</p><p style="font-family:var(--font-ui);font-size:0.58rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted-2);margin-top:0.2rem;">${l}</p></div>`
       ).join('')}
     </div>
     <div class="section-label" style="margin-bottom:0.75rem;">Head-to-Head</div>
@@ -2483,15 +2506,15 @@ function renderAdminMatches() {
     const g2 = m.played ? m.player2Goals : '—';
     return `
       <div class="admin-match-row ${m.played ? 'played' : ''} fade-up" style="animation-delay:${idx * 0.015}s;" onclick="openScoreModal(${m.id})">
-        <span style="font-family:var(--font-head);font-size:0.7rem;color:var(--muted);width:20px;text-align:center;flex-shrink:0;">${m.id}</span>
+        <span style="font-family:var(--font-ui);font-size:0.65rem;font-weight:700;color:var(--muted);width:22px;text-align:center;flex-shrink:0;">#${m.id}</span>
         <div style="display:flex;align-items:center;gap:0.5rem;flex:1;min-width:0;justify-content:flex-end;">
           <span style="font-family:var(--font-ui);font-weight:600;font-size:0.78rem;max-width:65px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${m.player1}</span>
           ${avatarHTML(m.player1, 30)}
         </div>
         <div class="admin-score-pill">
-          <span style="font-family:var(--font-head);font-size:0.9rem;color:${m.played ? 'var(--white)' : 'var(--muted)'};">${g1}</span>
+          <span style="font-family:var(--font-ui);font-size:0.9rem;font-weight:700;color:${m.played ? 'var(--white)' : 'var(--muted)'};">${g1}</span>
           <span style="color:var(--muted);font-size:0.7rem;">:</span>
-          <span style="font-family:var(--font-head);font-size:0.9rem;color:${m.played ? 'var(--white)' : 'var(--muted)'};">${g2}</span>
+          <span style="font-family:var(--font-ui);font-size:0.9rem;font-weight:700;color:${m.played ? 'var(--white)' : 'var(--muted)'};">${g2}</span>
         </div>
         <div style="display:flex;align-items:center;gap:0.5rem;flex:1;min-width:0;justify-content:flex-start;">
           ${avatarHTML(m.player2, 30)}
@@ -2610,104 +2633,235 @@ document.getElementById('share-overlay')?.addEventListener('click', function(e) 
 // ============================================================
 let _shareImageDataUrl = null;
 
-async function buildStandingsCanvas() {
-  const W = 400, H = 520;
-  const cv = document.createElement('canvas');
-  cv.width = W; cv.height = H;
-  const ctx = cv.getContext('2d');
+// ── Helper: load an image from a data-url or src into a promise ──
+function loadImg(src) {
+  return new Promise((res) => {
+    const img = new Image();
+    img.onload = () => res(img);
+    img.onerror = () => res(null);
+    img.src = src;
+  });
+}
 
-  ctx.fillStyle = '#03030a';
+// ── Helper: draw a circular clipped avatar (photo/emoji/letter) on canvas ──
+async function drawCanvasAvatar(ctx, name, cx, cy, radius) {
+  const c = { Sahin: '#818cf8', Mahashin: '#fcd34d', Nasim: '#34d399', Khokan: '#fb923c' };
+  const bg = { Sahin: '#1a1a35', Mahashin: '#2a2200', Nasim: '#001a12', Khokan: '#2a1000' };
+  const col = c[name] || '#c8ff00';
+  const av = avatarState[name];
+
+  // Draw background circle
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius, 0, Math.PI * 2);
+  ctx.fillStyle = bg[name] || '#111';
+  ctx.fill();
+  ctx.strokeStyle = col + 'cc';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+
+  // Clip to circle for photo
+  ctx.beginPath();
+  ctx.arc(cx, cy, radius - 1.5, 0, Math.PI * 2);
+  ctx.clip();
+
+  if (av && av.type === 'photo' && av.value) {
+    const img = await loadImg(av.value);
+    if (img) {
+      ctx.drawImage(img, cx - radius + 1.5, cy - radius + 1.5, (radius - 1.5) * 2, (radius - 1.5) * 2);
+      ctx.restore();
+      return;
+    }
+  }
+
+  ctx.restore();
+
+  // Emoji
+  if (av && av.type === 'emoji' && av.value) {
+    ctx.font = `${radius * 1.0}px system-ui`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(av.value, cx, cy + 1);
+    return;
+  }
+
+  // Initials
+  if (av && av.type === 'initials' && av.value) {
+    ctx.font = `700 ${radius * 0.65}px "Space Grotesk", system-ui`;
+    ctx.fillStyle = col;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(av.value.toUpperCase().slice(0, 2), cx, cy + 1);
+    return;
+  }
+
+  // Default: first letter
+  ctx.font = `700 ${radius * 0.75}px "Space Grotesk", system-ui`;
+  ctx.fillStyle = col;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(name[0].toUpperCase(), cx, cy + 1);
+}
+
+async function buildStandingsCanvas() {
+  const DPR = 2; // retina
+  const W = 420, H = 560;
+  const cv = document.createElement('canvas');
+  cv.width = W * DPR; cv.height = H * DPR;
+  const ctx = cv.getContext('2d');
+  ctx.scale(DPR, DPR);
+
+  // ── Background gradient ──
+  const bgGrad = ctx.createLinearGradient(0, 0, W, H);
+  bgGrad.addColorStop(0, '#06060f');
+  bgGrad.addColorStop(1, '#0a0a18');
+  ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, W, H);
 
-  // Top bar
-  ctx.fillStyle = '#c8ff00';
-  ctx.fillRect(0, 0, W, 4);
+  // Subtle grid pattern
+  ctx.strokeStyle = 'rgba(255,255,255,0.025)';
+  ctx.lineWidth = 0.5;
+  for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+  for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
 
-  ctx.font = '700 11px "Space Grotesk", system-ui';
+  // Top accent bar
+  const barGrad = ctx.createLinearGradient(0, 0, W, 0);
+  barGrad.addColorStop(0, '#c8ff00');
+  barGrad.addColorStop(0.5, '#a0d400');
+  barGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = barGrad;
+  ctx.fillRect(0, 0, W, 5);
+
+  // Header section
+  ctx.font = '800 12px "Space Grotesk", system-ui';
   ctx.fillStyle = '#c8ff00';
   ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-  ctx.fillText('RATATAA LEAGUE', 20, 28);
+  ctx.fillText('RATATAA LEAGUE', 20, 26);
   ctx.font = '500 10px "Space Grotesk", system-ui';
-  ctx.fillStyle = '#4a5068';
+  ctx.fillStyle = '#3a4060';
   ctx.textAlign = 'right';
-  ctx.fillText('SEASON 2026', W - 20, 28);
+  ctx.fillText('SEASON 2026', W - 20, 26);
 
-  ctx.strokeStyle = 'rgba(255,255,255,0.07)';
-  ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(0, 48); ctx.lineTo(W, 48); ctx.stroke();
-
-  ctx.font = '800 28px "Space Grotesk", system-ui';
-  ctx.fillStyle = '#f0f4ff';
-  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
-  ctx.fillText('STANDINGS', 20, 82);
-
-  const rows = computeStandings();
-  const COLS = [20, 50, 80, 226, 258, 292, 326, 360];
-  const headers = ['#', 'PLAYER', 'P', 'W', 'D', 'L', 'GD', 'PTS'];
-
-  ctx.font = '600 9px "Space Grotesk", system-ui';
-  ctx.fillStyle = '#4a5068';
-  ctx.textBaseline = 'middle';
-  headers.forEach((h, i) => {
-    ctx.textAlign = i <= 1 ? 'left' : 'center';
-    ctx.fillText(h, COLS[i], 105);
-  });
-
+  // Divider
   ctx.strokeStyle = 'rgba(255,255,255,0.06)';
   ctx.lineWidth = 1;
-  ctx.beginPath(); ctx.moveTo(0, 116); ctx.lineTo(W, 116); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, 44); ctx.lineTo(W, 44); ctx.stroke();
 
-  rows.forEach((r, i) => {
-    const y = 136 + i * 56;
-    if (i === 0 && r.pts > 0) {
-      ctx.fillStyle = 'rgba(200,255,0,0.04)';
-      ctx.fillRect(0, y - 20, W, 48);
+  // Title
+  ctx.font = '900 34px "Space Grotesk", system-ui';
+  ctx.fillStyle = '#f0f4ff';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  ctx.fillText('STANDINGS', 20, 90);
+
+  // Accent underline under title
+  const ulGrad = ctx.createLinearGradient(20, 0, 180, 0);
+  ulGrad.addColorStop(0, '#c8ff00');
+  ulGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = ulGrad;
+  ctx.fillRect(20, 96, 160, 3);
+
+  // Column headers
+  const COLS = { rank: 22, av: 52, name: 80, w: 218, d: 252, l: 284, gd: 320, pts: 360 };
+  const hdrs = [['#', COLS.rank, 'left'], ['PLAYER', COLS.name, 'left'], ['W', COLS.w, 'center'],
+                ['D', COLS.d, 'center'], ['L', COLS.l, 'center'], ['GD', COLS.gd, 'center'], ['PTS', COLS.pts, 'center']];
+  ctx.font = '700 8.5px "Space Grotesk", system-ui';
+  ctx.fillStyle = '#3a4060';
+  ctx.textBaseline = 'middle';
+  hdrs.forEach(([h, x, align]) => { ctx.textAlign = align; ctx.fillText(h, x, 116); });
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, 126); ctx.lineTo(W, 126); ctx.stroke();
+
+  const rows = computeStandings();
+  const dotColors = { Sahin: '#818cf8', Mahashin: '#fcd34d', Nasim: '#34d399', Khokan: '#fb923c' };
+  const rankColors = ['#f5c842', '#94a3b8', '#cd7f32'];
+  const ROW_H = 94;
+
+  for (let i = 0; i < rows.length; i++) {
+    const r = rows[i];
+    const y = 140 + i * ROW_H;
+    const cy = y + ROW_H / 2 - 8;
+    const isLeader = i === 0 && r.pts > 0;
+
+    // Row background
+    if (isLeader) {
+      const rowGrad = ctx.createLinearGradient(0, y, W, y);
+      rowGrad.addColorStop(0, 'rgba(200,255,0,0.07)');
+      rowGrad.addColorStop(1, 'transparent');
+      ctx.fillStyle = rowGrad;
+      ctx.fillRect(0, y - 2, W, ROW_H);
+      // Left accent strip
+      ctx.fillStyle = '#c8ff00';
+      ctx.fillRect(0, y - 2, 3, ROW_H);
     }
-    const dotColors = { Sahin: '#818cf8', Mahashin: '#fcd34d', Nasim: '#34d399', Khokan: '#fb923c' };
-    const rankColors = { 0: '#f5c842', 1: '#94a3b8', 2: '#cd7f32' };
-    ctx.font = `700 10px "Space Grotesk", system-ui`;
-    ctx.fillStyle = rankColors[i] || '#4a5068';
-    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    ctx.fillText(String(i + 1), COLS[0], y);
 
-    // Avatar circle
-    ctx.beginPath();
-    ctx.arc(COLS[1] + 12, y, 12, 0, Math.PI * 2);
-    ctx.fillStyle = dotColors[r.name] + '25';
-    ctx.fill();
-    ctx.strokeStyle = dotColors[r.name] + '66';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-    ctx.font = '700 10px "Space Grotesk", system-ui';
-    ctx.fillStyle = dotColors[r.name];
+    // Rank number
+    ctx.font = `${isLeader ? '800' : '600'} 13px "Space Grotesk", system-ui`;
+    ctx.fillStyle = rankColors[i] || '#3a4060';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(r.name[0], COLS[1] + 12, y);
+    ctx.fillText(String(i + 1), COLS.rank, cy);
 
-    ctx.font = '600 11px "Space Grotesk", system-ui';
-    ctx.fillStyle = i === 0 && r.pts > 0 ? '#c8ff00' : '#f0f4ff';
+    // Avatar (async photo support)
+    await drawCanvasAvatar(ctx, r.name, COLS.av, cy, 18);
+
+    // Name
+    ctx.font = `${isLeader ? '700' : '600'} 13px "Space Grotesk", system-ui`;
+    ctx.fillStyle = isLeader ? '#c8ff00' : '#f0f4ff';
     ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-    ctx.fillText(r.name, COLS[1] + 28, y);
+    ctx.fillText(r.name, COLS.name, cy - 6);
 
-    [[r.played,'#f0f4ff'],[r.won,'#00e5a0'],[r.drawn,'#6b7490'],[r.lost,'#ff3b3b'],[(r.gd > 0 ? '+' : '') + r.gd, r.gd > 0 ? '#00e5a0' : r.gd < 0 ? '#ff3b3b' : '#6b7490'],[r.pts, i === 0 && r.pts > 0 ? '#c8ff00' : '#818cf8']].forEach(([ val, col], ci) => {
-      ctx.font = ci === 5 ? '800 12px "Space Grotesk", system-ui' : '500 11px "Space Grotesk", system-ui';
+    // Leader badge
+    if (isLeader) {
+      ctx.font = '600 7px "Space Grotesk", system-ui';
+      ctx.fillStyle = '#c8ff00';
+      ctx.textAlign = 'left';
+      ctx.fillText('⚡ LEADER', COLS.name, cy + 9);
+    }
+
+    // Stats columns
+    const stats = [
+      [r.won, '#00e5a0'], [r.drawn, '#6b7490'], [r.lost, '#ff3b3b'],
+      [(r.gd > 0 ? '+' : '') + r.gd, r.gd > 0 ? '#00e5a0' : r.gd < 0 ? '#ff3b3b' : '#6b7490'],
+      [r.pts, isLeader ? '#c8ff00' : '#818cf8']
+    ];
+    const statCols = [COLS.w, COLS.d, COLS.l, COLS.gd, COLS.pts];
+    stats.forEach(([val, col], si) => {
+      const isPts = si === 4;
+      ctx.font = isPts ? `800 ${isLeader ? 16 : 14}px "Space Grotesk", system-ui`
+                       : '500 12px "Space Grotesk", system-ui';
       ctx.fillStyle = col;
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(String(val), COLS[ci + 2], y);
+      if (isPts && isLeader) {
+        // Glow effect for leader pts
+        ctx.shadowColor = '#c8ff00';
+        ctx.shadowBlur = 8;
+      }
+      ctx.fillText(String(val), statCols[si], cy);
+      ctx.shadowBlur = 0;
     });
-    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
-    ctx.lineWidth = 1;
-    ctx.beginPath(); ctx.moveTo(0, y + 24); ctx.lineTo(W, y + 24); ctx.stroke();
-  });
 
+    // Row divider
+    if (i < rows.length - 1) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(20, y + ROW_H - 2); ctx.lineTo(W - 20, y + ROW_H - 2); ctx.stroke();
+    }
+  }
+
+  // Footer
   const lgs = computeLeagueStats();
-  ctx.fillStyle = 'rgba(255,255,255,0.06)';
-  ctx.fillRect(0, H - 44, W, 1);
-  ctx.font = '500 9.5px "Space Grotesk", system-ui';
-  ctx.fillStyle = '#4a5068';
+  ctx.fillStyle = 'rgba(255,255,255,0.04)';
+  ctx.fillRect(0, H - 36, W, 1);
+  ctx.font = '400 9px "Space Grotesk", system-ui';
+  ctx.fillStyle = '#3a4060';
   ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-  ctx.fillText(`${lgs.played}/${lgs.total} matches · ${lgs.totalGoals} goals · ${lgs.avgGoals} avg`, 20, H - 18);
+  ctx.fillText(`${lgs.played}/${lgs.total} matches · ${lgs.totalGoals} goals · ${lgs.avgGoals} avg/match`, 20, H - 18);
+  ctx.fillStyle = '#c8ff00';
+  ctx.globalAlpha = 0.5;
   ctx.textAlign = 'right';
-  ctx.fillText('ratataa-league', W - 20, H - 18);
+  ctx.fillText('RATATAA', W - 20, H - 18);
+  ctx.globalAlpha = 1;
 
   return cv.toDataURL('image/png');
 }
@@ -2719,69 +2873,139 @@ async function buildMatchCanvas(matchId) {
   const winner = g1 > g2 ? m.player1 : g2 > g1 ? m.player2 : null;
   const isDraw = g1 === g2;
 
-  const W = 400, H = 220;
+  const DPR = 2;
+  const W = 420, H = 240;
   const cv = document.createElement('canvas');
-  cv.width = W; cv.height = H;
+  cv.width = W * DPR; cv.height = H * DPR;
   const ctx = cv.getContext('2d');
+  ctx.scale(DPR, DPR);
   const dotColors = { Sahin: '#818cf8', Mahashin: '#fcd34d', Nasim: '#34d399', Khokan: '#fb923c' };
 
-  ctx.fillStyle = '#03030a';
+  // Background
+  const bgGrad = ctx.createLinearGradient(0, 0, W, H);
+  bgGrad.addColorStop(0, '#06060f');
+  bgGrad.addColorStop(1, '#0a0a18');
+  ctx.fillStyle = bgGrad;
   ctx.fillRect(0, 0, W, H);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+  ctx.lineWidth = 0.5;
+  for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+  for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+  // Winner glow behind their side
+  if (winner) {
+    const isP1 = winner === m.player1;
+    const glowX = isP1 ? 0 : W;
+    const gGrad = ctx.createRadialGradient(glowX, H / 2, 0, glowX, H / 2, W * 0.6);
+    gGrad.addColorStop(0, 'rgba(200,255,0,0.06)');
+    gGrad.addColorStop(1, 'transparent');
+    ctx.fillStyle = gGrad;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  // Top accent bar
+  const barGrad = ctx.createLinearGradient(0, 0, W, 0);
+  barGrad.addColorStop(0, '#c8ff00');
+  barGrad.addColorStop(0.6, '#a0d400');
+  barGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = barGrad;
+  ctx.fillRect(0, 0, W, 4);
+
+  // Header
+  ctx.font = '800 10px "Space Grotesk", system-ui';
   ctx.fillStyle = '#c8ff00';
-  ctx.fillRect(0, 0, W, 3);
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillText('RATATAA LEAGUE', 18, 22);
+  ctx.font = '500 9px "Space Grotesk", system-ui';
+  ctx.fillStyle = '#3a4060';
+  ctx.textAlign = 'right';
+  ctx.fillText(`MATCH #${m.id} · SEASON 2026`, W - 18, 22);
 
-  ctx.font = '700 10px "Space Grotesk", system-ui';
-  ctx.fillStyle = '#c8ff00'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-  ctx.fillText('RATATAA LEAGUE', 16, 22);
-  ctx.fillStyle = '#4a5068'; ctx.textAlign = 'right';
-  ctx.fillText(`MATCH #${m.id}`, W - 16, 22);
-
-  ctx.strokeStyle = 'rgba(255,255,255,0.06)'; ctx.lineWidth = 1;
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+  ctx.lineWidth = 1;
   ctx.beginPath(); ctx.moveTo(0, 36); ctx.lineTo(W, 36); ctx.stroke();
 
-  const drawAvatar = (name, cx, cy) => {
-    ctx.beginPath(); ctx.arc(cx, cy, 30, 0, Math.PI * 2);
-    ctx.fillStyle = dotColors[name] + '20'; ctx.fill();
-    ctx.strokeStyle = dotColors[name] + '80'; ctx.lineWidth = 2; ctx.stroke();
-    ctx.font = '700 22px "Space Grotesk", system-ui'; ctx.fillStyle = dotColors[name];
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(name[0], cx, cy);
-  };
-  drawAvatar(m.player1, 80, 100);
-  drawAvatar(m.player2, W - 80, 100);
+  const CY = 130; // center y for avatars + score
+  const P1X = 85, P2X = W - 85;
 
-  const drawName = (name, cx, isWin) => {
-    ctx.font = `600 12px "Space Grotesk", system-ui`;
-    ctx.fillStyle = isWin ? '#f5c842' : '#f0f4ff';
+  // Avatars
+  await drawCanvasAvatar(ctx, m.player1, P1X, CY - 20, 34);
+  await drawCanvasAvatar(ctx, m.player2, P2X, CY - 20, 34);
+
+  // Player names
+  const drawPlayerLabel = (name, cx, isWin) => {
+    ctx.font = `${isWin ? '700' : '500'} 12px "Space Grotesk", system-ui`;
+    ctx.fillStyle = isWin ? '#f5c842' : '#8892b0';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText(name, cx, 148);
-    if (isWin) { ctx.font = '700 8px "Space Grotesk", system-ui'; ctx.fillStyle = '#f5c842'; ctx.fillText('WINNER', cx, 164); }
+    ctx.fillText(name, cx, CY + 26);
+    if (isWin) {
+      // Winner badge
+      const bw = 52, bh = 14, bx = cx - bw / 2, by = CY + 36;
+      ctx.fillStyle = 'rgba(245,200,66,0.15)';
+      ctx.beginPath();
+      ctx.roundRect(bx, by, bw, bh, 7);
+      ctx.fill();
+      ctx.font = '700 7px "Space Grotesk", system-ui';
+      ctx.fillStyle = '#f5c842';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('👑 WINNER', cx, by + bh / 2);
+    }
   };
-  drawName(m.player1, 80, winner === m.player1);
-  drawName(m.player2, W - 80, winner === m.player2);
+  drawPlayerLabel(m.player1, P1X, winner === m.player1);
+  drawPlayerLabel(m.player2, P2X, winner === m.player2);
 
-  ctx.font = '900 56px "Space Grotesk", system-ui'; ctx.fillStyle = '#f0f4ff';
+  // Score
+  const scoreY = CY - 18;
+  ctx.font = '900 52px "Space Grotesk", system-ui';
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-  ctx.fillText(String(g1), W / 2 - 30, 100);
-  ctx.font = '300 28px "Space Grotesk", system-ui'; ctx.fillStyle = '#4a5068';
-  ctx.fillText('—', W / 2, 100);
-  ctx.font = '900 56px "Space Grotesk", system-ui'; ctx.fillStyle = '#f0f4ff';
-  ctx.fillText(String(g2), W / 2 + 30, 100);
-  ctx.font = '800 9px "Space Grotesk", system-ui';
-  ctx.fillStyle = isDraw ? '#6b7490' : '#c8ff00';
-  ctx.fillText(isDraw ? 'DRAW' : winner.toUpperCase() + ' WINS', W / 2, 136);
 
-  ctx.fillStyle = 'rgba(255,255,255,0.05)'; ctx.fillRect(0, H - 30, W, 1);
-  ctx.font = '500 9px "Space Grotesk", system-ui'; ctx.fillStyle = '#4a5068';
+  // P1 score
+  if (winner === m.player1) { ctx.shadowColor = '#f5c842'; ctx.shadowBlur = 16; }
+  ctx.fillStyle = winner === m.player1 ? '#f5c842' : winner ? '#4a5068' : '#f0f4ff';
+  ctx.fillText(String(g1), W / 2 - 38, scoreY);
+  ctx.shadowBlur = 0;
+
+  // Separator
+  ctx.font = '300 28px "Space Grotesk", system-ui';
+  ctx.fillStyle = '#2a2a3a';
+  ctx.fillText('—', W / 2, scoreY);
+
+  // P2 score
+  if (winner === m.player2) { ctx.shadowColor = '#f5c842'; ctx.shadowBlur = 16; }
+  ctx.fillStyle = winner === m.player2 ? '#f5c842' : winner ? '#4a5068' : '#f0f4ff';
+  ctx.fillText(String(g2), W / 2 + 38, scoreY);
+  ctx.shadowBlur = 0;
+
+  // Result label
+  const label = isDraw ? 'DRAW' : winner.toUpperCase() + ' WINS';
+  const labelCol = isDraw ? '#6b7490' : '#c8ff00';
+  ctx.font = '800 9px "Space Grotesk", system-ui';
+  ctx.fillStyle = labelCol;
+  if (!isDraw) { ctx.shadowColor = '#c8ff00'; ctx.shadowBlur = 8; }
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(label, W / 2, CY + 10);
+  ctx.shadowBlur = 0;
+
+  // Footer
+  ctx.fillStyle = 'rgba(255,255,255,0.04)';
+  ctx.fillRect(0, H - 28, W, 1);
+  ctx.font = '400 8.5px "Space Grotesk", system-ui';
+  ctx.fillStyle = '#3a4060';
   ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
-  ctx.fillText('GD ' + (!isDraw ? '+' : '') + Math.abs(g1 - g2), 16, H - 14);
+  if (!isDraw) ctx.fillText(`Goal difference: +${Math.abs(g1 - g2)}`, 18, H - 14);
+  ctx.fillStyle = '#c8ff00';
+  ctx.globalAlpha = 0.5;
   ctx.textAlign = 'right';
-  ctx.fillText('ratataa-league', W - 16, H - 14);
+  ctx.fillText('RATATAA', W - 18, H - 14);
+  ctx.globalAlpha = 1;
 
   return cv.toDataURL('image/png');
 }
 
 async function shareStandingsAsImage() {
-  showToast('Generating image...', '');
+  showToast('⏳ Generating...', '');
   try {
     const dataUrl = await buildStandingsCanvas();
     if (!dataUrl) { showToast('Image failed', 'error'); return; }
@@ -2790,7 +3014,7 @@ async function shareStandingsAsImage() {
 }
 
 async function shareMatchAsImage(matchId) {
-  showToast('Generating image...', '');
+  showToast('⏳ Generating...', '');
   try {
     const dataUrl = await buildMatchCanvas(matchId);
     if (!dataUrl) { showToast('Image failed', 'error'); return; }
@@ -2865,35 +3089,15 @@ const VERSION_KEY = 'ratataa_app_version';
 
 function checkForUpdate() {
   const saved = localStorage.getItem(VERSION_KEY);
-  if (!saved) {
-    // First ever visit — save and done
-    localStorage.setItem(VERSION_KEY, CURRENT_VERSION);
-    return;
-  }
+  if (!saved) { localStorage.setItem(VERSION_KEY, CURRENT_VERSION); return; }
   if (saved !== CURRENT_VERSION) {
-    // New version detected — save it and hard-reload immediately
-    localStorage.setItem(VERSION_KEY, CURRENT_VERSION);
-    // Force bypass cache completely
-    const url = new URL(window.location.href);
-    url.searchParams.set('_v', CURRENT_VERSION);
-    window.location.replace(url.toString());
-    return;
-  }
-  // Same version — strip the ?_v param silently if present
-  const url = new URL(window.location.href);
-  if (url.searchParams.has('_v')) {
-    url.searchParams.delete('_v');
-    window.history.replaceState(null, '', url.toString());
+    setTimeout(() => document.getElementById('update-banner')?.classList.add('show'), 1500);
   }
 }
-
 function applyUpdate() {
   localStorage.setItem(VERSION_KEY, CURRENT_VERSION);
-  const url = new URL(window.location.href);
-  url.searchParams.set('_v', CURRENT_VERSION + '_manual');
-  window.location.replace(url.toString());
+  window.location.reload(true);
 }
-
 function dismissUpdate(e) {
   e?.stopPropagation();
   localStorage.setItem(VERSION_KEY, CURRENT_VERSION);
