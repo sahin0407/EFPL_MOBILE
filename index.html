@@ -2267,36 +2267,59 @@ function openPlayerModal(name) {
   const rank = standings.findIndex(x => x.name === name) + 1;
   const c = PLAYER_COLORS[name];
   const opponents = PLAYERS.filter(p => p !== name);
+  
   const h2hHTML = opponents.map(opp => {
     const h = headToHead(name, opp);
-    const total = h.p1wins + h.p2wins + h.draws;
     return `
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:0.75rem 0;border-bottom:1px solid var(--border);">
-        <div style="display:flex;align-items:center;gap:0.6rem;">${avatarHTML(opp, 32)}<span style="font-family:var(--font-ui);font-size:0.82rem;font-weight:600;">${opp}</span></div>
-        <div style="display:flex;align-items:center;gap:0.75rem;font-family:var(--font-body);font-size:0.75rem;">
-          <span style="color:var(--success);font-weight:600;">${h.p1wins}W</span>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0.6rem 0;border-bottom:1px solid rgba(255,255,255,0.05);">
+        <div style="display:flex;align-items:center;gap:0.6rem;">${avatarHTML(opp, 28)}<span style="font-family:var(--font-ui);font-size:0.75rem;font-weight:600;color:var(--white);">${opp}</span></div>
+        <div style="display:flex;align-items:center;gap:0.75rem;font-family:var(--font-head);font-size:0.7rem;">
+          <span style="color:var(--success);">${h.p1wins}W</span>
           <span style="color:var(--muted-2);">${h.draws}D</span>
-          <span style="color:var(--danger);font-weight:600;">${h.p2wins}L</span>
-          <span style="color:var(--muted);">(${total})</span>
+          <span style="color:var(--danger);">${h.p2wins}L</span>
         </div>
       </div>`;
   }).join('');
 
+  document.getElementById('player-modal-content').style.padding = '0.5rem';
+
   document.getElementById('player-modal-content').innerHTML = `
-    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border);">
-      ${avatarHTML(name, 72)}
-      <div>
-        <h2 style="font-family:var(--font-head);font-size:1.8rem;font-weight:700;color:${c.dot};letter-spacing:0.04em;">${name.toUpperCase()}</h2>
-        <p style="font-family:var(--font-body);font-size:0.78rem;color:var(--muted-2);margin-top:0.2rem;">Rank #${rank} · ${s.pts} points</p>
+    <div class="trading-card" style="--glow: ${c.dot}55;">
+      <div class="trading-card-inner">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;">
+          <div style="background: rgba(0,0,0,0.6); padding: 0.4rem 0.8rem; border-radius: 8px; border: 1px solid ${c.border}; text-align:center;">
+            <span style="font-family:var(--font-head);font-size:1.4rem;font-weight:900;color:${c.dot};line-height:1;">${s.pts}</span>
+            <span style="font-family:var(--font-ui);font-size:0.5rem;color:var(--white);text-transform:uppercase;letter-spacing:1px;display:block;margin-top:2px;">OVR PTS</span>
+          </div>
+          <div style="font-family:var(--font-ui); font-size: 0.65rem; color: var(--gold); font-weight: 800; letter-spacing: 2px;">RATATAA ICONS</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:1.5rem;">
+          <div style="box-shadow: 0 0 30px ${c.dot}66; border-radius: 50%; margin-bottom: 0.75rem; border: 2px solid ${c.dot};">
+            ${avatarHTML(name, 96)}
+          </div>
+          <h2 style="font-family:var(--font-head);font-size:2rem;font-weight:900;color:var(--white);letter-spacing:0.05em;text-shadow: 0 4px 10px rgba(0,0,0,0.5);">${name.toUpperCase()}</h2>
+          <p style="font-family:var(--font-ui);font-size:0.75rem;color:${c.dot};font-weight:700;letter-spacing:0.2em;text-transform:uppercase;">Rank #${rank}</p>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;text-align:center;background:rgba(0,0,0,0.5);border-radius:12px;padding:0.75rem;margin-bottom:1.25rem;border:1px solid rgba(255,255,255,0.08);">
+          <div>
+            <div style="font-family:var(--font-head);font-size:1.4rem;font-weight:700;color:var(--white);">${s.played}</div>
+            <div style="font-family:var(--font-ui);font-size:0.5rem;color:var(--muted-2);text-transform:uppercase;letter-spacing:1px;">Matches</div>
+          </div>
+          <div style="border-left:1px solid rgba(255,255,255,0.1);border-right:1px solid rgba(255,255,255,0.1);">
+            <div style="font-family:var(--font-head);font-size:1.4rem;font-weight:700;color:var(--success);">${s.won}</div>
+            <div style="font-family:var(--font-ui);font-size:0.5rem;color:var(--muted-2);text-transform:uppercase;letter-spacing:1px;">Wins</div>
+          </div>
+          <div>
+            <div style="font-family:var(--font-head);font-size:1.4rem;font-weight:700;color:var(--gold);">${s.gf}</div>
+            <div style="font-family:var(--font-ui);font-size:0.5rem;color:var(--muted-2);text-transform:uppercase;letter-spacing:1px;">Goals</div>
+          </div>
+        </div>
+        <div style="background:rgba(0,0,0,0.4); border-radius:12px; padding:0.75rem 1rem; border:1px solid rgba(255,255,255,0.05);">
+          <div style="font-family:var(--font-ui);font-size:0.55rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted-2);margin-bottom:0.5rem;text-align:center;">H2H Record</div>
+          ${h2hHTML}
+        </div>
       </div>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:0.6rem;margin-bottom:1.25rem;">
-      ${[['Played',s.played,'var(--white)'],['Wins',s.won,'var(--success)'],['Goals For',s.gf,'var(--gold)'],['Points',s.pts,'var(--accent)']].map(([l,v,col]) =>
-        `<div style="text-align:center;background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:0.85rem 0.5rem;"><p style="font-family:var(--font-ui);font-size:1.7rem;font-weight:800;color:${col}">${v}</p><p style="font-family:var(--font-ui);font-size:0.58rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted-2);margin-top:0.2rem;">${l}</p></div>`
-      ).join('')}
-    </div>
-    <div class="section-label" style="margin-bottom:0.75rem;">Head-to-Head</div>
-    ${h2hHTML}`;
+    </div>`;
   document.getElementById('player-modal').classList.add('open');
 }
 function closePlayerModal() { document.getElementById('player-modal').classList.remove('open'); }
