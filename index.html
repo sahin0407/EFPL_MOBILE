@@ -1243,13 +1243,18 @@ button, a, [onclick] {
      ============================================================ -->
 <nav id="top-nav">
   <div class="nav-inner">
-    <button class="nav-logo" onclick="showSection('home')">RATATAA</button>
+    
+    <button class="nav-logo" onclick="showSection('home')" style="display:flex; align-items:center; gap:0.4rem;">
+      <svg width="22" height="22" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 0 8px rgba(200,255,0,0.4));">
+        <path d="M10 30L20 10L30 30" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M14 22H26" stroke="var(--accent)" stroke-width="4" stroke-linecap="round"/>
+        <path d="M20 10V30" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" opacity="0.4"/>
+      </svg>
+      <span style="letter-spacing: 0.15em;">RATATAA</span>
+    </button>
+
     <div class="nav-links">
       <button class="nav-link active" data-section="home" onclick="showSection('home')">Home</button>
-      <button class="nav-link" data-section="fixtures" onclick="showSection('fixtures')">Fixtures</button>
-      <button class="nav-link" data-section="results" onclick="showSection('results')">Results</button>
-      <button class="nav-link" data-section="scorers" onclick="showSection('scorers')">Scorers</button>
-      <button class="nav-link" data-section="players" onclick="showSection('players')">Players</button>
       <button class="nav-link" onclick="openLoginModal()" style="display:flex;align-items:center;gap:0.35rem;">
         <svg style="width:12px;height:12px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
         Admin
@@ -1707,10 +1712,10 @@ button, a, [onclick] {
 const PLAYERS = ['Sahin', 'Mahashin', 'Nasim', 'Khokan'];
 
 const PLAYER_COLORS = {
-  Sahin:    { bg: 'rgba(99,102,241,0.18)',  border: '#6366f1', dot: '#818cf8' },
-  Mahashin: { bg: 'rgba(245,200,66,0.15)',  border: '#f5c842', dot: '#fcd34d' },
-  Nasim:    { bg: 'rgba(0,229,160,0.12)',   border: '#00e5a0', dot: '#34d399' },
-  Khokan:   { bg: 'rgba(255,107,53,0.15)',  border: '#ff6b35', dot: '#fb923c' },
+  Sahin:    { bg: 'rgba(165,0,68,0.18)',    border: '#a50044', dot: '#edb12a' }, // FC Barcelona (Garnet & Gold)
+  Mahashin: { bg: 'rgba(0,65,112,0.18)',    border: '#004170', dot: '#da291c' }, // PSG (Navy & Red)
+  Nasim:    { bg: 'rgba(206,162,66,0.15)',  border: '#cea242', dot: '#f8f9fa' }, // Real Madrid Away (Gold & White)
+  Khokan:   { bg: 'rgba(108,171,221,0.18)', border: '#6cabdd', dot: '#ffffff' }, // Man City (Sky Blue & White)
 };
 
 const STORAGE_KEY = 'ratataaLeagueData';
