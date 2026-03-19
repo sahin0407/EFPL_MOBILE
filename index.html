@@ -23,27 +23,27 @@
    ============================================================ */
 
 :root {
-  --bg:          #0a0a12;
-  --bg-2:        #0f0f1a;
-  --bg-3:        #14142a;
-  --surface:     rgba(255,255,255,0.05);
-  --surface-2:   rgba(255,255,255,0.08);
-  --surface-3:   rgba(255,255,255,0.12);
-  --border:      rgba(255,255,255,0.1);
-  --border-2:    rgba(255,255,255,0.18);
-  --accent:      #3d8bff;
-  --accent-dim:  rgba(61,139,255,0.12);
-  --accent-glow: rgba(61,139,255,0.3);
-  --blue:        #3b82f6;
-  --blue-dim:    rgba(59,130,246,0.15);
-  --violet:      #8b5cf6;
-  --white:       #e8ecf4;
-  --muted:       #4a5068;
-  --muted-2:     #8890a8;
+  --bg:          #06090f;
+  --bg-2:        #080d14;
+  --bg-3:        #0c1220;
+  --surface:     rgba(212,175,55,0.04);
+  --surface-2:   rgba(212,175,55,0.07);
+  --surface-3:   rgba(212,175,55,0.11);
+  --border:      rgba(212,175,55,0.13);
+  --border-2:    rgba(212,175,55,0.24);
+  --accent:      #d4af37;
+  --accent-dim:  rgba(212,175,55,0.12);
+  --accent-glow: rgba(212,175,55,0.35);
+  --blue:        #1a7a5e;
+  --blue-dim:    rgba(26,122,94,0.15);
+  --violet:      #c49a2a;
+  --white:       #f0ead6;
+  --muted:       #3d3a2e;
+  --muted-2:     #9a9070;
   --danger:      #ff3b3b;
-  --success:     #00e5a0;
+  --success:     #1aae78;
   --gold:        #f5c842;
-  --orange:      #ff6b35;
+  --orange:      #c4882a;
   --font-head:   'Barlow Condensed', 'Arial Narrow', sans-serif;
   --font-ui:     'Inter', system-ui, sans-serif;
   --font-body:   'Inter', system-ui, sans-serif;
@@ -55,7 +55,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html {
-  background: var(--bg);
+  background: radial-gradient(ellipse at top, #0d0c14 0%, #07090f 60%);
   color: var(--white);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
@@ -63,9 +63,27 @@ html {
 }
 
 body {
-  background: var(--bg);
+  background:
+    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(212,175,55,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 30% at 100% 60%, rgba(26,122,94,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 25% at 0% 80%, rgba(212,175,55,0.04) 0%, transparent 60%),
+    var(--bg);
   min-height: 100vh;
   overflow-x: clip;
+  position: relative;
+}
+
+/* Eid star-field dots */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: radial-gradient(circle, rgba(212,175,55,0.07) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 60%);
+  -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 60%);
 }
 
 /* Scrollbar */
@@ -73,7 +91,7 @@ body {
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; opacity: 0.5; }
 
-/* Grain overlay removed for cleaner look */
+/* Eid: Gold glow on scrollbar */
 
 /* ── Typography ── */
 .font-head { font-family: var(--font-head); }
@@ -87,7 +105,7 @@ body {
 /* ── Accent glow text ── */
 .glow-accent {
   color: var(--accent);
-  text-shadow: 0 0 40px rgba(61,139,255,0.6), 0 0 80px rgba(61,139,255,0.2);
+  text-shadow: 0 0 40px rgba(212,175,55,0.6), 0 0 80px rgba(212,175,55,0.2);
 }
 
 /* ── Gold shimmer ── */
@@ -112,14 +130,14 @@ body {
 }
 .card-hover:hover {
   background: var(--surface-2);
-  border-color: rgba(61,139,255,0.2);
+  border-color: rgba(212,175,55,0.22);
   transform: translateY(-2px);
 }
 
 /* ── Stripe accent card ── */
 .card-accent {
-  background: linear-gradient(135deg, rgba(61,139,255,0.06) 0%, rgba(61,139,255,0.02) 100%);
-  border: 1px solid rgba(61,139,255,0.15);
+  background: linear-gradient(135deg, rgba(212,175,55,0.06) 0%, rgba(212,175,55,0.02) 100%);
+  border: 1px solid rgba(212,175,55,0.15);
   border-radius: var(--r-lg);
 }
 
@@ -141,18 +159,21 @@ body {
 }
 
 .btn-primary {
-  background: var(--accent);
-  color: #0a0a0a;
+  background: linear-gradient(135deg, #d4af37 0%, #f5c842 50%, #d4af37 100%);
+  background-size: 200% auto;
+  color: #0a0a08;
   border-radius: 100px;
   padding: 0.85rem 1.75rem;
   font-size: 0.75rem;
 }
 .btn-primary:hover {
-  background: #5a9fff;
-  box-shadow: 0 8px 32px var(--accent-glow);
+  background: linear-gradient(135deg, #f5c842 0%, #ffe89a 50%, #d4af37 100%);
+  box-shadow: 0 8px 32px rgba(212,175,55,0.35);
   transform: translateY(-2px);
 }
 .btn-primary:active { transform: scale(0.96); box-shadow: none; }
+.btn-primary { animation: btnGoldShimmer 3s linear infinite; }
+@keyframes btnGoldShimmer { 0%{background-position:0% center;} 100%{background-position:200% center;} }
 
 .btn-ghost {
   background: transparent;
@@ -163,8 +184,8 @@ body {
   font-size: 0.75rem;
 }
 .btn-ghost:hover {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: #d4af37;
+  color: #ffe89a;
 }
 
 .btn-glass {
@@ -175,7 +196,7 @@ body {
   padding: 0.65rem 1.2rem;
   font-size: 0.7rem;
 }
-.btn-glass:hover { background: var(--surface-3); border-color: rgba(61,139,255,0.3); }
+.btn-glass:hover { background: var(--surface-3); border-color: rgba(212,175,55,0.3); }
 .btn-glass:active { transform: scale(0.96); transition: transform 0.1s; }
 
 .btn-danger {
@@ -200,10 +221,10 @@ body {
   padding: 0.25rem 0.65rem;
   border-radius: 100px;
 }
-.tag-upcoming { background: rgba(59,130,246,0.12); color: #60a5fa; border: 1px solid rgba(59,130,246,0.2); }
-.tag-played   { background: rgba(0,229,160,0.1);   color: var(--success); border: 1px solid rgba(0,229,160,0.2); }
+.tag-upcoming { background: rgba(212,175,55,0.1); color: #d4af37; border: 1px solid rgba(212,175,55,0.22); }
+.tag-played   { background: rgba(26,174,120,0.1);  color: #1aae78; border: 1px solid rgba(26,174,120,0.2); }
 .tag-draw     { background: rgba(107,116,144,0.15); color: #8892b0; border: 1px solid rgba(107,116,144,0.2); }
-.tag-accent   { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(61,139,255,0.2); }
+.tag-accent   { background: rgba(212,175,55,0.1); color: var(--accent); border: 1px solid rgba(212,175,55,0.22); }
 
 /* ── Diagonal accent line ── */
 .diag-line {
@@ -220,7 +241,7 @@ body {
   right: -5%;
   width: 1px;
   height: 180%;
-  background: linear-gradient(180deg, transparent, rgba(61,139,255,0.15), transparent);
+  background: linear-gradient(180deg, transparent, rgba(212,175,55,0.15), transparent);
   transform: rotate(-15deg);
 }
 
@@ -240,9 +261,9 @@ body {
   display: inline-block;
   width: 12px;
   height: 2px;
-  background: var(--accent);
+  background: linear-gradient(90deg, #d4af37, #ffe89a);
   border-radius: 2px;
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
 .section-title {
@@ -254,11 +275,228 @@ body {
   text-transform: uppercase;
 }
 
+
+/* ============================================================
+   EID MUBARAK THEME — Site-wide Gold & Emerald
+   ============================================================ */
+
+/* Eid floating crescent in hero background */
+#hero-section::before {
+  content: '';
+  position: absolute;
+  top: -10%;
+  right: -5%;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(ellipse, rgba(212,175,55,0.07) 0%, transparent 65%);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  animation: eidGlowPulse 6s ease-in-out infinite;
+}
+@keyframes eidGlowPulse { 0%,100%{opacity:0.7;} 50%{opacity:1;} }
+
+/* Eid banner strip below top nav */
+#eid-site-banner {
+  position: fixed;
+  top: 56px;
+  left: 0; right: 0;
+  z-index: 99;
+  background: linear-gradient(90deg,
+    rgba(4,7,14,0) 0%,
+    rgba(212,175,55,0.12) 20%,
+    rgba(212,175,55,0.18) 50%,
+    rgba(212,175,55,0.12) 80%,
+    rgba(4,7,14,0) 100%
+  );
+  border-bottom: 1px solid rgba(212,175,55,0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 0.4rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  overflow: hidden;
+}
+#eid-site-banner::before, #eid-site-banner::after {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 80px;
+  pointer-events: none;
+}
+#eid-site-banner::before { left: 0; background: linear-gradient(90deg, var(--bg), transparent); }
+#eid-site-banner::after  { right: 0; background: linear-gradient(-90deg, var(--bg), transparent); }
+
+.eid-banner-text {
+  font-family: var(--font-ui);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, #d4af37, #ffe89a, #d4af37);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+  white-space: nowrap;
+}
+.eid-banner-moon {
+  font-size: 0.85rem;
+  animation: eidMoonBob 3s ease-in-out infinite;
+  flex-shrink: 0;
+}
+@keyframes eidMoonBob { 0%,100%{transform:translateY(0) rotate(-5deg);} 50%{transform:translateY(-2px) rotate(5deg);} }
+
+/* Push sections down to account for banner */
+#hero-section { padding-top: calc(56px + 29px) !important; }
+#public-view .section-wrap,
+#public-view .section-wrap-sm,
+#public-view .section-wrap-lg { padding-top: calc(56px + 29px + 1rem); }
+#section-fixtures, #section-results, #section-scorers, #section-players {
+  padding-top: 29px;
+}
+
+/* Eid geometric SVG watermark in hero */
+.eid-hero-geo {
+  position: absolute;
+  right: -60px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 280px;
+  height: 280px;
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 0;
+  animation: eidGeoSpin 60s linear infinite;
+}
+@keyframes eidGeoSpin { to { transform: translateY(-50%) rotate(360deg); } }
+
+/* ── Card gold accent left border for league table rows ── */
+.league-table tr:hover td {
+  background: rgba(212,175,55,0.04) !important;
+}
+.league-table .rank-1 td:first-child {
+  border-left: 2px solid #d4af37;
+}
+.league-table .rank-2 td:first-child {
+  border-left: 2px solid rgba(212,175,55,0.5);
+}
+.league-table .rank-3 td:first-child {
+  border-left: 2px solid rgba(212,175,55,0.3);
+}
+
+/* Eid floating stars in hero */
+.eid-floating-stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+.eid-fs {
+  position: absolute;
+  border-radius: 50%;
+  background: #d4af37;
+  animation: eidStarFloat var(--dur,4s) ease-in-out var(--delay,0s) infinite alternate;
+}
+@keyframes eidStarFloat {
+  from { opacity:0.15; transform: translateY(0) scale(1); }
+  to   { opacity:0.55; transform: translateY(-8px) scale(1.3); }
+}
+
+/* ── Eid crescent badge on hero-badge ── */
+.hero-badge-eid {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, rgba(212,175,55,0.12), rgba(212,175,55,0.06));
+  border: 1px solid rgba(212,175,55,0.28);
+  border-radius: 100px;
+  padding: 0.3rem 1rem;
+  font-family: var(--font-ui);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: #d4af37;
+  margin-bottom: 0.5rem;
+}
+
+/* ── Eid bottom nav gold theme ── */
+.bnav-item.active { color: #d4af37 !important; }
+
+/* ── Gold shimmer for section labels ── */
+.section-label { color: #d4af37 !important; }
+
+/* ── Eid pattern card accent - geometric top border ── */
+.card::before {
+  content: none;
+}
+.card-eid-accent {
+  position: relative;
+  overflow: hidden;
+}
+.card-eid-accent::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.5) 30%, rgba(255,232,154,0.8) 50%, rgba(212,175,55,0.5) 70%, transparent 100%);
+  background-size: 200% auto;
+  animation: shimmer 4s linear infinite;
+}
+
+/* ── Hero title gold shimmer ── */
+.hero-title-eid {
+  background: linear-gradient(135deg, #f0ead6 0%, #ffe89a 40%, #f0ead6 70%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 5s linear infinite;
+}
+
+/* ── Eid footer message in hero ── */
+.eid-hero-wish {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: rgba(212,175,55,0.6);
+  letter-spacing: 0.06em;
+  margin-top: 0.75rem;
+  padding: 0.3rem 0.9rem;
+  border: 1px solid rgba(212,175,55,0.15);
+  border-radius: 100px;
+  background: rgba(212,175,55,0.05);
+}
+
+/* ── Eid crescent in top-left of standings card ── */
+.standings-eid-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.standings-eid-header .eid-moon-sm {
+  font-size: 1.1rem;
+  filter: drop-shadow(0 0 6px rgba(212,175,55,0.4));
+}
+
+/* Fix any leftover blue references */
+.tag-accent { background: rgba(212,175,55,0.1) !important; color: #d4af37 !important; border-color: rgba(212,175,55,0.22) !important; }
+.txt-accent { color: #d4af37 !important; }
+.glow-accent { color: #d4af37 !important; text-shadow: 0 0 30px rgba(212,175,55,0.5) !important; }
+
 /* ── TOP NAV ── */
 #top-nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  background: rgba(3,3,10,0.92);
-  border-bottom: 1px solid var(--border);
+  background: rgba(4,7,14,0.95);
+  border-bottom: 1px solid rgba(212,175,55,0.18);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
 }
@@ -281,7 +519,7 @@ body {
   letter-spacing: 0.12em;
   color: var(--accent);
   cursor: pointer;
-  text-shadow: 0 0 20px rgba(61,139,255,0.4);
+  text-shadow: 0 0 20px rgba(212,175,55,0.45);
   flex-shrink: 0;
 }
 
@@ -307,7 +545,7 @@ body {
   white-space: nowrap;
 }
 .nav-link:hover { color: var(--white); background: var(--surface-2); }
-.nav-link.active { color: var(--accent); background: var(--accent-dim); }
+.nav-link.active { color: var(--accent); background: rgba(212,175,55,0.1); }
 
 .nav-live {
   display: flex;
@@ -326,8 +564,8 @@ body {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: var(--success);
-  box-shadow: 0 0 8px var(--success);
+  background: #1aae78;
+  box-shadow: 0 0 8px rgba(26,174,120,0.6);
   animation: livepulse 2s ease-in-out infinite;
 }
 @keyframes livepulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
@@ -336,8 +574,8 @@ body {
 #bottom-nav {
   position: fixed;
   bottom: 0; left: 0; right: 0; z-index: 100;
-  background: rgba(3,3,10,0.97);
-  border-top: 1px solid var(--border);
+  background: rgba(4,7,14,0.98);
+  border-top: 1px solid rgba(212,175,55,0.15);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
   display: flex;
@@ -367,14 +605,14 @@ body {
 }
 .bnav-item svg { width: 20px; height: 20px; stroke-width: 1.8; }
 .bnav-item.active { color: var(--accent); }
-.bnav-item.active svg { filter: drop-shadow(0 0 6px var(--accent-glow)); }
+.bnav-item.active svg { filter: drop-shadow(0 0 6px rgba(212,175,55,0.5)); }
 .bnav-item::before {
   content: '';
   position: absolute;
   top: 0; left: 20%; right: 20%;
   height: 2px;
   border-radius: 2px;
-  background: var(--accent);
+  background: linear-gradient(90deg, #d4af37, #ffe89a, #d4af37);
   transform: scaleX(0);
   transition: transform 0.2s;
 }
@@ -391,7 +629,7 @@ body {
   min-height: 100svh;
   display: flex;
   flex-direction: column;
-  padding-top: 56px;
+  padding-top: 92px;
   position: relative;
   overflow: hidden;
 }
@@ -430,7 +668,7 @@ body {
   position: absolute;
   bottom: 0; left: 0; right: 0;
   height: 3px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  background: linear-gradient(90deg, transparent, #d4af37, #ffe89a, #d4af37, transparent);
   z-index: 2;
 }
 
@@ -448,8 +686,8 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: var(--accent-dim);
-  border: 1px solid rgba(61,139,255,0.2);
+  background: rgba(212,175,55,0.1);
+  border: 1px solid rgba(212,175,55,0.25);
   border-radius: 100px;
   padding: 0.3rem 1rem;
   font-family: var(--font-ui);
@@ -479,7 +717,7 @@ body {
   line-height: 0.9;
   text-align: center;
   letter-spacing: -0.02em;
-  -webkit-text-stroke: 1px rgba(61,139,255,0.5);
+  -webkit-text-stroke: 1px rgba(212,175,55,0.45);
   color: transparent;
   margin-bottom: 1.5rem;
 }
@@ -617,7 +855,7 @@ body {
 .league-table tbody tr { transition: background 0.15s; }
 .league-table tbody tr:hover { background: rgba(255,255,255,0.025); }
 
-.leader-row td { background: linear-gradient(90deg, rgba(61,139,255,0.04) 0%, transparent 80%); }
+.leader-row td { background: linear-gradient(90deg, rgba(212,175,55,0.06) 0%, transparent 80%); }
 
 .rank-badge {
   font-family: var(--font-ui);
@@ -639,8 +877,8 @@ body {
 }
 
 .leader-pts {
-  color: var(--accent);
-  text-shadow: 0 0 16px var(--accent-glow);
+  color: #ffe89a;
+  text-shadow: 0 0 16px rgba(212,175,55,0.5);
 }
 
 .leader-crown {
@@ -652,9 +890,9 @@ body {
   font-weight: 700;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  background: rgba(61,139,255,0.1);
+  background: rgba(212,175,55,0.1);
   color: var(--accent);
-  border: 1px solid rgba(61,139,255,0.2);
+  border: 1px solid rgba(212,175,55,0.2);
   padding: 0.12rem 0.5rem;
   border-radius: 100px;
   white-space: nowrap;
@@ -692,7 +930,7 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(245,200,66,0.03) 0%, transparent 60%);
+  background: linear-gradient(135deg, rgba(212,175,55,0.05) 0%, rgba(46,204,138,0.02) 60%);
   pointer-events: none;
 }
 
@@ -818,7 +1056,7 @@ body {
   transition: border-color 0.2s;
   width: 100%;
 }
-.input-field:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(61,139,255,0.08); }
+.input-field:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(212,175,55,0.1); }
 .input-field::placeholder { color: var(--muted); }
 
 /* ── TOAST ── */
@@ -989,7 +1227,7 @@ body {
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 1.25rem;
   height: 56px;
-  background: rgba(3,3,10,0.97);
+  background: rgba(7,6,12,0.98);
   border-bottom: 1px solid var(--border);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
@@ -1192,11 +1430,278 @@ button, a, [onclick] {
   top: -0.25rem;
   right: 0.75rem;
 }
+
+/* ============================================================
+   EID MUBARAK — Decorative Layer CSS
+   ============================================================ */
+
+/* ── Background orbs & sparkles ── */
+#eid-bg-deco {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.eid-orb {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(212,175,55,0.06) 0%, rgba(212,175,55,0.02) 40%, transparent 70%);
+  animation: eidOrbDrift var(--dur,10s) ease-in-out var(--delay,0s) infinite alternate;
+  filter: blur(40px);
+}
+@keyframes eidOrbDrift {
+  from { transform: translate(0,0); }
+  to   { transform: translate(var(--tx,20px), var(--ty,20px)); }
+}
+
+.eid-sparkle {
+  position: absolute;
+  width: var(--sz, 2px);
+  height: var(--sz, 2px);
+  border-radius: 50%;
+  background: #d4af37;
+  animation: eidSparkTwinkle var(--dur,2.5s) ease-in-out var(--delay,0s) infinite;
+  box-shadow: 0 0 4px rgba(212,175,55,0.6);
+}
+@keyframes eidSparkTwinkle {
+  0%,100% { opacity:0.1; transform:scale(0.8); }
+  50%      { opacity:1;   transform:scale(1.5); }
+}
+
+/* ── Hero lattice pattern overlay ── */
+.eid-lattice {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.025;
+  background-image:
+    repeating-linear-gradient(45deg,  #d4af37 0, #d4af37 1px, transparent 0, transparent 50%),
+    repeating-linear-gradient(-45deg, #d4af37 0, #d4af37 1px, transparent 0, transparent 50%);
+  background-size: 24px 24px;
+  mask-image: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 80%);
+  -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, transparent 80%);
+}
+
+/* ── Hero crescent decorative SVG ── */
+.eid-hero-crescent {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 1;
+  filter: drop-shadow(0 0 12px rgba(212,175,55,0.4));
+  animation: eidHeroCrescentFloat 5s ease-in-out infinite;
+}
+@keyframes eidHeroCrescentFloat {
+  0%,100% { transform: translateY(0) rotate(-3deg); }
+  50%      { transform: translateY(-6px) rotate(3deg); }
+}
+
+/* ── Eid footer decoration ── */
+#eid-footer-deco {
+  text-align: center;
+  padding: 1.5rem 1rem 0.5rem;
+  font-family: var(--font-ui);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, #d4af37, #ffe89a, #d4af37);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+  opacity: 0.7;
+  margin-bottom: calc(5rem + env(safe-area-inset-bottom));
+}
+
+/* ── Enhanced Eid match card shimmer effect ── */
+.match-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent);
+  border-radius: inherit;
+}
+
+/* ── Eid section page headers (Fixtures, Results etc) gold accent ── */
+#section-fixtures .section-title,
+#section-results .section-title,
+#section-scorers .section-title,
+#section-players .section-title {
+  background: linear-gradient(135deg, #f0ead6 0%, #ffe89a 35%, #f0ead6 65%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 5s linear infinite;
+}
+
+/* ── Home STANDINGS title ── */
+#standings-anchor .section-title {
+  background: linear-gradient(135deg, #f0ead6 0%, #ffe89a 35%, #f0ead6 65%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 5s linear infinite;
+}
+
+/* ── Eid crescent nav logo glow ── */
+#top-nav .nav-logo {
+  background: linear-gradient(90deg, #d4af37, #ffe89a, #d4af37);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+  text-shadow: none !important;
+}
+#top-nav .nav-logo svg path {
+  stroke: #d4af37 !important;
+}
+
+/* ── Bottom nav Eid accent bar gradient ── */
+#bottom-nav::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,0.5), rgba(255,232,154,0.8), rgba(212,175,55,0.5), transparent);
+  background-size: 200% auto;
+  animation: shimmer 4s linear infinite;
+}
+#bottom-nav { position: fixed; }
+
+/* ── Eid stat box gold pulse val ── */
+.hero-stat .val {
+  background: linear-gradient(135deg, #ffe89a, #d4af37, #ffe89a);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+
+/* ── Score display gold for winners ── */
+.score-win {
+  color: #f5c842 !important;
+  text-shadow: 0 0 12px rgba(212,175,55,0.4);
+}
+
+/* ── Eid geometric motif in section backgrounds ── */
+#section-fixtures::before,
+#section-results::before,
+#section-scorers::before,
+#section-players::before {
+  content: '';
+  position: fixed;
+  top: 10%;
+  right: -80px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(212,175,55,0.05) 0%, transparent 65%);
+  pointer-events: none;
+  animation: eidGlowPulse 7s ease-in-out infinite;
+}
+
+/* ── Eid decorative marquee-like banner ── */
+#eid-site-banner {
+  overflow: hidden;
+}
+
+/* ── Player card Eid shimmer border ── */
+.player-card {
+  border-color: rgba(212,175,55,0.15) !important;
+}
+.player-card:hover {
+  border-color: rgba(212,175,55,0.35) !important;
+  box-shadow: 0 12px 40px rgba(212,175,55,0.08), 0 0 0 1px rgba(212,175,55,0.1) !important;
+}
+
+/* ── Eid top scorer card pulsing glow ── */
+.top-scorer-card {
+  animation: eidCardPulse 4s ease-in-out infinite;
+}
+@keyframes eidCardPulse {
+  0%,100% { box-shadow: 0 0 0 rgba(212,175,55,0); }
+  50%      { box-shadow: 0 0 20px rgba(212,175,55,0.12); }
+}
+
+/* ── League table eid row ── */
+.leader-row {
+  background: linear-gradient(90deg, rgba(212,175,55,0.07) 0%, transparent 80%) !important;
+}
+
+/* ── Modal box Eid gold accent ── */
+.modal-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,0.6), transparent);
+  border-radius: 1px;
+}
+.modal-box {
+  border-color: rgba(212,175,55,0.2) !important;
+}
+
+/* ── Input field Eid focus ── */
+.input-field:focus {
+  border-color: #d4af37 !important;
+  box-shadow: 0 0 0 3px rgba(212,175,55,0.12) !important;
+}
+
+/* ── Eid toast gold ── */
+#toast.toast-success {
+  border-color: rgba(212,175,55,0.4) !important;
+  color: #ffe89a !important;
+}
+
+/* ── Prog fill Eid gold ── */
+.prog-fill {
+  background: linear-gradient(90deg, #d4af37, #ffe89a, #d4af37) !important;
+}
 </style>
 </head>
 <body>
 
 <!-- Update Banner -->
+<!-- EID BACKGROUND DECORATION -->
+<div id="eid-bg-deco">
+  <!-- Orbs -->
+  <div class="eid-orb" style="width:600px;height:600px;top:-200px;left:-100px;--dur:10s;--delay:0s;--tx:30px;--ty:20px;"></div>
+  <div class="eid-orb" style="width:400px;height:400px;top:40%;right:-100px;--dur:12s;--delay:2s;--tx:-20px;--ty:-40px;"></div>
+  <div class="eid-orb" style="width:300px;height:300px;bottom:10%;left:20%;--dur:9s;--delay:1s;--tx:40px;--ty:20px;"></div>
+  <!-- Sparkles -->
+  <div class="eid-sparkle" style="top:8%;left:12%;--sz:2px;--dur:2.1s;--delay:0s;"></div>
+  <div class="eid-sparkle" style="top:14%;left:78%;--sz:3px;--dur:2.8s;--delay:0.4s;"></div>
+  <div class="eid-sparkle" style="top:6%;left:55%;--sz:2px;--dur:1.9s;--delay:0.8s;"></div>
+  <div class="eid-sparkle" style="top:22%;left:92%;--sz:2px;--dur:3.2s;--delay:0.2s;"></div>
+  <div class="eid-sparkle" style="top:38%;left:4%;--sz:3px;--dur:2.5s;--delay:1s;"></div>
+  <div class="eid-sparkle" style="top:55%;left:95%;--sz:2px;--dur:2.3s;--delay:0.6s;"></div>
+  <div class="eid-sparkle" style="top:72%;left:8%;--sz:2px;--dur:2.7s;--delay:0.3s;"></div>
+  <div class="eid-sparkle" style="top:82%;left:85%;--sz:3px;--dur:2s;--delay:0.9s;"></div>
+  <div class="eid-sparkle" style="top:91%;left:42%;--sz:2px;--dur:2.6s;--delay:0.5s;"></div>
+  <div class="eid-sparkle" style="top:48%;left:50%;--sz:1.5px;--dur:3s;--delay:1.2s;"></div>
+  <!-- Large crescent background -->
+  <svg style="position:absolute;top:-60px;right:-60px;opacity:0.035;pointer-events:none;animation:eidMoonFloat 8s ease-in-out infinite;" width="320" height="320" viewBox="0 0 320 320" fill="none">
+    <path d="M160 20C90 20 35 75 35 145C35 215 90 270 160 270C195 270 226 256 250 234C230 242 208 246 185 246C115 246 60 191 60 121C60 73 85 32 122 12C134 10 147 9 160 9Z" fill="#d4af37"/>
+  </svg>
+  <!-- Bottom-left small crescent -->
+  <svg style="position:absolute;bottom:80px;left:-30px;opacity:0.04;pointer-events:none;animation:eidMoonFloat 6s ease-in-out 2s infinite;" width="180" height="180" viewBox="0 0 180 180" fill="none">
+    <path d="M90 10C48 10 15 43 15 85C15 127 48 160 90 160C111 160 130 152 144 138C131 143 117 146 101 146C59 146 26 113 26 71C26 43 40 18 63 6C72 4 81 3 90 3Z" fill="#d4af37"/>
+  </svg>
+</div>
+
+<!-- EID GREETING STRIP (shows below top nav) -->
 <div id="update-banner">
   <span>⚡ New version available</span>
   <button class="upd-btn" onclick="applyUpdate()">Update</button>
@@ -1233,12 +1738,13 @@ button, a, [onclick] {
   <div class="nav-inner">
     
     <button class="nav-logo" onclick="showSection('home')" style="display:flex; align-items:center; gap:0.4rem;">
-      <svg width="22" height="22" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 0 8px rgba(61,139,255,0.4));">
-        <path d="M10 30L20 10L30 30" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M14 22H26" stroke="var(--accent)" stroke-width="4" stroke-linecap="round"/>
-        <path d="M20 10V30" stroke="var(--accent)" stroke-width="4" stroke-linecap="round" opacity="0.4"/>
+      <svg width="22" height="22" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" style="filter: drop-shadow(0 0 8px rgba(212,175,55,0.5));">
+        <path d="M10 30L20 10L30 30" stroke="#d4af37" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M14 22H26" stroke="#d4af37" stroke-width="4" stroke-linecap="round"/>
+        <path d="M20 10V30" stroke="#d4af37" stroke-width="4" stroke-linecap="round" opacity="0.4"/>
       </svg>
       <span style="letter-spacing: 0.15em;">RATATAA</span>
+      <span style="font-size:0.85rem;margin-left:2px;filter:drop-shadow(0 0 4px rgba(212,175,55,0.6));animation:eidMoonBob 3s ease-in-out infinite;">☽</span>
     </button>
 
     <div class="nav-links">
@@ -1254,6 +1760,18 @@ button, a, [onclick] {
     </div>
   </div>
 </nav>
+
+
+<!-- ============================================================
+     EID SITE BANNER
+     ============================================================ -->
+<div id="eid-site-banner">
+  <span class="eid-banner-moon">☽</span>
+  <span class="eid-banner-text">Eid Mubarak 1446 AH — عيد مبارك</span>
+  <span class="eid-banner-moon">✦</span>
+  <span class="eid-banner-text">Wishing All Players & Fans a Blessed Eid</span>
+  <span class="eid-banner-moon">☽</span>
+</div>
 
 <!-- ============================================================
      BOTTOM NAV (Mobile)
@@ -1294,22 +1812,59 @@ button, a, [onclick] {
   <div id="section-home" class="section active">
 
     <section id="hero-section">
+      <!-- Eid lattice overlay -->
+      <div class="eid-lattice"></div>
+      <!-- Eid crescent deco -->
+      <svg class="eid-hero-crescent" width="120" height="120" viewBox="0 0 120 120" fill="none">
+        <path d="M60 8C32 8 10 30 10 58C10 86 32 108 60 108C75 108 88 102 97 92C88 95 78 97 67 97C39 97 17 75 17 47C17 28 27 12 42 5C48 4 54 3 60 3Z" fill="#d4af37"/>
+        <circle cx="85" cy="28" r="4" fill="#d4af37" opacity="0.8"/>
+        <circle cx="76" cy="16" r="2.5" fill="#d4af37" opacity="0.6"/>
+      </svg>
       <!-- Banner image -->
       <div class="hero-banner">
         <img src="players.jpg?v=11" class="hero-img" alt="Ratataa League" loading="eager">
         <div class="hero-accent-bar"></div>
       </div>
 
+
+      <!-- Eid floating stars -->
+      <div class="eid-floating-stars">
+        <div class="eid-fs" style="width:2px;height:2px;top:12%;left:6%;--dur:3.5s;--delay:0s;"></div>
+        <div class="eid-fs" style="width:3px;height:3px;top:20%;left:14%;--dur:4.2s;--delay:0.6s;"></div>
+        <div class="eid-fs" style="width:2px;height:2px;top:8%;left:75%;--dur:3.8s;--delay:1s;"></div>
+        <div class="eid-fs" style="width:3px;height:3px;top:15%;left:85%;--dur:4.5s;--delay:0.3s;"></div>
+        <div class="eid-fs" style="width:2px;height:2px;top:35%;left:3%;--dur:5s;--delay:0.8s;"></div>
+        <div class="eid-fs" style="width:2px;height:2px;top:30%;left:94%;--dur:4s;--delay:1.2s;"></div>
+        <div class="eid-fs" style="width:1.5px;height:1.5px;top:50%;left:90%;--dur:3.3s;--delay:0.4s;"></div>
+        <div class="eid-fs" style="width:3px;height:3px;top:5%;left:50%;--dur:6s;--delay:1.5s;"></div>
+        <div class="eid-fs" style="width:2px;height:2px;top:25%;left:60%;--dur:4.8s;--delay:0.2s;"></div>
+      </div>
+      <!-- Eid geometric SVG watermark -->
+      <svg class="eid-hero-geo" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="95" stroke="#d4af37" stroke-width="0.8"/>
+        <circle cx="100" cy="100" r="75" stroke="#d4af37" stroke-width="0.5"/>
+        <circle cx="100" cy="100" r="55" stroke="#d4af37" stroke-width="0.5"/>
+        <polygon points="100,10 190,55 190,145 100,190 10,145 10,55" stroke="#d4af37" stroke-width="0.6" fill="none"/>
+        <polygon points="100,30 170,65 170,135 100,170 30,135 30,65" stroke="#d4af37" stroke-width="0.4" fill="none"/>
+        <line x1="100" y1="5" x2="100" y2="195" stroke="#d4af37" stroke-width="0.3"/>
+        <line x1="5" y1="100" x2="195" y2="100" stroke="#d4af37" stroke-width="0.3"/>
+        <line x1="25" y1="25" x2="175" y2="175" stroke="#d4af37" stroke-width="0.3"/>
+        <line x1="175" y1="25" x2="25" y2="175" stroke="#d4af37" stroke-width="0.3"/>
+        <circle cx="100" cy="100" r="8" fill="#d4af37" opacity="0.3"/>
+        <circle cx="100" cy="10" r="3" fill="#d4af37" opacity="0.5"/>
+        <circle cx="100" cy="190" r="3" fill="#d4af37" opacity="0.5"/>
+        <circle cx="10" cy="100" r="3" fill="#d4af37" opacity="0.5"/>
+        <circle cx="190" cy="100" r="3" fill="#d4af37" opacity="0.5"/>
+      </svg>
+
       <!-- Content -->
       <div class="hero-content">
-        <div class="hero-badge fade-up" style="animation-delay:0.05s">
-          <div class="live-dot"></div>
-          Season 2026 · Live
-        </div>
+        <div class="hero-badge-eid fade-up" style="animation-delay:0.05s">☽ &nbsp; Season 2026 · Eid Special &nbsp; ☾</div>
 
         <h1 class="hero-title fade-up" style="animation-delay:0.1s">RATATAA</h1>
         <h2 class="hero-subtitle fade-up" style="animation-delay:0.15s">LEAGUE</h2>
         <p class="hero-tagline fade-up" style="animation-delay:0.2s">Where Legends Collide</p>
+        <div class="eid-hero-wish fade-up" style="animation-delay:0.22s">🌙 &nbsp; عيد مبارك — Eid Mubarak to All &nbsp; ✨</div>
 
         <div class="hero-ctas fade-up" style="animation-delay:0.25s">
           <button onclick="showSection('fixtures')" class="btn btn-primary">Fixtures</button>
@@ -1328,7 +1883,7 @@ button, a, [onclick] {
     <section id="standings-anchor" style="padding: 0 1rem calc(6rem + env(safe-area-inset-bottom)); max-width: 960px; margin: 0 auto;">
       <div style="display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1.25rem;gap:1rem;">
         <div>
-          <div class="section-label" style="margin-bottom:0.5rem">Live Table</div>
+          <div class="section-label standings-eid-header" style="margin-bottom:0.5rem"><span class="eid-moon-sm">☽</span> Live Table</div>
           <h2 class="section-title" style="font-size:clamp(1.8rem,7vw,2.8rem)">STANDINGS</h2>
         </div>
         <button onclick="shareStandingsAsImage()" class="btn btn-glass" style="flex-shrink:0;">
@@ -1396,6 +1951,7 @@ button, a, [onclick] {
     </div>
   </div>
 
+<div id="eid-footer-deco">☽ Eid Mubarak 1446 AH — عيد مبارك ☾</div>
 </main>
 
 <!-- ============================================================
@@ -3098,6 +3654,412 @@ function dismissUpdate(e) {
 }
 
 init();
+</script>
+
+<!-- ============================================================
+     EID MUBARAK OVERLAY
+     ============================================================ -->
+<style>
+
+/* ── EID STRIP SPACING ── */
+#section-home { padding-top: 0; }
+.section-wrap, .section-wrap-sm, .section-wrap-lg {
+  padding-top: calc(56px + 36px + 1.5rem) !important;
+}
+/* Section wrap base */
+.section-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 1rem calc(6rem + env(safe-area-inset-bottom));
+}
+.section-wrap-sm {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 0 1rem calc(6rem + env(safe-area-inset-bottom));
+}
+.section-wrap-lg {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 1rem calc(6rem + env(safe-area-inset-bottom));
+}
+
+/* ── EID OVERLAY ── */
+#eid-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  animation: eidFadeIn 0.6s ease both;
+  padding: 1.5rem;
+}
+#eid-overlay.closing {
+  animation: eidFadeOut 0.5s ease both;
+}
+@keyframes eidFadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes eidFadeOut { from { opacity:1; } to { opacity:0; pointer-events:none; } }
+
+.eid-card {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(145deg, #0d0d1f 0%, #12102a 50%, #0a0a18 100%);
+  border: 1px solid rgba(212,175,55,0.35);
+  border-radius: 28px;
+  padding: 2.5rem 2rem 2rem;
+  text-align: center;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(212,175,55,0.1),
+    0 0 60px rgba(212,175,55,0.08),
+    0 40px 80px rgba(0,0,0,0.6);
+  animation: eidCardIn 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.1s both;
+}
+@keyframes eidCardIn {
+  from { opacity:0; transform: scale(0.85) translateY(20px); }
+  to { opacity:1; transform: scale(1) translateY(0); }
+}
+
+/* Gold shimmer border top */
+.eid-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #d4af37, #ffe89a, #d4af37, transparent);
+  animation: shimmer 3s linear infinite;
+}
+
+/* Decorative corner ornaments */
+.eid-corner {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  opacity: 0.18;
+}
+.eid-corner-tl { top: 12px; left: 12px; }
+.eid-corner-tr { top: 12px; right: 12px; transform: scaleX(-1); }
+.eid-corner-bl { bottom: 60px; left: 12px; transform: scaleY(-1); }
+.eid-corner-br { bottom: 60px; right: 12px; transform: scale(-1); }
+
+/* Radial glow behind moon */
+.eid-glow {
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(ellipse, rgba(212,175,55,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Moon SVG */
+.eid-moon-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+.eid-moon-ring {
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  border: 1px solid rgba(212,175,55,0.2);
+  animation: eidRingPulse 3s ease-in-out infinite;
+}
+.eid-moon-ring-2 {
+  width: 110px;
+  height: 110px;
+  border-color: rgba(212,175,55,0.08);
+  animation-delay: 0.5s;
+}
+@keyframes eidRingPulse {
+  0%,100% { opacity:0.6; transform:scale(1); }
+  50% { opacity:1; transform:scale(1.04); }
+}
+.eid-moon-svg {
+  width: 68px;
+  height: 68px;
+  filter: drop-shadow(0 0 20px rgba(212,175,55,0.5)) drop-shadow(0 0 40px rgba(212,175,55,0.2));
+  animation: eidMoonFloat 4s ease-in-out infinite;
+}
+@keyframes eidMoonFloat {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Stars */
+.eid-stars {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: 28px;
+}
+.eid-star {
+  position: absolute;
+  border-radius: 50%;
+  background: #d4af37;
+  animation: eidStarTwinkle var(--dur,2s) ease-in-out var(--delay,0s) infinite;
+}
+@keyframes eidStarTwinkle {
+  0%,100% { opacity:0.2; transform:scale(1); }
+  50% { opacity:1; transform:scale(1.4); }
+}
+
+/* Text */
+.eid-eyebrow {
+  font-family: var(--font-ui);
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(212,175,55,0.7);
+  margin-bottom: 0.6rem;
+}
+
+.eid-title {
+  font-family: var(--font-head);
+  font-size: clamp(2.6rem, 10vw, 3.4rem);
+  font-weight: 900;
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+  background: linear-gradient(135deg, #f5c842 0%, #ffe89a 35%, #d4af37 55%, #ffe89a 75%, #f5c842 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+  margin-bottom: 0.2rem;
+}
+
+.eid-subtitle {
+  font-family: var(--font-head);
+  font-size: clamp(1.6rem, 6vw, 2.1rem);
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: rgba(212,175,55,0.45);
+  -webkit-text-stroke: 1px rgba(212,175,55,0.35);
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 1.2rem;
+}
+
+.eid-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 auto 1.2rem;
+  max-width: 280px;
+  opacity: 0.5;
+}
+.eid-divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #d4af37, transparent);
+}
+.eid-divider-icon {
+  font-size: 0.7rem;
+  color: #d4af37;
+}
+
+.eid-message {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  line-height: 1.65;
+  color: rgba(232,236,244,0.6);
+  margin-bottom: 1.6rem;
+  padding: 0 0.5rem;
+}
+
+.eid-arabic {
+  font-size: 1.35rem;
+  color: rgba(212,175,55,0.8);
+  margin-bottom: 0.3rem;
+  line-height: 1.4;
+}
+
+/* Dismiss button */
+.eid-dismiss {
+  width: 100%;
+  padding: 0.9rem 1.5rem;
+  background: linear-gradient(135deg, rgba(212,175,55,0.15) 0%, rgba(212,175,55,0.08) 100%);
+  border: 1px solid rgba(212,175,55,0.3);
+  border-radius: 100px;
+  color: #d4af37;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.eid-dismiss:hover {
+  background: linear-gradient(135deg, rgba(212,175,55,0.25) 0%, rgba(212,175,55,0.15) 100%);
+  border-color: rgba(212,175,55,0.55);
+  box-shadow: 0 0 20px rgba(212,175,55,0.15);
+  transform: translateY(-1px);
+}
+.eid-dismiss:active { transform: scale(0.97); }
+
+/* Lantern decorations */
+.eid-lanterns {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  pointer-events: none;
+}
+.eid-lantern {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0.25;
+  animation: eidLanternSway 3s ease-in-out infinite;
+}
+.eid-lantern:nth-child(2) { animation-delay: 0.8s; }
+@keyframes eidLanternSway {
+  0%,100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+</style>
+
+<div id="eid-overlay">
+  <div class="eid-card">
+    <!-- Stars -->
+    <div class="eid-stars">
+      <div class="eid-star" style="width:2px;height:2px;top:15%;left:8%;--dur:2.1s;--delay:0s;"></div>
+      <div class="eid-star" style="width:3px;height:3px;top:22%;left:15%;--dur:2.8s;--delay:0.3s;"></div>
+      <div class="eid-star" style="width:2px;height:2px;top:10%;left:82%;--dur:1.9s;--delay:0.6s;"></div>
+      <div class="eid-star" style="width:3px;height:3px;top:18%;left:88%;--dur:2.5s;--delay:0.1s;"></div>
+      <div class="eid-star" style="width:2px;height:2px;top:70%;left:5%;--dur:3.1s;--delay:0.9s;"></div>
+      <div class="eid-star" style="width:2px;height:2px;top:65%;left:92%;--dur:2.3s;--delay:0.4s;"></div>
+      <div class="eid-star" style="width:3px;height:3px;top:82%;left:20%;--dur:2.7s;--delay:0.7s;"></div>
+      <div class="eid-star" style="width:2px;height:2px;top:78%;left:75%;--dur:2s;--delay:0.2s;"></div>
+      <div class="eid-star" style="width:1.5px;height:1.5px;top:40%;left:3%;--dur:2.4s;--delay:1s;"></div>
+      <div class="eid-star" style="width:1.5px;height:1.5px;top:35%;left:96%;--dur:2.6s;--delay:0.5s;"></div>
+    </div>
+
+    <!-- Corner ornaments -->
+    <svg class="eid-corner eid-corner-tl" viewBox="0 0 60 60" fill="none">
+      <path d="M2 2 Q30 2 58 2 Q58 30 58 58" stroke="#d4af37" stroke-width="1.5" fill="none"/>
+      <path d="M2 2 L12 12 M2 15 L10 15 M15 2 L15 10" stroke="#d4af37" stroke-width="1" fill="none"/>
+      <circle cx="2" cy="2" r="2" fill="#d4af37"/>
+    </svg>
+    <svg class="eid-corner eid-corner-tr" viewBox="0 0 60 60" fill="none">
+      <path d="M2 2 Q30 2 58 2 Q58 30 58 58" stroke="#d4af37" stroke-width="1.5" fill="none"/>
+      <path d="M2 2 L12 12 M2 15 L10 15 M15 2 L15 10" stroke="#d4af37" stroke-width="1" fill="none"/>
+      <circle cx="2" cy="2" r="2" fill="#d4af37"/>
+    </svg>
+    <svg class="eid-corner eid-corner-bl" viewBox="0 0 60 60" fill="none">
+      <path d="M2 2 Q30 2 58 2 Q58 30 58 58" stroke="#d4af37" stroke-width="1.5" fill="none"/>
+      <path d="M2 2 L12 12 M2 15 L10 15 M15 2 L15 10" stroke="#d4af37" stroke-width="1" fill="none"/>
+      <circle cx="2" cy="2" r="2" fill="#d4af37"/>
+    </svg>
+    <svg class="eid-corner eid-corner-br" viewBox="0 0 60 60" fill="none">
+      <path d="M2 2 Q30 2 58 2 Q58 30 58 58" stroke="#d4af37" stroke-width="1.5" fill="none"/>
+      <path d="M2 2 L12 12 M2 15 L10 15 M15 2 L15 10" stroke="#d4af37" stroke-width="1" fill="none"/>
+      <circle cx="2" cy="2" r="2" fill="#d4af37"/>
+    </svg>
+
+    <!-- Glow -->
+    <div class="eid-glow"></div>
+
+    <!-- Lanterns at top -->
+    <div class="eid-lanterns">
+      <div class="eid-lantern">
+        <svg width="16" height="28" viewBox="0 0 16 28" fill="none">
+          <rect x="5" y="0" width="1" height="4" fill="#d4af37"/>
+          <rect x="3" y="4" width="10" height="16" rx="5" fill="#d4af37" opacity="0.8"/>
+          <rect x="5" y="20" width="1" height="4" fill="#d4af37"/>
+          <ellipse cx="5.5" cy="14" rx="1" ry="6" fill="rgba(255,232,154,0.3)"/>
+        </svg>
+      </div>
+      <div class="eid-lantern">
+        <svg width="16" height="28" viewBox="0 0 16 28" fill="none">
+          <rect x="5" y="0" width="1" height="4" fill="#d4af37"/>
+          <rect x="3" y="4" width="10" height="16" rx="5" fill="#d4af37" opacity="0.8"/>
+          <rect x="5" y="20" width="1" height="4" fill="#d4af37"/>
+          <ellipse cx="5.5" cy="14" rx="1" ry="6" fill="rgba(255,232,154,0.3)"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Crescent Moon -->
+    <div class="eid-moon-wrap" style="margin-top:0.75rem;">
+      <div class="eid-moon-ring eid-moon-ring-2"></div>
+      <div class="eid-moon-ring"></div>
+      <svg class="eid-moon-svg" viewBox="0 0 68 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="moonGrad" cx="35%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#ffe89a"/>
+            <stop offset="50%" stop-color="#f5c842"/>
+            <stop offset="100%" stop-color="#b8860b"/>
+          </radialGradient>
+        </defs>
+        <!-- Crescent -->
+        <path d="M34 8C20.745 8 10 18.745 10 32C10 45.255 20.745 56 34 56C40.5 56 46.4 53.4 50.7 49.1C47.4 50.3 43.8 51 40 51C26.745 51 16 40.255 16 27C16 19.5 19.3 12.8 24.5 8.3C27.5 8.1 30.7 8 34 8Z" fill="url(#moonGrad)"/>
+        <!-- Star 1 -->
+        <path d="M52 18L53.2 21.6L57 22L54.1 24.6L55 28.5L52 26.4L49 28.5L49.9 24.6L47 22L50.8 21.6Z" fill="#ffe89a" opacity="0.9"/>
+        <!-- Star 2 small -->
+        <path d="M43 10L43.7 12.1L46 12.4L44.2 14L44.8 16.2L43 15L41.2 16.2L41.8 14L40 12.4L42.3 12.1Z" fill="#ffe89a" opacity="0.7"/>
+      </svg>
+    </div>
+
+    <!-- Eyebrow -->
+    <div class="eid-eyebrow">✦ Ratataa League Wishes ✦</div>
+
+    <!-- Main title -->
+    <div class="eid-arabic">عيد مبارك</div>
+    <div class="eid-title">EID</div>
+    <div class="eid-title" style="margin-top:-0.1rem">MUBARAK</div>
+    <div class="eid-subtitle">1446 AH</div>
+
+    <!-- Divider -->
+    <div class="eid-divider">
+      <div class="eid-divider-line"></div>
+      <div class="eid-divider-icon">☽ ✦ ☾</div>
+      <div class="eid-divider-line"></div>
+    </div>
+
+    <!-- Message -->
+    <p class="eid-message">
+      Wishing you and your loved ones a blessed and joyful Eid.<br>
+      May this celebration bring peace, happiness,<br>and endless blessings to all. 🌙
+    </p>
+
+    <!-- CTA -->
+    <button class="eid-dismiss" onclick="dismissEid()">
+      <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+      </svg>
+      Eid Mubarak — Enter the League
+    </button>
+  </div>
+</div>
+
+<script>
+function dismissEid() {
+  const overlay = document.getElementById('eid-overlay');
+  overlay.classList.add('closing');
+  setTimeout(() => { overlay.style.display = 'none'; }, 480);
+}
+// Tap outside to dismiss
+document.getElementById('eid-overlay').addEventListener('click', function(e) {
+  if (e.target === this) dismissEid();
+});
 </script>
 
 <!-- ============================================================
