@@ -13,10 +13,13 @@ body {
   text-align:center;
 }
 
+/* Header */
 h1 {
   padding:20px;
+  font-size:28px;
 }
 
+/* Button */
 button {
   padding:10px 20px;
   border:none;
@@ -25,8 +28,14 @@ button {
   color:white;
   cursor:pointer;
   margin-bottom:20px;
+  font-weight:bold;
 }
 
+button:hover {
+  background:#16a34a;
+}
+
+/* Players Grid */
 .players {
   display:grid;
   grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
@@ -34,20 +43,29 @@ button {
   padding:20px;
 }
 
+/* Card Design */
 .card {
-  background:rgba(255,255,255,0.1);
+  background:rgba(255,255,255,0.08);
   padding:20px;
-  border-radius:10px;
+  border-radius:12px;
   transition:0.3s;
 }
 
 .card:hover {
-  transform:scale(1.05);
+  transform:scale(1.07);
+  background:rgba(255,255,255,0.15);
 }
 
+/* Leaderboard */
 ul {
   list-style:none;
   padding:0;
+  margin-bottom:30px;
+}
+
+li {
+  padding:8px;
+  font-size:18px;
 }
 </style>
 
@@ -55,27 +73,29 @@ ul {
 
 <body>
 
-<h1>RATATAA 🔥</h1>
+<h1>🔥 RATATAA LEAGUE 🔥</h1>
 
-<button onclick="showMessage()">Click Me 🔥</button>
+<button onclick="showMessage()">Enter League</button>
 
 <h2>Players</h2>
 
 <div class="players">
-  <div class="card">Sahin</div>
-  <div class="card">Mahashin</div>
-  <div class="card">Nasim</div>
-  <div class="card">Khokan</div>
+  <div class="card">Sahin<br>🔥 Leader</div>
+  <div class="card">Mahashin<br>⚡ Attacker</div>
+  <div class="card">Nasim<br>🎯 Sniper</div>
+  <div class="card">Khokan<br>🛡 Defender</div>
 </div>
 
-<h2>Leaderboard</h2>
+<h2>🏆 Leaderboard</h2>
 <ul id="board"></ul>
 
 <script>
+// Welcome Button
 function showMessage(){
   alert("Welcome to RATATAA LEAGUE 🔥");
 }
 
+// Player Scores
 const players = [
   {name:"Sahin", score:120},
   {name:"Mahashin", score:95},
@@ -83,13 +103,15 @@ const players = [
   {name:"Khokan", score:80}
 ];
 
+// Sort leaderboard
 players.sort((a,b)=>b.score-a.score);
 
+// Show leaderboard
 const board = document.getElementById("board");
 
 players.forEach((p,i)=>{
   const li = document.createElement("li");
-  li.innerText = (i+1)+". "+p.name+" - "+p.score;
+  li.innerText = (i+1) + ". " + p.name + " - " + p.score;
   board.appendChild(li);
 });
 </script>
