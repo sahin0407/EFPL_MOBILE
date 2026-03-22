@@ -1,124 +1,3045 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" class="scroll-smooth">
 <head>
-<meta charset="UTF-8">
-<title>RATATAA LEAGUE</title>
+<meta charset="UTF-8" />
 
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
+<!-- App version — change this every commit -->
+<meta name="app-version" content="1.0.5">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+
+<!-- PWA -->
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Ratataa League">
+<meta name="theme-color" content="#080810">
+
+<title>RATATAA LEAGUE — Where Legends Collide</title>
+<script src="https://cdn.tailwindcss.com?v=2"></script>
 <style>
-body {
-  margin:0;
-  font-family: Arial;
-  background: linear-gradient(135deg, #0f172a, #020617);
-  color:white;
-  text-align:center;
-}
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;0,9..40,900;1,9..40,400&display=swap');
 
-/* Title */
-h1 {
-  padding:20px;
-  font-size:32px;
-}
+  /* ============================================================
+     RATATAA LEAGUE — Core CSS
+     Custom properties, animations, glassmorphism, typography
+     ============================================================ */
 
-/* Button */
-button {
-  padding:12px 25px;
-  border:none;
-  border-radius:30px;
-  background:linear-gradient(45deg,#22c55e,#4ade80);
-  color:white;
-  cursor:pointer;
-  font-weight:bold;
-  transition:0.3s;
-}
+  :root {
+    --bg-base:       #080810;
+    --bg-card:       rgba(255,255,255,0.04);
+    --bg-card-hover: rgba(255,255,255,0.07);
+    --border:        rgba(255,255,255,0.08);
+    --border-hover:  rgba(99,102,241,0.5);
+    --indigo:        #6366f1;
+    --indigo-dim:    rgba(99,102,241,0.15);
+    --gold:          #eab308;
+    --gold-dim:      rgba(234,179,8,0.15);
+    --white:         #f8fafc;
+    --muted:         #64748b;
+    --danger:        #ef4444;
+    --success:       #22c55e;
+    --font-display:  'Bebas Neue', 'Impact', sans-serif;
+    --font-body:     'DM Sans', 'Segoe UI', system-ui, sans-serif;
+  }
 
-button:hover {
-  transform:scale(1.1);
-}
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* Players */
-.players {
-  display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
-  gap:20px;
-  padding:20px;
-}
+  html { background: var(--bg-base); color: var(--white); font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
 
-/* Cards */
-.card {
-  background: rgba(255,255,255,0.08);
-  padding:25px;
-  border-radius:15px;
-  transition:0.4s;
-  box-shadow:0 0 0 transparent;
-}
+  body { background: var(--bg-base); min-height: 100vh; overflow-x: clip; }
 
-.card:hover {
-  transform: translateY(-10px) scale(1.05);
-  box-shadow:0 0 20px rgba(34,197,94,0.5);
-}
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg-base); }
+  ::-webkit-scrollbar-thumb { background: var(--indigo); border-radius: 4px; }
 
-/* Leaderboard */
-ul {
-  list-style:none;
-  padding:0;
-}
+  /* ── Display font ── */
+  .font-display { font-family: var(--font-display); letter-spacing: 0.04em; }
 
-li {
-  background:rgba(255,255,255,0.08);
-  margin:10px auto;
-  padding:12px;
-  border-radius:10px;
-  width:200px;
-  transition:0.3s;
-}
+  /* ── Glassmorphism card ── */
+  .glass {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    transition: all 0.3s ease;
+  }
+  .glass:hover { background: var(--bg-card-hover); border-color: var(--border-hover); }
 
-li:hover {
-  background:rgba(255,255,255,0.15);
-  transform:scale(1.05);
-}
+  /* ── Gradient orb background ── */
+  .orb-container { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.18;
+    animation: orb-float 12s ease-in-out infinite;
+  }
+  .orb-1 { width: 600px; height: 600px; background: radial-gradient(circle, #6366f1, transparent); top: -15%; left: 20%; animation-delay: 0s; }
+  .orb-2 { width: 400px; height: 400px; background: radial-gradient(circle, #eab308, transparent); bottom: 0; right: 5%; animation-delay: -5s; }
+  .orb-3 { width: 300px; height: 300px; background: radial-gradient(circle, #7c3aed, transparent); top: 40%; left: -5%; animation-delay: -3s; }
+
+  @keyframes orb-float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(20px, -30px) scale(1.05); }
+    66% { transform: translate(-15px, 20px) scale(0.95); }
+  }
+
+  /* ── Shimmer on gold text ── */
+  .gold-shimmer {
+    background: linear-gradient(90deg, #eab308 0%, #fde68a 45%, #eab308 55%, #ca8a04 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shimmer 4s linear infinite;
+  }
+  @keyframes shimmer { to { background-position: 200% center; } }
+
+  /* ── Indigo glow button ── */
+  .btn-indigo {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-indigo::after { content:''; position:absolute; inset:0; background:linear-gradient(135deg,rgba(255,255,255,0.1),transparent); opacity:0; transition:opacity 0.2s; }
+  .btn-indigo:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(99,102,241,0.45); }
+  .btn-indigo:hover::after { opacity:1; }
+  .btn-indigo:active { transform: translateY(0); }
+
+  .btn-gold {
+    background: linear-gradient(135deg, #eab308, #ca8a04);
+    color: #000;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .btn-gold:hover { transform: translateY(-1px); box-shadow: 0 8px 30px rgba(234,179,8,0.4); }
+
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+  .btn-ghost:hover { border-color: var(--indigo); color: var(--white); }
+
+  /* ── Nav ── */
+  #top-nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(8,8,16,0.85);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    transition: all 0.3s;
+  }
+  .nav-link {
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .nav-link:hover, .nav-link.active { color: var(--white); background: var(--indigo-dim); }
+  .nav-link.active { color: var(--indigo); }
+
+  /* ── Bottom mobile nav ── */
+  #bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(8,8,16,0.97);
+    border-top: 1px solid var(--border);
+    backdrop-filter: blur(24px);
+    display: flex;
+    padding: 0.4rem 0 calc(0.4rem + env(safe-area-inset-bottom));
+  }
+  .bnav-item {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    gap: 2px; cursor: pointer; padding: 0.35rem 0;
+    color: var(--muted); font-size: 0.55rem; letter-spacing: 0.04em; text-transform: uppercase;
+    transition: color 0.2s; background: none; border: none; outline: none;
+  }
+  .bnav-item.active { color: var(--indigo); }
+  .bnav-item svg { width: 18px; height: 18px; }
+
+  /* ── Sections ── */
+  .section { display: none; }
+  .section.active { display: block; animation: fadeUp 0.35s ease both; }
+
+  /* ── Table ── */
+  .league-table { width: 100%; border-collapse: collapse; }
+  .league-table th {
+    font-size: 0.6rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); padding: 0.6rem 0.25rem; text-align: center; border-bottom: 1px solid var(--border);
+  }
+  .league-table th:first-child { text-align: left; padding-left: 0.5rem; }
+  .league-table td { padding: 0.7rem 0.25rem; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.8rem; vertical-align: middle; }
+  .league-table td:first-child { text-align: left; padding-left: 0.5rem; }
+  .league-table tr:last-child td { border-bottom: none; }
+  .league-table tbody tr { transition: background 0.2s; }
+  .league-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+
+  /* rank badges */
+  .rank-1 { color: var(--gold); }
+  .rank-2 { color: #94a3b8; }
+  .rank-3 { color: #cd7f32; }
+
+  /* ── Fixture / Result cards ── */
+  .fixture-card {
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    align-items: center; gap: 1rem;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.25s;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+  .fixture-card:hover { border-color: var(--border-hover); background: var(--bg-card-hover); transform: translateY(-1px); }
+  .fixture-card-played:hover { border-color: rgba(234,179,8,0.3); box-shadow: 0 4px 20px rgba(234,179,8,0.08); }
+  .fixture-card-upcoming { cursor: default !important; }
+  .fixture-card-upcoming:hover { transform: none !important; }
+
+  /* ── Score badge ── */
+  .score-badge {
+    display: flex; align-items: center; gap: 0.4rem;
+    background: rgba(255,255,255,0.06); border-radius: 8px;
+    padding: 0.35rem 0.65rem; font-family: var(--font-display);
+    font-size: 1.4rem; letter-spacing: 0.05em; white-space: nowrap;
+  }
+
+  /* ── Fixture center column ── */
+  .fixture-center {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 5px; min-width: 80px;
+  }
+  .fixture-center .pill {
+    white-space: nowrap; flex-shrink: 0;
+  }
+
+  /* ── Status pill ── */
+  .pill {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    font-size: 0.6rem; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 20px;
+  }
+  .pill-upcoming { background: rgba(99,102,241,0.15); color: var(--indigo); }
+  .pill-played { background: rgba(34,197,94,0.15); color: var(--success); }
+
+  /* ── Modal ── */
+  .modal-backdrop {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 1rem;
+    opacity: 0; transition: opacity 0.25s;
+    pointer-events: none;
+  }
+  .modal-backdrop.open { opacity: 1; pointer-events: all; }
+  .modal-box {
+    background: #0f0f1a;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    max-width: 520px; width: 100%;
+    max-height: 90vh; overflow-y: auto;
+    transform: scale(0.92) translateY(20px);
+    transition: transform 0.3s ease;
+    position: relative;
+  }
+  .modal-backdrop.open .modal-box { transform: scale(1) translateY(0); }
+
+  /* ── Admin ── */
+  #admin-view { display: none; }
+  #admin-view.active { display: flex; }
+
+  /* ── Input ── */
+  .input-field {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.6rem 0.875rem;
+    color: var(--white);
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  .input-field:focus { border-color: var(--indigo); }
+  .input-field::placeholder { color: var(--muted); }
+
+  /* ── Stat box ── */
+  .stat-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    display: flex; flex-direction: column; gap: 0.25rem;
+  }
+  .stat-box .val { font-family: var(--font-display); font-size: 2rem; letter-spacing: 0.03em; color: var(--white); }
+  .stat-box .lbl { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+
+  /* ── Player avatar ── */
+  .player-avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display); font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  /* ── Progress bar ── */
+  .prog-bar { height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+  .prog-fill { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+
+  /* ── Fade in ── */
+  @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:translateY(0); } }
+  .fade-up { animation: fadeUp 0.4s ease forwards; }
+
+  @keyframes pulse-dot { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+  .pulse-dot { animation: pulse-dot 1.5s ease-in-out infinite; }
+
+  /* ── Admin sidebar (desktop only) ── */
+  #admin-sidebar {
+    width: 220px; flex-shrink: 0;
+    background: rgba(0,0,0,0.4);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    padding: 1.5rem 0;
+  }
+  .sidebar-item {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 0.7rem 1.25rem; width: 100%;
+    cursor: pointer; color: var(--muted); font-size: 0.85rem; font-weight: 500;
+    transition: all 0.2s;
+    background: none;
+    border: none;
+    border-left: 2px solid transparent;
+    text-decoration: none; text-align: left;
+  }
+  .sidebar-item:hover { color: var(--white); background: rgba(255,255,255,0.04); }
+  .sidebar-item.active { color: var(--indigo); border-left-color: var(--indigo); background: var(--indigo-dim); }
+
+  /* ── Admin bottom tab bar (mobile only) ── */
+  #admin-tabbar {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 150;
+    background: rgba(5,5,15,0.97);
+    border-top: 1px solid var(--border);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    display: none;
+    padding: 0.4rem 0 calc(0.4rem + env(safe-area-inset-bottom));
+  }
+  .admin-tab {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    gap: 3px; cursor: pointer; padding: 0.45rem 0;
+    color: var(--muted); font-size: 0.58rem; letter-spacing: 0.07em;
+    text-transform: uppercase; font-weight: 600; transition: color 0.2s;
+    background: none; border: none; outline: none;
+  }
+  .admin-tab svg { width: 20px; height: 20px; }
+  .admin-tab.active { color: var(--indigo); }
+
+  /* ── Mobile admin overrides ── */
+  @media(max-width:767px) {
+    #admin-sidebar { display: none !important; }
+    #admin-view.active #admin-tabbar { display: flex !important; }
+    #admin-body    { flex-direction: column !important; }
+    #admin-content-wrap { padding: 1rem !important; padding-bottom: 85px !important; }
+    #admin-topbar  { padding: 0.6rem 1rem !important; }
+    .admin-panel h2 { font-size: 1.8rem !important; }
+    .admin-panel p.subtitle { font-size: 0.75rem !important; margin-bottom: 1.25rem !important; }
+    .tools-grid { grid-template-columns: 1fr !important; }
+    .admin-match-row { padding: 0.75rem !important; gap: 0.5rem !important; }
+    .admin-match-score { min-width: 60px !important; padding: 0.3rem 0.5rem !important; }
+    .admin-match-name { font-size: 0.75rem !important; }
+    .admin-match-avatar { width: 28px !important; height: 28px !important; }
+  }
+
+  /* ── Toast ── */
+  #toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #1e1e2e; border: 1px solid var(--indigo); color: var(--white);
+    padding: 0.7rem 1.5rem; border-radius: 30px; font-size: 0.8rem; font-weight: 500;
+    z-index: 500; opacity: 0; transition: all 0.3s; pointer-events: none; white-space: nowrap;
+    box-shadow: 0 4px 24px rgba(99,102,241,0.25);
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  #toast.toast-error { border-color: var(--danger); box-shadow: 0 4px 24px rgba(239,68,68,0.25); }
+  #toast.toast-success { border-color: var(--success); box-shadow: 0 4px 24px rgba(34,197,94,0.2); }
+  /* On desktop, show toast above bottom edge; in admin, stay near bottom */
+  @media(min-width:768px) { #toast { bottom: 32px; } }
+
+  /* ── Focus visible (keyboard accessibility) ── */
+  button:focus-visible, input:focus-visible {
+    outline: 2px solid var(--indigo);
+    outline-offset: 2px;
+  }
+
+  /* ── Number input (score) ── */
+  input[type=number]::-webkit-inner-spin-button { opacity: 1; }
+
+  /* ── Divider ── */
+  .divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
+
+  /* ── Hero — Full-width banner with overlay text ── */
+  #hero-section {
+    padding-top: 56px;
+    position: relative;
+    background: var(--bg-base);
+  }
+
+  /* Banner container — height driven by the image itself */
+  .hero-banner {
+    position: relative;
+    width: 100%;
+    background: #000;
+    /* Let the image dictate height — no forced aspect ratio */
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    min-height: 260px;
+    overflow: hidden;
+  }
+
+  .hero-img {
+    /* Show the FULL image — no cropping ever */
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: contain;
+    max-height: 70vh;       /* never taller than 70% of screen */
+  }
+
+  /* Dark gradient over bottom of image so text reads clearly */
+  .hero-banner::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    height: 60%;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(8,8,16,0.6) 50%,
+      rgba(8,8,16,0.95) 100%
+    );
+    pointer-events: none;
+  }
+
+  /* Text sits at the bottom of the banner, over the gradient */
+  .hero-banner-text {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    padding: 1.25rem 1.25rem 1.5rem;
+    text-align: center;
+  }
+
+  /* Season badge */
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.9rem;
+    border-radius: 20px;
+    background: var(--indigo-dim);
+    border: 1px solid rgba(99,102,241,0.35);
+    margin-bottom: 0.5rem;
+  }
+
+  /* Below-banner content area */
+  .hero-below {
+    padding: 2rem 1.25rem 2.5rem;
+    text-align: center;
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  /* Desktop tweaks */
+  @media (min-width: 768px) {
+    #hero-section { padding-top: 64px; }
+
+    .hero-img {
+      max-height: 65vh;
+    }
+
+    .hero-banner-text {
+      padding: 2rem 4rem 2.5rem;
+    }
+
+    .hero-below {
+      padding: 2.5rem 2rem 3rem;
+      max-width: 680px;
+    }
+  }
+  
+
+  /* ── Glow text ── */
+  .glow-indigo { text-shadow: 0 0 40px rgba(99,102,241,0.5); }
+
+  /* responsive utils */
+  @media(max-width:640px) {
+    .hide-mobile { display: none !important; }
+    .fixture-card { grid-template-columns: 1fr auto 1fr; gap: 0.5rem; padding: 0.75rem; }
+  }
+  @media(min-width:768px) {
+    #bottom-nav { display: none; }
+  }
+  @media(max-width:767px) {
+    #top-nav .nav-links { display: none; }
+    main { padding-bottom: 80px; }
+  }
+
+  /* ── Table scroll wrapper ── */
+  .table-scroll { 
+    overflow-x: auto; 
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
+    max-width: 100%;
+  }
+  .table-scroll::-webkit-scrollbar { height: 3px; }
+  .table-scroll::-webkit-scrollbar-track { background: transparent; }
+  .table-scroll::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.4); border-radius: 3px; }
+
+  /* ── Avatar tab buttons ── */
+  .avatar-tab-btn { background: transparent; border: none; color: var(--muted); cursor: pointer; }
+  .avatar-tab-btn.active-tab { background: var(--indigo-dim); color: var(--indigo); }
+
+  /* ── Avatar card in admin panel ── */
+  .avatar-admin-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: border-color 0.2s;
+  }
+  .avatar-admin-card:hover { border-color: var(--border-hover); }
+
+  /* ============================================================
+     REAL APP FEEL — Targeted, scroll-safe
+     ============================================================ */
+
+  /* Text select block — only non-interactive elements */
+  body, p, h1, h2, h3, h4, h5, h6, span, div, label, li {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Input fields — keep selectable */
+  input, textarea, [contenteditable] {
+    -webkit-user-select: text !important;
+    user-select: text !important;
+    -webkit-touch-callout: default !important;
+  }
+
+  /* touch-action ONLY on buttons — not on scroll containers */
+  button, .btn-indigo, .btn-gold, .sidebar-item, .admin-tab,
+  .bnav-item, .nav-link, .pill {
+    touch-action: manipulation;
+  }
+
+  /* Disable overscroll ONLY on body — not inner scrollable divs */
+  html { overscroll-behavior-y: none; }
+
+  /* Sharp fonts */
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Button press feel */
+  button:active, .sidebar-item:active, .admin-tab:active, .bnav-item:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+    transition: transform 0.08s ease, opacity 0.08s ease;
+  }
+
+  /* Image drag block */
+  img { -webkit-user-drag: none; pointer-events: none; }
+  button img, [onclick] img, label img { pointer-events: auto; }
+
+  /* Safe area for notch */
+  #bottom-nav, #admin-tabbar {
+    padding-bottom: max(env(safe-area-inset-bottom), 8px);
+  }
+
+  /* Update banner */
+  #update-banner {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 9999;
+    background: linear-gradient(90deg, #4f46e5, #6366f1);
+    color: white; padding: 10px 16px;
+    font-size: 0.8rem; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transform: translateY(-100%);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(99,102,241,0.4);
+  }
+  #update-banner.show { transform: translateY(0); }
+  #update-banner .upd-btn {
+    background: white; color: #4f46e5; border: none;
+    border-radius: 20px; padding: 3px 12px;
+    font-size: 0.72rem; font-weight: 700; cursor: pointer; flex-shrink: 0;
+  }
+  #update-banner .upd-close {
+    opacity: 0.7; font-size: 1.2rem; line-height: 1; padding: 0 4px;
+  }
+
+  /* ============================================================
+     SPECIAL — League Leader (Points Table #1)
+     ============================================================ */
+  .leader-row {
+    background: linear-gradient(90deg, rgba(234,179,8,0.10), rgba(234,179,8,0.04), transparent) !important;
+    position: relative;
+  }
+  .leader-row td:first-child {
+    border-left: 2px solid var(--gold);
+  }
+  @keyframes leader-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(234,179,8,0); }
+    50%       { box-shadow: 0 0 18px 2px rgba(234,179,8,0.18); }
+  }
+  .leader-crown-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: linear-gradient(135deg, rgba(234,179,8,0.2), rgba(234,179,8,0.08));
+    border: 1px solid rgba(234,179,8,0.45);
+    border-radius: 20px;
+    padding: 1px 7px;
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+    white-space: nowrap;
+    animation: leader-pulse 2.5s ease-in-out infinite;
+  }
+
+  /* ============================================================
+     SPECIAL — Top Scorer Fire Card
+     ============================================================ */
+  @keyframes fire-glow {
+    0%, 100% {
+      box-shadow: 0 0 12px rgba(234,179,8,0.3), 0 0 28px rgba(251,146,60,0.2), 0 4px 24px rgba(239,68,68,0.15);
+      border-color: rgba(234,179,8,0.55);
+    }
+    33% {
+      box-shadow: 0 0 20px rgba(251,146,60,0.5), 0 0 45px rgba(234,179,8,0.3), 0 4px 32px rgba(239,68,68,0.25);
+      border-color: rgba(251,146,60,0.8);
+    }
+    66% {
+      box-shadow: 0 0 16px rgba(239,68,68,0.4), 0 0 36px rgba(251,146,60,0.3), 0 4px 28px rgba(234,179,8,0.2);
+      border-color: rgba(239,68,68,0.6);
+    }
+  }
+  @keyframes fire-shimmer {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  .top-scorer-card {
+    animation: fire-glow 2.8s ease-in-out infinite !important;
+    position: relative;
+    overflow: hidden;
+  }
+  .top-scorer-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg,
+      rgba(234,179,8,0.07) 0%,
+      rgba(251,146,60,0.06) 35%,
+      rgba(239,68,68,0.05) 65%,
+      rgba(234,179,8,0.07) 100%);
+    background-size: 300% 300%;
+    animation: fire-shimmer 3.5s ease infinite;
+    pointer-events: none;
+    border-radius: inherit;
+    z-index: 0;
+  }
+  .top-scorer-card > * { position: relative; z-index: 1; }
+
+  .fire-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: linear-gradient(135deg, rgba(251,146,60,0.25), rgba(234,179,8,0.15));
+    border: 1px solid rgba(251,146,60,0.5);
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #fb923c;
+    white-space: nowrap;
+  }
+
+  /* ── Hero "Currently Leading" mini-card ── */
+  .hero-leader-card {
+    background: linear-gradient(135deg, rgba(234,179,8,0.12), rgba(234,179,8,0.04));
+    border: 1px solid rgba(234,179,8,0.35);
+    border-radius: 14px;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    animation: leader-pulse 2.5s ease-in-out infinite;
+  }
+  .hero-fire-card {
+    background: linear-gradient(135deg, rgba(251,146,60,0.12), rgba(234,179,8,0.06));
+    border: 1px solid rgba(251,146,60,0.35);
+    border-radius: 14px;
+    padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    animation: fire-glow 2.8s ease-in-out infinite;
+  }
+
+  /* ============================================================
+     SKELETON SCREEN — shimmer placeholders while Firebase loads
+     ============================================================ */
+  @keyframes skel-sweep {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  .skel {
+    background: rgba(255,255,255,0.06);
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+  }
+  .skel::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.10) 50%, transparent 100%);
+    animation: skel-sweep 1.4s ease-in-out infinite;
+  }
+  .skel-circle { border-radius: 50% !important; }
+  .skel-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.85rem 0.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .skel-row:last-child { border-bottom: none; }
+
+  /* ============================================================
+     SHARE AS IMAGE — hidden canvas overlay
+     ============================================================ */
+  #share-overlay {
+    position: fixed; inset: 0; z-index: 600;
+    background: rgba(0,0,0,0.88);
+    backdrop-filter: blur(8px);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 1.5rem; gap: 1rem;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s;
+  }
+  #share-overlay.open { opacity: 1; pointer-events: all; }
+  #share-preview-img {
+    max-width: 340px; width: 100%;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    display: block;
+  }
+  .share-btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+  .share-btn {
+    display: flex; align-items: center; gap: 0.5rem;
+    padding: 0.7rem 1.4rem; border-radius: 30px;
+    font-size: 0.82rem; font-weight: 700;
+    cursor: pointer; transition: all 0.2s; border: none;
+    letter-spacing: 0.03em;
+  }
+  .share-btn-wa  { background: #25D366; color: #fff; }
+  .share-btn-wa:hover  { background: #1ebe5a; transform: translateY(-1px); }
+  .share-btn-dl  { background: linear-gradient(135deg,#6366f1,#4f46e5); color: #fff; }
+  .share-btn-dl:hover  { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(99,102,241,0.4); }
+  .share-btn-cls { background: rgba(255,255,255,0.08); color: var(--white); border: 1px solid var(--border); }
+  .share-btn-cls:hover { background: rgba(255,255,255,0.14); }
+
+  /* Hidden share canvas source — rendered off-screen */
+  #share-canvas-source {
+    position: fixed;
+    left: -9999px; top: -9999px;
+    width: 400px;
+    background: #080810;
+    border-radius: 20px;
+    padding: 0;
+    overflow: hidden;
+    font-family: 'DM Sans', system-ui, sans-serif;
+  }
+
 </style>
-
 </head>
-
 <body>
 
-<h1>🔥 RATATAA LEAGUE 🔥</h1>
-
-<button onclick="showMessage()">Enter League</button>
-
-<h2>Players</h2>
-
-<div class="players">
-  <div class="card">🔥 Sahin<br>Leader</div>
-  <div class="card">⚡ Mahashin<br>Attacker</div>
-  <div class="card">🎯 Nasim<br>Sniper</div>
-  <div class="card">🛡 Khokan<br>Defender</div>
+<!-- Update Banner -->
+<div id="update-banner">
+  <span>🔄 New update available!</span>
+  <button class="upd-btn" onclick="applyUpdate()">Update Now</button>
+  <span class="upd-close" onclick="dismissUpdate(event)">×</span>
 </div>
 
-<h2>🏆 Leaderboard</h2>
-<ul id="board"></ul>
 
+<!-- ============================================================
+     SHARE AS IMAGE OVERLAY
+     ============================================================ -->
+<div id="share-overlay">
+  <p class="text-xs font-semibold tracking-widest uppercase" style="color:var(--muted)">Share Image</p>
+  <img id="share-preview-img" src="" alt="Share preview"/>
+  <div class="share-btn-row">
+    <button class="share-btn share-btn-wa" onclick="shareToWhatsApp()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.136.565 4.14 1.548 5.873L0 24l6.336-1.524A11.938 11.938 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.869 9.869 0 01-5.031-1.378l-.36-.214-3.732.897.945-3.62-.235-.373A9.878 9.878 0 012.118 12C2.118 6.54 6.54 2.118 12 2.118c5.46 0 9.882 4.422 9.882 9.882 0 5.46-4.422 9.882-9.882 9.882z"/></svg>
+      WhatsApp
+    </button>
+    <button class="share-btn share-btn-dl" onclick="downloadShareImage()">
+      <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+      Download
+    </button>
+    <button class="share-btn share-btn-cls" onclick="closeShareOverlay()">✕ Close</button>
+  </div>
+</div>
+
+<!-- Hidden off-screen div used as canvas source -->
+<div id="share-canvas-source"></div>
+
+<!-- ============================================================
+     TOAST NOTIFICATION
+     ============================================================ -->
+<div id="toast">✓ Saved</div>
+
+<!-- ============================================================
+     TOP NAV (Desktop)
+     ============================================================ -->
+<nav id="top-nav">
+  <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+    <!-- Logo -->
+    <button onclick="showSection('home')" class="font-display text-xl tracking-widest hover:opacity-80 transition-opacity" style="color:var(--gold)">
+      RATATAA
+    </button>
+    <!-- Desktop Links -->
+    <div class="nav-links flex items-center gap-1">
+      <button class="nav-link active" data-section="home" onclick="showSection('home')">Home</button>
+      <button class="nav-link" data-section="fixtures" onclick="showSection('fixtures')">Fixtures</button>
+      <button class="nav-link" data-section="results" onclick="showSection('results')">Results</button>
+      <button class="nav-link" data-section="scorers" onclick="showSection('scorers')">Top Scorers</button>
+      <button class="nav-link" data-section="players" onclick="showSection('players')">Players</button>
+      <button class="nav-link" onclick="openLoginModal()" style="display:flex;align-items:center;gap:0.4rem;">
+        <svg style="width:14px;height:14px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+        Admin
+      </button>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-1.5">
+        <div class="w-2 h-2 rounded-full pulse-dot" style="background:var(--success)" title="Live data"></div>
+        <span class="text-xs font-semibold" style="color:var(--muted)" id="nav-live-label" title="Matches played / total">LIVE</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ============================================================
+     BOTTOM NAV (Mobile)
+     ============================================================ -->
+<nav id="bottom-nav">
+  <button class="bnav-item active" data-section="home" onclick="showSection('home')">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+    Home
+  </button>
+  <button class="bnav-item" data-section="fixtures" onclick="showSection('fixtures')">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+    Fixtures
+  </button>
+  <button class="bnav-item" data-section="results" onclick="showSection('results')">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+    Results
+  </button>
+  <button class="bnav-item" data-section="scorers" onclick="showSection('scorers')">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+    Scorers
+  </button>
+  <button class="bnav-item" data-section="players" onclick="showSection('players')">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+    Players
+  </button>
+  <button class="bnav-item" onclick="openLoginModal()">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+    Admin
+  </button>
+</nav>
+
+<!-- ============================================================
+     MAIN PUBLIC VIEW
+     ============================================================ -->
+<main id="public-view">
+
+  <!-- ── HOME ── -->
+  <div id="section-home" class="section active">
+
+    <!-- HERO -->
+    <section id="hero-section">
+
+      <!-- ── Full-width image banner with text overlay ── -->
+      <div class="hero-banner">
+        <img src="players.jpg?v=11" class="hero-img" alt="Ratataa League players" loading="eager">
+
+        <!-- Orbs behind everything inside banner -->
+        <div class="orb-container" style="z-index:1">
+          <div class="orb orb-1"></div>
+          <div class="orb orb-2"></div>
+          <div class="orb orb-3"></div>
+        </div>
+
+        <!-- Text overlay at the bottom of the banner -->
+        <div class="hero-banner-text fade-up">
+          <!-- Season badge -->
+          <div class="hero-badge" style="margin-bottom:0.5rem">
+            <span class="w-1.5 h-1.5 rounded-full pulse-dot" style="background:var(--indigo)"></span>
+            <span class="text-xs font-semibold tracking-widest uppercase" style="color:var(--indigo)">Season 2026</span>
+          </div>
+
+          <h1 class="font-display glow-indigo" style="font-size:clamp(3rem,11vw,7rem);line-height:0.88;color:var(--white)">
+            RATATAA<br><span class="gold-shimmer">LEAGUE</span>
+          </h1>
+        </div>
+      </div>
+
+      <!-- ── Content below the banner ── -->
+      <div class="hero-below fade-up" style="animation-delay:0.15s">
+        <p class="text-sm font-light tracking-widest uppercase mb-8" style="color:var(--muted)">Where Legends Collide</p>
+
+        <div class="flex flex-col items-center gap-3 w-full max-w-xs mx-auto">
+          <button onclick="showSection('fixtures')" class="btn-indigo w-full py-3.5 rounded-full text-sm font-semibold tracking-wider uppercase">
+            View Fixtures
+          </button>
+          <button onclick="document.getElementById('standings-anchor').scrollIntoView({behavior:'smooth'})" class="btn-ghost w-full py-3.5 rounded-full text-sm font-semibold tracking-wider uppercase">
+            Live Standings
+          </button>
+        </div>
+
+        <!-- Quick stats row -->
+        <div class="mt-10 grid grid-cols-3 gap-4 w-full max-w-xs mx-auto" id="hero-stats"></div>
+
+        <!-- ── Special: Leader + Top Scorer spotlight ── -->
+        <div class="mt-5 w-full max-w-xs mx-auto space-y-2.5" id="hero-specials"></div>
+      </div>
+
+    </section>
+
+    <!-- STANDINGS -->
+    <section id="standings-anchor" class="max-w-7xl mx-auto px-4 py-20">
+      <div class="flex items-end justify-between mb-8">
+        <div>
+          <p class="text-xs font-semibold tracking-widest uppercase mb-1" style="color:var(--indigo)">Live Table</p>
+          <h2 class="font-display text-5xl" style="color:var(--white)">STANDINGS</h2>
+        </div>
+        <button onclick="shareStandingsAsImage()" class="btn-ghost flex items-center gap-1.5 rounded-xl text-xs font-semibold flex-shrink-0" style="padding:0.45rem 0.85rem;border-color:rgba(99,102,241,0.35);color:var(--indigo)">
+          <svg style="width:13px;height:13px;flex-shrink:0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+          Share
+        </button>
+      </div>
+      <div class="glass rounded-2xl overflow-hidden" id="standings-table"></div>
+
+      <!-- League stats -->
+      <div class="mt-12">
+        <p class="text-xs font-semibold tracking-widest uppercase mb-4" style="color:var(--muted)">Tournament Stats</p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3" id="league-stats-boxes"></div>
+      </div>
+    </section>
+
+  </div><!-- /#section-home -->
+
+  <!-- ── FIXTURES ── -->
+  <div id="section-fixtures" class="section">
+    <div class="max-w-3xl mx-auto px-4 pt-28 pb-20">
+      <div class="mb-10">
+        <p class="text-xs font-semibold tracking-widest uppercase mb-1" style="color:var(--indigo)">Full Schedule</p>
+        <h2 class="font-display text-5xl" style="color:var(--white)">FIXTURES</h2>
+      </div>
+      <div id="fixtures-list" class="space-y-3"></div>
+    </div>
+  </div>
+
+  <!-- ── RESULTS ── -->
+  <div id="section-results" class="section">
+    <div class="max-w-3xl mx-auto px-4 pt-28 pb-20">
+      <div class="mb-10">
+        <p class="text-xs font-semibold tracking-widest uppercase mb-1" style="color:var(--gold)">Match Archive</p>
+        <h2 class="font-display text-5xl" style="color:var(--white)">RESULTS</h2>
+      </div>
+      <div id="results-list" class="space-y-3"></div>
+      <div id="no-results" class="text-center py-20 hidden" style="color:var(--muted)">
+        <p class="font-display text-3xl mb-2">NO RESULTS YET</p>
+        <p class="text-sm">Matches will appear here once played</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TOP SCORERS ── -->
+  <div id="section-scorers" class="section">
+    <div class="max-w-2xl mx-auto px-4 pt-28 pb-20">
+      <div class="mb-10">
+        <p class="text-xs font-semibold tracking-widest uppercase mb-1" style="color:var(--gold)">Golden Boot Race</p>
+        <h2 class="font-display text-5xl" style="color:var(--white)">TOP SCORERS</h2>
+      </div>
+      <div id="scorers-list" class="space-y-3"></div>
+    </div>
+  </div>
+
+  <!-- ── PLAYERS ── -->
+  <div id="section-players" class="section">
+    <div class="max-w-4xl mx-auto px-4 pt-28 pb-20">
+      <div class="mb-10">
+        <p class="text-xs font-semibold tracking-widest uppercase mb-1" style="color:var(--indigo)">The Four</p>
+        <h2 class="font-display text-5xl" style="color:var(--white)">PLAYERS</h2>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="players-grid"></div>
+    </div>
+  </div>
+
+</main><!-- /#public-view -->
+
+<!-- ============================================================
+     ADMIN LOGIN MODAL
+     ============================================================ -->
+<div id="login-modal" class="modal-backdrop">
+  <div class="modal-box p-8 max-w-sm" style="text-align:center">
+    <p class="text-xs tracking-widest uppercase mb-1" style="color:var(--indigo)">Access Control</p>
+    <h2 class="font-display text-3xl mb-6">ADMIN PORTAL</h2>
+    <div class="space-y-3 text-left">
+      <div>
+        <label class="block text-xs font-semibold tracking-wider uppercase mb-1.5" style="color:var(--muted)">Username</label>
+        <input id="login-user" type="text" class="input-field" placeholder="Username" autocomplete="off" onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()" />
+      </div>
+      <div>
+        <label class="block text-xs font-semibold tracking-wider uppercase mb-1.5" style="color:var(--muted)">Password</label>
+        <input id="login-pass" type="password" class="input-field" placeholder="Password" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()" />
+      </div>
+      <p id="login-error" class="text-xs hidden" style="color:var(--danger)">❌ Invalid credentials</p>
+      <button onclick="doLogin()" class="btn-indigo w-full py-3 rounded-xl text-sm font-semibold tracking-wider uppercase mt-2">
+        Enter
+      </button>
+      <button onclick="closeLoginModal()" class="btn-ghost w-full py-2.5 rounded-xl text-sm tracking-wider">
+        Cancel
+      </button>
+      <p class="text-xs mt-3" style="color:var(--muted);opacity:0.5">Tip: press <kbd style="background:rgba(255,255,255,0.08);padding:1px 5px;border-radius:4px;font-family:monospace">A</kbd> anywhere to open this panel</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     ADMIN VIEW  — Mobile-first layout
+     Top bar + bottom tab nav on mobile / sidebar on desktop
+     ============================================================ -->
+<div id="admin-view" class="min-h-screen" style="background:var(--bg-base)">
+
+  <!-- ── Admin Top Bar ── -->
+  <div id="admin-topbar" class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-5 py-3.5"
+       style="background:rgba(4,4,14,0.95);border-bottom:1px solid var(--border);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)">
+    <div class="flex items-center gap-2.5">
+      <span class="font-display text-xl tracking-widest" style="color:var(--gold)">RATATAA</span>
+      <span class="text-xs font-bold tracking-widest uppercase px-2 py-0.5 rounded-md"
+            style="background:var(--indigo-dim);color:var(--indigo)">Admin</span>
+    </div>
+    <button onclick="adminLogout()"
+            class="btn-ghost flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold">
+      <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+      </svg>
+      Logout
+    </button>
+  </div>
+
+  <!-- ── Inner flex: sidebar (desktop) + content ── -->
+  <div id="admin-body" class="flex" style="padding-top:56px;min-height:100vh">
+
+    <!-- Desktop Sidebar -->
+    <aside id="admin-sidebar">
+      <div class="px-5 mb-5">
+        <p class="text-xs font-semibold tracking-widest uppercase" style="color:var(--muted)">Command Center</p>
+      </div>
+      <button class="sidebar-item active" onclick="adminShowPanel('matches',this)">
+        <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+        </svg>
+        Matches
+      </button>
+      <button class="sidebar-item" onclick="adminShowPanel('standings',this)">
+        <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+        Standings
+      </button>
+      <button class="sidebar-item" onclick="adminShowPanel('tools',this)">
+        <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/>
+        </svg>
+        Tools
+      </button>
+      <button class="sidebar-item" onclick="adminShowPanel('avatars',this)">
+        <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        Players
+      </button>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div id="admin-content-wrap" class="flex-1 overflow-y-auto p-4 md:p-8">
+
+      <!-- ── MATCHES PANEL ── -->
+      <div id="admin-panel-matches" class="admin-panel">
+        <div class="mb-5">
+          <h2 class="font-display subtitle" style="font-size:2rem;color:var(--white)">MATCH CONTROL</h2>
+          <p class="text-xs mt-0.5 subtitle" style="color:var(--muted)">Tap any match to enter or update the score.</p>
+        </div>
+
+        <!-- Progress bar strip -->
+        <div class="glass rounded-xl p-4 mb-4 flex items-center gap-4">
+          <div class="flex-1">
+            <div class="flex justify-between text-xs mb-2" style="color:var(--muted)">
+              <span>Progress</span>
+              <span id="admin-progress-label">0 / 18</span>
+            </div>
+            <div class="prog-bar">
+              <div id="admin-progress-bar" class="prog-fill" style="width:0%;background:linear-gradient(90deg,var(--indigo),var(--gold))"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="admin-matches-list" class="space-y-2"></div>
+      </div>
+
+      <!-- ── STANDINGS PANEL ── -->
+      <div id="admin-panel-standings" class="admin-panel hidden">
+        <div class="mb-5">
+          <h2 class="font-display" style="font-size:2rem;color:var(--white)">LIVE STANDINGS</h2>
+          <p class="text-xs mt-0.5" style="color:var(--muted)">Auto-updates after every score entry.</p>
+        </div>
+        <div class="glass rounded-2xl" id="admin-standings-table"></div>
+      </div>
+
+      <!-- ── TOOLS PANEL ── -->
+      <div id="admin-panel-tools" class="admin-panel hidden">
+        <div class="mb-5">
+          <h2 class="font-display" style="font-size:2rem;color:var(--white)">TOOLS</h2>
+          <p class="text-xs mt-0.5" style="color:var(--muted)">Data management and advanced controls.</p>
+        </div>
+
+        <div class="tools-grid grid grid-cols-1 gap-3">
+
+          <!-- Export -->
+          <div class="glass rounded-2xl p-5 flex items-center justify-between gap-4">
+            <div>
+              <p class="font-semibold text-sm">Export Data</p>
+              <p class="text-xs mt-0.5" style="color:var(--muted)">Download full tournament JSON</p>
+            </div>
+            <button onclick="exportData()" class="btn-indigo px-5 py-2.5 rounded-xl text-sm font-semibold flex-shrink-0">Export</button>
+          </div>
+
+          <!-- Import -->
+          <div class="glass rounded-2xl p-5 flex items-center justify-between gap-4">
+            <div>
+              <p class="font-semibold text-sm">Import Data</p>
+              <p class="text-xs mt-0.5" style="color:var(--muted)">Restore from JSON backup</p>
+            </div>
+            <label class="btn-ghost px-5 py-2.5 rounded-xl text-sm font-semibold cursor-pointer flex-shrink-0">
+              Import
+              <input type="file" accept=".json" class="hidden" onchange="importData(event)" />
+            </label>
+          </div>
+
+          <!-- Reset -->
+          <div class="glass rounded-2xl p-5 flex items-center justify-between gap-4">
+            <div>
+              <p class="font-semibold text-sm" style="color:var(--danger)">Reset Tournament</p>
+              <p class="text-xs mt-0.5" style="color:var(--muted)">Clears all scores, keeps fixtures</p>
+            </div>
+            <button onclick="confirmReset()" class="px-5 py-2.5 rounded-xl text-sm font-semibold flex-shrink-0"
+                    style="background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:var(--danger);cursor:pointer;transition:all 0.2s"
+                    onmouseover="this.style.background='rgba(239,68,68,0.28)'"
+                    onmouseout="this.style.background='rgba(239,68,68,0.15)'">Reset</button>
+          </div>
+
+          <!-- Debug -->
+          <div class="glass rounded-2xl p-5">
+            <div class="flex items-center justify-between gap-4">
+              <div>
+                <p class="font-semibold text-sm" style="color:var(--muted)">Debug Tools</p>
+                <p class="text-xs mt-0.5" style="color:var(--muted)">Reveal hidden controls</p>
+              </div>
+              <button onclick="revealDebug(this)" class="btn-ghost px-5 py-2.5 rounded-xl text-sm font-semibold flex-shrink-0">Reveal</button>
+            </div>
+            <div id="debug-tools" class="hidden mt-4 pt-4" style="border-top:1px solid var(--border)">
+              <button onclick="markAllPlayed()" class="w-full py-3 rounded-xl text-sm font-semibold"
+                      style="background:var(--gold-dim);border:1px solid rgba(234,179,8,0.3);color:var(--gold);cursor:pointer">
+                Mark All Played (Random Scores)
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ── AVATARS PANEL ── -->
+      <div id="admin-panel-avatars" class="admin-panel hidden">
+        <div class="mb-6">
+          <h2 class="font-display" style="font-size:2rem;color:var(--white)">PLAYER AVATARS</h2>
+          <p class="text-xs mt-0.5" style="color:var(--muted)">Upload a photo, pick an emoji, or set custom initials for each player.</p>
+        </div>
+        <div id="admin-avatars-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Mobile Bottom Tab Bar ── -->
+  <div id="admin-tabbar">
+    <button class="admin-tab active" onclick="adminShowPanel('matches',this)" id="atab-matches">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+      </svg>
+      Matches
+    </button>
+    <button class="admin-tab" onclick="adminShowPanel('standings',this)" id="atab-standings">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+      </svg>
+      Standings
+    </button>
+    <button class="admin-tab" onclick="adminShowPanel('tools',this)" id="atab-tools">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/>
+      </svg>
+      Tools
+    </button>
+    <button class="admin-tab" onclick="adminShowPanel('avatars',this)" id="atab-avatars">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+      </svg>
+      Players
+    </button>
+  </div>
+
+</div>
+
+<!-- ============================================================
+     AVATAR EDIT MODAL (Admin)
+     ============================================================ -->
+<div id="avatar-modal" class="modal-backdrop">
+  <div class="modal-box p-7 max-w-sm">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="font-display text-2xl">EDIT AVATAR</h3>
+      <button onclick="closeAvatarModal()" aria-label="Close" style="color:var(--muted);cursor:pointer;font-size:1.5rem;line-height:1">&times;</button>
+    </div>
+
+    <!-- Preview -->
+    <div class="flex flex-col items-center gap-2 mb-6">
+      <div id="avatar-preview-wrap"></div>
+      <p id="avatar-editing-name" class="font-display text-xl" style="color:var(--white)"></p>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex rounded-xl overflow-hidden mb-5" style="border:1px solid var(--border)">
+      <button class="avatar-tab-btn flex-1 py-2.5 text-xs font-semibold tracking-wider uppercase transition-all active-tab" data-tab="photo" onclick="switchAvatarTab('photo',this)">📷 Photo</button>
+      <button class="avatar-tab-btn flex-1 py-2.5 text-xs font-semibold tracking-wider uppercase transition-all" data-tab="emoji" onclick="switchAvatarTab('emoji',this)" style="border-left:1px solid var(--border);border-right:1px solid var(--border)">😀 Emoji</button>
+      <button class="avatar-tab-btn flex-1 py-2.5 text-xs font-semibold tracking-wider uppercase transition-all" data-tab="initials" onclick="switchAvatarTab('initials',this)">AB Text</button>
+    </div>
+
+    <!-- Photo Tab -->
+    <div id="avatar-tab-photo" class="avatar-tab-content">
+      <label class="block w-full py-10 rounded-xl text-center cursor-pointer transition-all"
+             style="border:2px dashed var(--border);color:var(--muted)"
+             onmouseover="this.style.borderColor='var(--indigo)';this.style.color='var(--white)'"
+             onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'"
+             id="avatar-drop-zone">
+        <div class="text-3xl mb-2">📁</div>
+        <p class="text-sm font-semibold">Tap to upload photo</p>
+        <p class="text-xs mt-1">JPG, PNG, WEBP — max 2MB</p>
+        <input type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="hidden" id="avatar-file-input" onchange="handleAvatarPhotoUpload(event)" />
+      </label>
+      <p id="avatar-photo-error" class="text-xs mt-2 hidden" style="color:var(--danger)"></p>
+    </div>
+
+    <!-- Emoji Tab -->
+    <div id="avatar-tab-emoji" class="avatar-tab-content hidden">
+      <p class="text-xs mb-3" style="color:var(--muted)">Pick an emoji:</p>
+      <div class="grid grid-cols-7 gap-1.5 mb-4" id="emoji-grid"></div>
+      <div class="flex gap-2">
+        <input id="avatar-emoji-input" type="text" maxlength="2" class="input-field text-center text-2xl" placeholder="😀"
+               oninput="updateAvatarPreview()" />
+        <button onclick="applyEmoji()" class="btn-indigo px-5 py-2.5 rounded-xl text-sm font-semibold flex-shrink-0">Use</button>
+      </div>
+    </div>
+
+    <!-- Initials Tab -->
+    <div id="avatar-tab-initials" class="avatar-tab-content hidden">
+      <p class="text-xs mb-3" style="color:var(--muted)">Enter up to 2 characters:</p>
+      <div class="flex gap-2">
+        <input id="avatar-initials-input" type="text" maxlength="2" class="input-field text-center text-2xl font-display tracking-widest uppercase"
+               placeholder="SK" oninput="updateAvatarPreview()" />
+        <button onclick="applyInitials()" class="btn-indigo px-5 py-2.5 rounded-xl text-sm font-semibold flex-shrink-0">Use</button>
+      </div>
+    </div>
+
+    <!-- Remove button -->
+    <div class="mt-5 pt-4" style="border-top:1px solid var(--border)">
+      <button onclick="removeAvatar()" class="w-full py-2.5 rounded-xl text-sm font-semibold transition-all"
+              style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:var(--danger);cursor:pointer"
+              onmouseover="this.style.background='rgba(239,68,68,0.2)'"
+              onmouseout="this.style.background='rgba(239,68,68,0.1)'">
+        Remove Avatar (reset to default)
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MATCH SCORE MODAL (Admin)
+     ============================================================ -->
+<div id="score-modal" class="modal-backdrop">
+  <div class="modal-box p-7 max-w-sm">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="font-display text-2xl">ENTER SCORE</h3>
+      <button onclick="closeScoreModal()" aria-label="Close" style="color:var(--muted);cursor:pointer;font-size:1.5rem;line-height:1">&times;</button>
+    </div>
+    <p id="score-modal-match" class="text-sm mb-6 font-semibold text-center" style="color:var(--muted)"></p>
+    <div class="grid grid-cols-3 items-center gap-4 mb-6">
+      <div class="text-center">
+        <p id="score-modal-p1" class="font-display text-xl mb-2"></p>
+        <input id="score-p1" type="number" min="0" max="99" step="1" class="input-field text-center text-2xl font-display" placeholder="0"
+               oninput="this.value=Math.max(0,parseInt(this.value)||0)"
+               onfocus="this.select()"
+               onkeydown="if(event.key==='Enter')document.getElementById('score-p2').focus()" />
+      </div>
+      <div class="text-center font-display text-2xl" style="color:var(--muted)">VS</div>
+      <div class="text-center">
+        <p id="score-modal-p2" class="font-display text-xl mb-2"></p>
+        <input id="score-p2" type="number" min="0" max="99" step="1" class="input-field text-center text-2xl font-display" placeholder="0"
+               oninput="this.value=Math.max(0,parseInt(this.value)||0)"
+               onfocus="this.select()"
+               onkeydown="if(event.key==='Enter')saveScore()" />
+      </div>
+    </div>
+    <button onclick="saveScore()" class="btn-indigo w-full py-3 rounded-xl text-sm font-semibold tracking-wider uppercase">Save Score</button>
+    <button id="score-clear-btn" onclick="clearScore()" class="btn-ghost w-full py-2.5 rounded-xl text-sm tracking-wider mt-2" style="display:none">Clear Result</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     MATCH REPORT MODAL (Public)
+     ============================================================ -->
+<div id="report-modal" class="modal-backdrop">
+  <div class="modal-box p-7">
+    <div class="flex items-center justify-between mb-4">
+      <span class="pill pill-played">Match Report</span>
+      <button onclick="closeReportModal()" aria-label="Close" style="color:var(--muted);cursor:pointer;font-size:1.5rem;line-height:1">&times;</button>
+    </div>
+    <div id="report-modal-content"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PLAYER PROFILE MODAL
+     ============================================================ -->
+<div id="player-modal" class="modal-backdrop">
+  <div class="modal-box p-7">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="font-display text-2xl">PLAYER PROFILE</h3>
+      <button onclick="closePlayerModal()" aria-label="Close" style="color:var(--muted);cursor:pointer;font-size:1.5rem;line-height:1">&times;</button>
+    </div>
+    <div id="player-modal-content"></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT ENGINE
+     ============================================================ -->
 <script>
-function showMessage(){
-  alert("Welcome to RATATAA LEAGUE 🔥");
+// ============================================================
+// DATA MODEL & CONSTANTS
+// ============================================================
+
+/** Fixed players — never change */
+const PLAYERS = ['Sahin', 'Mahashin', 'Nasim', 'Khokan'];
+
+/** Player accent colors for visual identity */
+const PLAYER_COLORS = {
+  Sahin:   { bg: 'rgba(99,102,241,0.2)',  border: '#6366f1', dot: '#6366f1' },
+  Mahashin:{ bg: 'rgba(234,179,8,0.2)',   border: '#eab308', dot: '#eab308' },
+  Nasim:   { bg: 'rgba(34,197,94,0.2)',   border: '#22c55e', dot: '#22c55e' },
+  Khokan:  { bg: 'rgba(239,68,68,0.2)',   border: '#ef4444', dot: '#ef4444' },
+};
+
+const STORAGE_KEY = 'ratataaLeagueData';
+const AVATAR_STORAGE_KEY = 'ratataaAvatars';
+
+/** App state — loaded from or saved to localStorage */
+let state = {
+  matches: [],
+  adminLoggedIn: false,
+};
+
+/**
+ * avatarState — { PlayerName: { type: 'photo'|'emoji'|'initials', value: '...' } }
+ * type 'photo'    -> value is a data: URL (base64)
+ * type 'emoji'    -> value is an emoji string e.g. '🦁'
+ * type 'initials' -> value is up to 2 chars e.g. 'SK'
+ * No entry -> falls back to colored letter circle
+ */
+let avatarState = {};
+
+let currentScoreMatchId = null;
+let avatarEditingPlayer = null;
+
+// ============================================================
+// FIXTURE GENERATION
+// Produces exactly 18 matches (3 × each unique pair),
+// shuffled so NO two consecutive matches share a player.
+// ============================================================
+
+/**
+ * generateFixtures()
+ * 1. Build all unique pairs from 4 players → 6 pairs.
+ * 2. Duplicate each pair 3 times → 18 matches.
+ * 3. Shuffle array randomly.
+ * 4. Run smart swap passes to eliminate consecutive same-player clashes.
+ */
+function generateFixtures() {
+  // Step 1: all unique pairs
+  const pairs = [];
+  for (let i = 0; i < PLAYERS.length; i++) {
+    for (let j = i + 1; j < PLAYERS.length; j++) {
+      pairs.push([PLAYERS[i], PLAYERS[j]]);
+    }
+  }
+
+  // Step 2: 3 copies of each pair → 18 matches
+  let matches = [];
+  for (let r = 0; r < 3; r++) {
+    pairs.forEach(([p1, p2]) => {
+      matches.push({ player1: p1, player2: p2, player1Goals: null, player2Goals: null, played: false });
+    });
+  }
+
+  // Step 3: Fisher-Yates shuffle
+  for (let i = matches.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [matches[i], matches[j]] = [matches[j], matches[i]];
+  }
+
+  // Step 4: eliminate consecutive player clashes
+  // We do up to 100 passes; each pass scans the list and swaps offending adjacent pairs
+  const sharesPlayer = (a, b) =>
+    a.player1 === b.player1 || a.player1 === b.player2 ||
+    a.player2 === b.player1 || a.player2 === b.player2;
+
+  for (let pass = 0; pass < 100; pass++) {
+    let changed = false;
+    for (let i = 0; i < matches.length - 1; i++) {
+      if (sharesPlayer(matches[i], matches[i + 1])) {
+        // Find a valid swap target further in the array
+        for (let k = i + 2; k < matches.length; k++) {
+          if (!sharesPlayer(matches[i], matches[k]) &&
+              !sharesPlayer(matches[k], matches[i + 1]) &&
+              (k + 1 >= matches.length || !sharesPlayer(matches[k], matches[k + 1]))) {
+            [matches[i + 1], matches[k]] = [matches[k], matches[i + 1]];
+            changed = true;
+            break;
+          }
+        }
+      }
+    }
+    if (!changed) break; // fully resolved
+  }
+
+  // Assign stable IDs
+  matches = matches.map((m, idx) => ({ id: idx + 1, ...m }));
+
+  return matches;
 }
 
-const players = [
-  {name:"Sahin", score:120},
-  {name:"Mahashin", score:95},
-  {name:"Nasim", score:110},
-  {name:"Khokan", score:80}
+// ============================================================
+// LOCALSTORAGE — LOAD / SAVE
+// ============================================================
+
+/** loadState(): reads from localStorage, falls back to fresh state */
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed.matches && Array.isArray(parsed.matches)) {
+        state.matches = parsed.matches;
+        return;
+      }
+    }
+  } catch(e) { console.warn('loadState error', e); }
+  state.matches = generateFixtures();
+}
+
+/** saveState(): persists current matches to localStorage (overridden by Firebase module) */
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ matches: state.matches }));
+  } catch(e) { console.warn('saveState error', e); }
+}
+
+/** loadAvatars(): reads avatarState from localStorage */
+function loadAvatars() {
+  try {
+    const raw = localStorage.getItem(AVATAR_STORAGE_KEY);
+    if (raw) avatarState = JSON.parse(raw);
+  } catch(e) { avatarState = {}; }
+}
+
+/** saveAvatars(): persists avatarState to localStorage + Firebase */
+function saveAvatars() {
+  try { localStorage.setItem(AVATAR_STORAGE_KEY, JSON.stringify(avatarState)); } catch(e) {}
+  // Firebase sync handled by module below (window.saveAvatarsToFirebase)
+  if (typeof window.saveAvatarsToFirebase === 'function') window.saveAvatarsToFirebase();
+}
+
+// ============================================================
+// CALCULATION ENGINE
+// Derives all stats live from matches array — no caching.
+// ============================================================
+
+/**
+ * computeStandings()
+ * Returns array of player stat objects sorted by:
+ * 1. Points  2. GD  3. GF  4. Name
+ */
+function computeStandings() {
+  const stats = {};
+  PLAYERS.forEach(p => {
+    stats[p] = { name: p, played: 0, won: 0, drawn: 0, lost: 0, gf: 0, ga: 0, gd: 0, pts: 0 };
+  });
+
+  state.matches.forEach(m => {
+    if (!m.played) return;
+    const g1 = Number(m.player1Goals), g2 = Number(m.player2Goals);
+    const p1 = stats[m.player1], p2 = stats[m.player2];
+
+    p1.played++; p2.played++;
+    p1.gf += g1; p1.ga += g2;
+    p2.gf += g2; p2.ga += g1;
+
+    if (g1 > g2) {
+      p1.won++; p1.pts += 3;
+      p2.lost++;
+    } else if (g1 < g2) {
+      p2.won++; p2.pts += 3;
+      p1.lost++;
+    } else {
+      p1.drawn++; p2.drawn++;
+      p1.pts += 1; p2.pts += 1;
+    }
+  });
+
+  PLAYERS.forEach(p => { stats[p].gd = stats[p].gf - stats[p].ga; });
+
+  return Object.values(stats).sort((a, b) =>
+    b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || a.name.localeCompare(b.name)
+  );
+}
+
+/**
+ * computeTopScorers()
+ * Sorted by GF, then pts, then GD
+ */
+function computeTopScorers() {
+  const standings = computeStandings();
+  return [...standings].sort((a, b) => b.gf - a.gf || b.pts - a.pts || b.gd - a.gd);
+}
+
+/**
+ * computeLeagueStats()
+ * Global tournament metrics
+ */
+function computeLeagueStats() {
+  const played = state.matches.filter(m => m.played);
+  const totalGoals = played.reduce((sum, m) => sum + Number(m.player1Goals) + Number(m.player2Goals), 0);
+  const avgGoals = played.length ? (totalGoals / played.length).toFixed(1) : '—';
+
+  let biggestWin = null, biggestMargin = 0;
+  played.forEach(m => {
+    const diff = Math.abs(Number(m.player1Goals) - Number(m.player2Goals));
+    if (diff > biggestMargin) {
+      biggestMargin = diff;
+      const winner = Number(m.player1Goals) > Number(m.player2Goals) ? m.player1 : m.player2;
+      const loser  = Number(m.player1Goals) > Number(m.player2Goals) ? m.player2 : m.player1;
+      biggestWin = `${winner} ${Math.max(m.player1Goals, m.player2Goals)}-${Math.min(m.player1Goals, m.player2Goals)} ${loser}`;
+    }
+  });
+
+  return { played: played.length, total: state.matches.length || 18, totalGoals, avgGoals, biggestWin };
+}
+
+/**
+ * headToHead(p1, p2)
+ * Returns {p1wins, p2wins, draws} between two players
+ */
+function headToHead(p1, p2) {
+  let p1w = 0, p2w = 0, dr = 0;
+  state.matches.forEach(m => {
+    if (!m.played) return;
+    const involves = (m.player1 === p1 && m.player2 === p2) || (m.player1 === p2 && m.player2 === p1);
+    if (!involves) return;
+    const g1 = m.player1 === p1 ? Number(m.player1Goals) : Number(m.player2Goals);
+    const g2 = m.player1 === p1 ? Number(m.player2Goals) : Number(m.player1Goals);
+    if (g1 > g2) p1w++;
+    else if (g2 > g1) p2w++;
+    else dr++;
+  });
+  return { p1wins: p1w, p2wins: p2w, draws: dr };
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+
+function showSection(id) {
+  // If admin view is active, do nothing
+  if (document.getElementById('admin-view').classList.contains('active')) return;
+
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  const target = document.getElementById('section-' + id);
+  if (target) {
+    // Force animation replay by briefly removing the class
+    target.style.animation = 'none';
+    requestAnimationFrame(() => {
+      target.style.animation = '';
+      target.classList.add('active');
+    });
+  }
+
+  // Update nav active states
+  document.querySelectorAll('[data-section]').forEach(el => {
+    el.classList.toggle('active', el.dataset.section === id);
+  });
+
+  // Scroll to very top
+  window.scrollTo({ top: 0, behavior: 'instant' });
+
+  renderAll();
+}
+
+// ============================================================
+// RENDER — PUBLIC
+// ============================================================
+
+/** renderAll(): re-renders every visible public section */
+function renderAll() {
+  renderHeroStats();
+  renderStandings('standings-table');
+  renderLeagueStatsBoxes();
+  renderFixtures();
+  renderResults();
+  renderTopScorers();
+  renderPlayers();
+}
+
+/** avatarHTML(name, size) — renders the correct avatar for a player */
+function avatarHTML(name, size = 42) {
+  const c = PLAYER_COLORS[name];
+  const av = avatarState[name];
+  const fontSize = size * 0.38;
+
+  if (av && av.type === 'photo' && av.value) {
+    return `<div class="player-avatar" style="width:${size}px;height:${size}px;border:2px solid ${c.border};overflow:hidden;flex-shrink:0">
+      <img src="${av.value}" alt="${name}" style="width:100%;height:100%;object-fit:cover;display:block" />
+    </div>`;
+  }
+  if (av && av.type === 'emoji' && av.value) {
+    return `<div class="player-avatar" style="width:${size}px;height:${size}px;background:${c.bg};border:1px solid ${c.border};flex-shrink:0">
+      <span style="font-size:${size * 0.52}px;line-height:1">${av.value}</span>
+    </div>`;
+  }
+  if (av && av.type === 'initials' && av.value) {
+    return `<div class="player-avatar" style="width:${size}px;height:${size}px;background:${c.bg};border:1px solid ${c.border};flex-shrink:0">
+      <span style="color:${c.dot};font-size:${size * 0.32}px;font-weight:700;letter-spacing:-0.02em">${av.value.toUpperCase().slice(0,2)}</span>
+    </div>`;
+  }
+  // Default: colored letter circle
+  return `<div class="player-avatar" style="width:${size}px;height:${size}px;background:${c.bg};border:1px solid ${c.border};flex-shrink:0">
+    <span style="color:${c.dot};font-size:${fontSize}px">${name[0]}</span>
+  </div>`;
+}
+
+/** renderHeroStats(): tiny stats row below hero CTA */
+function renderHeroStats() {
+  const lgs = computeLeagueStats();
+  const el = document.getElementById('hero-stats');
+  if (!el) return;
+  el.innerHTML = `
+    <div class="text-center">
+      <p class="font-display text-3xl" style="color:var(--indigo)">${lgs.played}</p>
+      <p class="text-xs mt-1" style="color:var(--muted)">Played</p>
+    </div>
+    <div class="text-center border-x" style="border-color:var(--border)">
+      <p class="font-display text-3xl" style="color:var(--gold)">${lgs.totalGoals}</p>
+      <p class="text-xs mt-1" style="color:var(--muted)">Goals</p>
+    </div>
+    <div class="text-center">
+      <p class="font-display text-3xl" style="color:var(--success)">${lgs.avgGoals}</p>
+      <p class="text-xs mt-1" style="color:var(--muted)">Avg/Match</p>
+    </div>
+  `;
+  // Update nav live label with progress
+  const navLabel = document.getElementById('nav-live-label');
+  if (navLabel) navLabel.textContent = `${lgs.played}/${lgs.total}`;
+
+  // ── Hero specials: leader + top scorer spotlights ──
+  const heroSpecials = document.getElementById('hero-specials');
+  if (heroSpecials) {
+    const standings = computeStandings();
+    const scorers   = computeTopScorers();
+    const leader    = standings.length && standings[0].pts > 0 ? standings[0] : null;
+    const topScorer = scorers.length   && scorers[0].gf   > 0 ? scorers[0]   : null;
+    let html = '';
+    if (leader) {
+      html += `<div class="hero-leader-card">
+        ${avatarHTML(leader.name, 36)}
+        <div class="flex-1 min-w-0">
+          <p class="text-xs font-bold tracking-widest uppercase" style="color:var(--gold)">👑 Points Leader</p>
+          <p class="font-display text-lg gold-shimmer leading-none mt-0.5">${leader.name.toUpperCase()}</p>
+        </div>
+        <span class="font-display text-2xl" style="color:var(--gold);text-shadow:0 0 12px rgba(234,179,8,0.5)">${leader.pts} <span class="text-xs" style="color:var(--muted);-webkit-text-fill-color:var(--muted)">pts</span></span>
+      </div>`;
+    }
+    if (topScorer && (!leader || topScorer.name !== leader.name || topScorer.gf > 0)) {
+      html += `<div class="hero-fire-card">
+        ${avatarHTML(topScorer.name, 36)}
+        <div class="flex-1 min-w-0">
+          <p class="text-xs font-bold tracking-widest uppercase" style="color:#fb923c">🔥 Top Scorer</p>
+          <p class="font-display text-lg gold-shimmer leading-none mt-0.5">${topScorer.name.toUpperCase()}</p>
+        </div>
+        <span class="font-display text-2xl" style="color:#fb923c;text-shadow:0 0 12px rgba(251,146,60,0.5)">${topScorer.gf} <span class="text-xs" style="color:var(--muted);font-family:var(--font-body)">goals</span></span>
+      </div>`;
+    }
+    heroSpecials.innerHTML = html;
+  }
+}
+
+/** renderStandings(containerId) — reusable for public + admin */
+function renderStandings(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  if (!state.matches || state.matches.length === 0) {
+    renderSkeletonStandings(containerId);
+    return;
+  }
+  const rows = computeStandings();
+  const rankColors = ['rank-1', 'rank-2', 'rank-3', ''];
+
+  el.innerHTML = `
+    <div class="table-scroll">
+    <table class="league-table" style="width:100%">
+      <thead>
+        <tr>
+          <th style="text-align:left">Player</th>
+          <th title="Played">P</th><th title="Won">W</th><th title="Drawn">D</th><th title="Lost">L</th>
+          <th title="Goals For">GF</th><th title="Goals Against">GA</th><th title="Goal Difference">GD</th>
+          <th style="color:var(--indigo)" title="Points">PTS</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${rows.map((r, i) => {
+          const c = PLAYER_COLORS[r.name];
+          const isLeader = i === 0 && r.pts > 0;
+          return `<tr class="${isLeader ? 'leader-row' : ''}">
+            <td>
+              <div class="flex items-center gap-1.5 flex-wrap" style="row-gap:3px">
+                <span class="font-display text-xs ${rankColors[i]}" style="min-width:12px;text-align:center">${i + 1}</span>
+                ${avatarHTML(r.name, 24)}
+                <span class="font-semibold text-sm" style="${isLeader ? 'background:linear-gradient(90deg,#eab308,#fde68a,#eab308);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 4s linear infinite' : ''}">${r.name}</span>
+                ${isLeader ? '<span class="leader-crown-badge">👑 Leader</span>' : ''}
+              </div>
+            </td>
+            <td>${r.played}</td>
+            <td style="color:var(--success)">${r.won}</td>
+            <td style="color:var(--muted)">${r.drawn}</td>
+            <td style="color:var(--danger)">${r.lost}</td>
+            <td>${r.gf}</td>
+            <td>${r.ga}</td>
+            <td>${r.gd > 0 ? '+' + r.gd : r.gd}</td>
+            <td><span class="font-display" style="color:${isLeader ? 'var(--gold)' : 'var(--indigo)'};font-size:1rem;${isLeader ? 'text-shadow:0 0 12px rgba(234,179,8,0.45)' : ''}">${r.pts}</span></td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+    </div>
+  `;
+}
+
+/** renderLeagueStatsBoxes() */
+function renderLeagueStatsBoxes() {
+  const el = document.getElementById('league-stats-boxes');
+  if (!el) return;
+  const ls = computeLeagueStats();
+  el.innerHTML = `
+    <div class="stat-box"><span class="val" style="color:var(--indigo)">${ls.played}<span class="font-display text-base" style="color:var(--muted)">/${ls.total}</span></span><span class="lbl">Matches Played</span></div>
+    <div class="stat-box"><span class="val" style="color:var(--gold)">${ls.totalGoals}</span><span class="lbl">Total Goals</span></div>
+    <div class="stat-box"><span class="val" style="color:var(--success)">${ls.avgGoals}</span><span class="lbl">Avg Goals / Match</span></div>
+    <div class="stat-box"><span class="val text-base font-semibold leading-tight" style="color:var(--white)">${ls.biggestWin || '—'}</span><span class="lbl">Biggest Win</span></div>
+  `;
+}
+
+/** renderFixtures() */
+function renderFixtures() {
+  const el = document.getElementById('fixtures-list');
+  if (!el) return;
+  if (!state.matches || state.matches.length === 0) {
+    renderSkeletonFixtures('fixtures-list');
+    return;
+  }
+  el.innerHTML = state.matches.map((m, idx) => {
+    const label = m.played
+      ? `<span class="pill pill-played" style="white-space:nowrap;flex-shrink:0">✓ Played</span>`
+      : `<span class="pill pill-upcoming" style="white-space:nowrap;flex-shrink:0">Upcoming</span>`;
+    const scoreHTML = m.played
+      ? `<div class="score-badge"><span>${m.player1Goals}</span><span style="color:var(--muted);font-size:0.9rem">:</span><span>${m.player2Goals}</span></div>`
+      : `<div class="font-display text-xs tracking-widest uppercase" style="color:var(--muted)">#${m.id}</div>`;
+    const clickHandler = m.played ? `onclick="openReportModal(${m.id})"` : '';
+    const hoverClass = m.played ? 'fixture-card-played' : 'fixture-card-upcoming';
+    return `
+      <div class="fixture-card ${hoverClass} fade-up" style="animation-delay:${idx * 0.03}s;${m.played ? 'cursor:pointer' : 'cursor:default'}" ${clickHandler}>
+        <div class="flex items-center gap-2.5 justify-end">
+          <span class="font-semibold text-sm text-right" style="white-space:nowrap">${m.player1}</span>
+          ${avatarHTML(m.player1)}
+        </div>
+        <div class="fixture-center">
+          ${scoreHTML}
+          ${label}
+        </div>
+        <div class="flex items-center gap-2.5 justify-start">
+          ${avatarHTML(m.player2)}
+          <span class="font-semibold text-sm" style="white-space:nowrap">${m.player2}</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/** renderResults() */
+function renderResults() {
+  const played = state.matches.filter(m => m.played);
+  const rl = document.getElementById('results-list');
+  const nr = document.getElementById('no-results');
+  if (!rl) return;
+
+  if (played.length === 0) {
+    rl.innerHTML = '';
+    if (nr) nr.classList.remove('hidden');
+    return;
+  }
+  if (nr) nr.classList.add('hidden');
+
+  const playedDesc = [...played].reverse();
+  rl.innerHTML = playedDesc.map((m, idx) => {
+    const g1 = Number(m.player1Goals), g2 = Number(m.player2Goals);
+    const winner = g1 > g2 ? m.player1 : g2 > g1 ? m.player2 : null;
+    const isDraw = g1 === g2;
+    return `
+      <div class="fixture-card fade-up" style="animation-delay:${idx * 0.03}s;cursor:pointer" onclick="openReportModal(${m.id})">
+        <div class="flex items-center gap-2.5 justify-end">
+          <span class="font-semibold text-sm text-right ${!winner ? '' : winner === m.player1 ? '' : 'opacity-40'}" style="white-space:nowrap">${m.player1}</span>
+          ${avatarHTML(m.player1)}
+        </div>
+        <div class="fixture-center">
+          <div class="score-badge">
+            <span class="${winner === m.player1 ? 'gold-shimmer' : ''}">${g1}</span>
+            <span style="color:var(--muted);font-size:0.9rem">–</span>
+            <span class="${winner === m.player2 ? 'gold-shimmer' : ''}">${g2}</span>
+          </div>
+          ${isDraw
+            ? '<span class="pill" style="background:rgba(100,116,139,0.2);color:#94a3b8;white-space:nowrap">DRAW</span>'
+            : '<span class="pill pill-played" style="white-space:nowrap">✓ Played</span>'}
+        </div>
+        <div class="flex items-center gap-2.5 justify-start">
+          ${avatarHTML(m.player2)}
+          <span class="font-semibold text-sm ${!winner ? '' : winner === m.player2 ? '' : 'opacity-40'}" style="white-space:nowrap">${m.player2}</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/** renderTopScorers() */
+function renderTopScorers() {
+  const el = document.getElementById('scorers-list');
+  if (!el) return;
+  if (!state.matches || state.matches.length === 0) {
+    renderSkeletonScorers('scorers-list');
+    return;
+  }
+  const scorers = computeTopScorers();
+  const maxGF = Math.max(...scorers.map(s => s.gf), 1);
+  const medals = ['🥇', '🥈', '🥉', ''];
+
+  el.innerHTML = scorers.map((s, i) => {
+    const c = PLAYER_COLORS[s.name];
+    const pct = Math.round((s.gf / maxGF) * 100);
+    const isTopScorer = i === 0 && s.gf > 0;
+    return `
+      <div class="${isTopScorer ? 'top-scorer-card' : 'glass'} rounded-xl p-5 flex items-center gap-4 fade-up" style="animation-delay:${i * 0.07}s${isTopScorer ? '' : ''}">
+        <span class="font-display text-2xl" style="min-width:36px">${medals[i] || i + 1}</span>
+        ${avatarHTML(s.name, 48)}
+        <div class="flex-1 min-w-0">
+          <div class="flex items-baseline justify-between gap-2 mb-1.5">
+            <div class="flex items-center gap-1.5 flex-wrap" style="row-gap:3px">
+              <span class="font-semibold${isTopScorer ? ' gold-shimmer' : ''}">${s.name}</span>
+              ${isTopScorer ? '<span class="fire-badge">🔥 Top Scorer</span>' : ''}
+            </div>
+            <span class="font-display text-2xl" style="color:${isTopScorer ? 'var(--gold)' : c.dot};${isTopScorer ? 'text-shadow:0 0 14px rgba(234,179,8,0.5)' : ''}">${s.gf}</span>
+          </div>
+          <div class="prog-bar">
+            <div class="prog-fill" style="width:${pct}%;background:${isTopScorer ? 'linear-gradient(90deg,#ef4444,#fb923c,#eab308)' : c.dot}"></div>
+          </div>
+          <div class="flex gap-3 mt-1.5 text-xs" style="color:var(--muted)">
+            <span>${s.pts} pts</span>
+            <span>GD ${s.gd > 0 ? '+' : ''}${s.gd}</span>
+            <span>${s.played} played</span>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+/** renderPlayers() — grid of clickable player cards */
+function renderPlayers() {
+  const el = document.getElementById('players-grid');
+  if (!el) return;
+  const standings = computeStandings();
+  const standingsMap = {};
+  standings.forEach((s, i) => { standingsMap[s.name] = { ...s, rank: i + 1 }; });
+
+  el.innerHTML = PLAYERS.map((name, idx) => {
+    const s = standingsMap[name];
+    const c = PLAYER_COLORS[name];
+    return `
+      <div class="glass rounded-2xl p-6 cursor-pointer fade-up" style="animation-delay:${idx * 0.07}s;border-color:${c.border}20" onclick="openPlayerModal('${name}')">
+        <div class="flex items-center gap-3 mb-5">
+          ${avatarHTML(name, 52)}
+          <div>
+            <p class="font-display text-2xl" style="color:var(--white)">${name.toUpperCase()}</p>
+            <p class="text-xs" style="color:${c.dot}">Rank #${s.rank}</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-4 gap-2 text-center">
+          ${[['P', s.played], ['W', s.won], ['GF', s.gf], ['PTS', s.pts]].map(([l, v]) => `
+            <div>
+              <p class="font-display text-xl" style="color:var(--white)">${v}</p>
+              <p class="text-xs" style="color:var(--muted)">${l}</p>
+            </div>`).join('')}
+        </div>
+        <div class="mt-4 flex items-center justify-between">
+          <span class="text-xs" style="color:var(--muted)">View profile</span>
+          <svg class="w-4 h-4" style="color:var(--indigo)" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ============================================================
+// MODALS — PUBLIC
+// ============================================================
+
+/** openReportModal(matchId) */
+function openReportModal(matchId) {
+  const m = state.matches.find(x => x.id === matchId);
+  if (!m || !m.played) return;
+  const g1 = Number(m.player1Goals), g2 = Number(m.player2Goals);
+  const winner = g1 > g2 ? m.player1 : g2 > g1 ? m.player2 : null;
+  const isDraw = g1 === g2;
+  const c1 = PLAYER_COLORS[m.player1], c2 = PLAYER_COLORS[m.player2];
+
+  document.getElementById('report-modal-content').innerHTML = `
+    <div class="flex justify-around items-center py-6">
+      <div class="text-center">
+        ${avatarHTML(m.player1, 64)}
+        <p class="font-display text-xl mt-3 ${winner === m.player1 ? 'gold-shimmer' : ''}">${m.player1.toUpperCase()}</p>
+        ${winner === m.player1 ? '<span class="pill" style="background:var(--gold-dim);color:var(--gold)">WINNER</span>' : ''}
+      </div>
+      <div class="text-center">
+        <div class="font-display" style="font-size:3.5rem;line-height:1;color:var(--white)">${g1}<span style="color:var(--muted);font-size:0.6em"> – </span>${g2}</div>
+        ${isDraw ? '<div class="mt-2 pill" style="background:rgba(100,116,139,0.2);color:#94a3b8">DRAW</div>' : ''}
+        <p class="text-xs mt-3" style="color:var(--muted)">Match #${m.id}</p>
+      </div>
+      <div class="text-center">
+        ${avatarHTML(m.player2, 64)}
+        <p class="font-display text-xl mt-3 ${winner === m.player2 ? 'gold-shimmer' : ''}">${m.player2.toUpperCase()}</p>
+        ${winner === m.player2 ? '<span class="pill" style="background:var(--gold-dim);color:var(--gold)">WINNER</span>' : ''}
+      </div>
+    </div>
+    ${!isDraw ? `<div class="divider"></div>
+    <div class="text-center">
+      <p class="text-xs font-semibold tracking-widest uppercase" style="color:var(--muted)">Goal Difference</p>
+      <p class="font-display text-3xl mt-1" style="color:var(--indigo)">+${Math.abs(g1 - g2)}</p>
+    </div>` : ''}
+  `;
+  // Add share button at bottom of report modal
+  const existing = document.getElementById('report-share-btn');
+  if (!existing) {
+    const shareRow = document.createElement('div');
+    shareRow.id = 'report-share-btn';
+    shareRow.style.cssText = 'padding:0 1.75rem 1.75rem;';
+    shareRow.innerHTML = `<button onclick="shareMatchAsImage(${matchId})" style="width:100%;padding:0.65rem;border-radius:12px;border:1px solid rgba(99,102,241,0.35);background:rgba(99,102,241,0.08);color:var(--indigo);font-size:0.78rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:0.5rem;letter-spacing:0.04em;text-transform:uppercase;transition:all 0.2s" onmouseover="this.style.background='rgba(99,102,241,0.18)'" onmouseout="this.style.background='rgba(99,102,241,0.08)'"><svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg> Share Result</button>`;
+    document.querySelector('#report-modal .modal-box').appendChild(shareRow);
+  } else {
+    existing.querySelector('button').onclick = () => shareMatchAsImage(matchId);
+  }
+  document.getElementById('report-modal').classList.add('open');
+}
+function closeReportModal() { document.getElementById('report-modal').classList.remove('open'); }
+
+/** openPlayerModal(name) */
+function openPlayerModal(name) {
+  const standings = computeStandings();
+  const s = standings.find(x => x.name === name);
+  const rank = standings.findIndex(x => x.name === name) + 1;
+  const c = PLAYER_COLORS[name];
+
+  // Head-to-head vs all others
+  const opponents = PLAYERS.filter(p => p !== name);
+  const h2hHTML = opponents.map(opp => {
+    const h = headToHead(name, opp);
+    const total = h.p1wins + h.p2wins + h.draws;
+    return `
+      <div class="flex items-center justify-between py-2.5 border-b" style="border-color:var(--border)">
+        <div class="flex items-center gap-2">
+          ${avatarHTML(opp, 32)}
+          <span class="font-semibold text-sm">${opp}</span>
+        </div>
+        <div class="flex items-center gap-3 text-xs">
+          <span style="color:var(--success)">${h.p1wins}W</span>
+          <span style="color:var(--muted)">${h.draws}D</span>
+          <span style="color:var(--danger)">${h.p2wins}L</span>
+          <span style="color:var(--muted)">(${total} played)</span>
+        </div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('player-modal-content').innerHTML = `
+    <div class="flex items-center gap-4 mb-6 pb-6" style="border-bottom:1px solid var(--border)">
+      ${avatarHTML(name, 72)}
+      <div>
+        <h2 class="font-display text-4xl" style="color:${c.dot}">${name.toUpperCase()}</h2>
+        <p class="text-sm mt-0.5" style="color:var(--muted)">Rank #${rank} · ${s.pts} points</p>
+      </div>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+      ${[['Played',s.played,'var(--white)'],['Wins',s.won,'var(--success)'],['Goals For',s.gf,'var(--gold)'],['Points',s.pts,'var(--indigo)']].map(([l,v,col]) =>
+        `<div class="text-center glass rounded-xl p-3"><p class="font-display text-2xl" style="color:${col}">${v}</p><p class="text-xs mt-0.5" style="color:var(--muted)">${l}</p></div>`
+      ).join('')}
+    </div>
+    <p class="text-xs font-semibold tracking-widest uppercase mb-3" style="color:var(--muted)">Head-to-Head</p>
+    ${h2hHTML}
+  `;
+  document.getElementById('player-modal').classList.add('open');
+}
+function closePlayerModal() { document.getElementById('player-modal').classList.remove('open'); }
+
+// ============================================================
+// AVATAR PANEL — ADMIN
+// ============================================================
+
+const EMOJI_PRESETS = [
+  '🦁','🐯','🦊','🐺','🦅','🐲','👑','⚡','🔥','💎',
+  '🏆','⚽','🎯','🗡️','🛡️','🤺','💪','🥊','🚀','🌟',
+  '😈','👿','🤖','👾','🎭','🦄','🐉','🌊','⚔️','🎪'
 ];
 
-players.sort((a,b)=>b.score-a.score);
+/** renderAdminAvatars() — shows all 4 player cards in avatars panel */
+function renderAdminAvatars() {
+  const el = document.getElementById('admin-avatars-grid');
+  if (!el) return;
+  el.innerHTML = PLAYERS.map(name => {
+    const c = PLAYER_COLORS[name];
+    const av = avatarState[name];
+    const hasCustom = av && av.value;
+    const typeLabel = hasCustom
+      ? (av.type === 'photo' ? '📷 Photo' : av.type === 'emoji' ? '😀 Emoji' : 'AB Initials')
+      : 'Default';
+    return `
+      <div class="avatar-admin-card">
+        <div style="flex-shrink:0">${avatarHTML(name, 64)}</div>
+        <div class="flex-1 min-w-0">
+          <p class="font-display text-xl" style="color:${c.dot}">${name.toUpperCase()}</p>
+          <p class="text-xs mt-0.5" style="color:var(--muted)">${typeLabel}</p>
+        </div>
+        <button onclick="openAvatarModal('${name}')" class="btn-indigo px-4 py-2 rounded-xl text-xs font-semibold flex-shrink-0">Edit</button>
+      </div>`;
+  }).join('');
+}
 
-const board = document.getElementById("board");
+/** openAvatarModal(name) */
+function openAvatarModal(name) {
+  avatarEditingPlayer = name;
+  document.getElementById('avatar-editing-name').textContent = name.toUpperCase();
+  document.getElementById('avatar-editing-name').style.color = PLAYER_COLORS[name].dot;
 
-players.forEach((p,i)=>{
-  const li = document.createElement("li");
-  li.innerText = (i+1) + ". " + p.name + " - " + p.score;
-  board.appendChild(li);
+  // Reset tabs to photo
+  switchAvatarTab('photo', document.querySelector('[data-tab="photo"]'));
+  document.getElementById('avatar-emoji-input').value = '';
+  document.getElementById('avatar-initials-input').value = '';
+  document.getElementById('avatar-photo-error').classList.add('hidden');
+
+  // Populate emoji grid
+  const grid = document.getElementById('emoji-grid');
+  grid.innerHTML = EMOJI_PRESETS.map(e =>
+    `<button onclick="selectEmojiPreset('${e}')" class="text-2xl p-1 rounded-lg hover:bg-white/10 transition-all" style="cursor:pointer;border:none;background:transparent;line-height:1">${e}</button>`
+  ).join('');
+
+  // Pre-fill current values
+  const av = avatarState[name];
+  if (av) {
+    if (av.type === 'emoji') document.getElementById('avatar-emoji-input').value = av.value;
+    if (av.type === 'initials') document.getElementById('avatar-initials-input').value = av.value;
+  }
+
+  refreshAvatarPreview();
+  document.getElementById('avatar-modal').classList.add('open');
+}
+
+function closeAvatarModal() {
+  document.getElementById('avatar-modal').classList.remove('open');
+  avatarEditingPlayer = null;
+}
+
+/** switchAvatarTab(tab, btn) */
+function switchAvatarTab(tab, btn) {
+  document.querySelectorAll('.avatar-tab-content').forEach(el => el.classList.add('hidden'));
+  document.querySelectorAll('.avatar-tab-btn').forEach(el => el.classList.remove('active-tab'));
+  document.getElementById('avatar-tab-' + tab)?.classList.remove('hidden');
+  if (btn) btn.classList.add('active-tab');
+}
+
+/** refreshAvatarPreview() — re-renders the large preview at top of modal */
+function refreshAvatarPreview() {
+  const wrap = document.getElementById('avatar-preview-wrap');
+  if (wrap && avatarEditingPlayer) wrap.innerHTML = avatarHTML(avatarEditingPlayer, 90);
+}
+
+/** updateAvatarPreview() — live preview while typing emoji/initials */
+function updateAvatarPreview() {
+  if (!avatarEditingPlayer) return;
+  const emojiVal = document.getElementById('avatar-emoji-input').value.trim();
+  const initialsVal = document.getElementById('avatar-initials-input').value.trim();
+  const activeTab = document.querySelector('.avatar-tab-btn.active-tab')?.dataset?.tab;
+
+  // Temporarily set avatarState for preview
+  const original = avatarState[avatarEditingPlayer];
+  if (activeTab === 'emoji' && emojiVal) {
+    avatarState[avatarEditingPlayer] = { type: 'emoji', value: emojiVal };
+  } else if (activeTab === 'initials' && initialsVal) {
+    avatarState[avatarEditingPlayer] = { type: 'initials', value: initialsVal };
+  }
+  refreshAvatarPreview();
+  // Restore original so we don't accidentally commit an empty value
+  if (!emojiVal && !initialsVal) avatarState[avatarEditingPlayer] = original;
+}
+
+/** selectEmojiPreset(emoji) */
+function selectEmojiPreset(emoji) {
+  document.getElementById('avatar-emoji-input').value = emoji;
+  updateAvatarPreview();
+  applyEmoji();
+}
+
+/** applyEmoji() */
+function applyEmoji() {
+  const val = document.getElementById('avatar-emoji-input').value.trim();
+  if (!val || !avatarEditingPlayer) return;
+  avatarState[avatarEditingPlayer] = { type: 'emoji', value: val };
+  saveAvatars();
+  refreshAvatarPreview();
+  renderAdminAvatars();
+  renderAll();
+  showToast('✓ Emoji set!', 'success');
+}
+
+/** applyInitials() */
+function applyInitials() {
+  const val = document.getElementById('avatar-initials-input').value.trim().toUpperCase().slice(0,2);
+  if (!val || !avatarEditingPlayer) return;
+  avatarState[avatarEditingPlayer] = { type: 'initials', value: val };
+  saveAvatars();
+  refreshAvatarPreview();
+  renderAdminAvatars();
+  renderAll();
+  showToast('✓ Initials set!', 'success');
+}
+
+/** handleAvatarPhotoUpload(event) — reads file, validates, compresses to base64 */
+function handleAvatarPhotoUpload(event) {
+  const file = event.target.files[0];
+  const errEl = document.getElementById('avatar-photo-error');
+  errEl.classList.add('hidden');
+  if (!file) return;
+
+  if (file.size > 2 * 1024 * 1024) {
+    errEl.textContent = 'File too large (max 2MB). Please choose a smaller image.';
+    errEl.classList.remove('hidden');
+    event.target.value = '';
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    const dataUrl = e.target.result;
+    // Compress via canvas
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      const MAX = 320;
+      const ratio = Math.min(MAX / img.width, MAX / img.height, 1);
+      canvas.width  = Math.round(img.width  * ratio);
+      canvas.height = Math.round(img.height * ratio);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      const compressed = canvas.toDataURL('image/jpeg', 0.82);
+      avatarState[avatarEditingPlayer] = { type: 'photo', value: compressed };
+      saveAvatars();
+      refreshAvatarPreview();
+      renderAdminAvatars();
+      renderAll();
+      showToast('✓ Photo uploaded!', 'success');
+      closeAvatarModal();
+    };
+    img.src = dataUrl;
+  };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
+/** removeAvatar() — resets to colored letter default */
+function removeAvatar() {
+  if (!avatarEditingPlayer) return;
+  delete avatarState[avatarEditingPlayer];
+  saveAvatars();
+  refreshAvatarPreview();
+  renderAdminAvatars();
+  renderAll();
+  showToast('Avatar removed', 'default');
+  closeAvatarModal();
+}
+
+// ============================================================
+// COPY STANDINGS
+// ============================================================
+function copyStandings() {
+  const rows = computeStandings();
+  const txt = `RATATAA LEAGUE — STANDINGS\n${'─'.repeat(50)}\n` +
+    rows.map((r, i) => `${i+1}. ${r.name.padEnd(10)} ${r.pts}pts  ${r.played}P ${r.won}W ${r.drawn}D ${r.lost}L  GF:${r.gf} GA:${r.ga} GD:${r.gd > 0 ? '+'+r.gd : r.gd}`).join('\n');
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(txt)
+      .then(() => showToast('✓ Standings copied!', 'success'))
+      .catch(() => fallbackCopy(txt));
+  } else {
+    fallbackCopy(txt);
+  }
+}
+function fallbackCopy(txt) {
+  const ta = document.createElement('textarea');
+  ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); showToast('✓ Copied!', 'success'); }
+  catch { showToast('Copy failed', 'error'); }
+  document.body.removeChild(ta);
+}
+
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show' + (type ? ' toast-' + type : '');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.className = ''; }, 2800);
+}
+
+// ============================================================
+// ADMIN — LOGIN
+// ============================================================
+
+/** Keyboard shortcut: press 'A' to open admin login */
+document.addEventListener('keydown', e => {
+  if (e.key === 'a' || e.key === 'A') {
+    const active = document.activeElement;
+    // Don't trigger if user is typing in an input
+    if (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA') return;
+    if (!document.getElementById('admin-view').classList.contains('active')) {
+      openLoginModal();
+    }
+  }
+  if (e.key === 'Escape') {
+    closeLoginModal(); closeScoreModal(); closeReportModal(); closePlayerModal(); closeAvatarModal(); closeShareOverlay();
+  }
 });
+
+function openLoginModal() {
+  document.getElementById('login-modal').classList.add('open');
+  setTimeout(() => document.getElementById('login-user').focus(), 100);
+}
+function closeLoginModal() {
+  document.getElementById('login-modal').classList.remove('open');
+  document.getElementById('login-error').classList.add('hidden');
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+}
+
+/** doLogin(): validates credentials (case-sensitive) */
+function doLogin() {
+  const user = document.getElementById('login-user').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  if (user === 'Ratataa' && pass === 'Ego') {
+    closeLoginModal();
+    enterAdminView();
+  } else {
+    document.getElementById('login-error').classList.remove('hidden');
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-pass').focus();
+  }
+}
+
+// ============================================================
+// ADMIN — VIEW
+// ============================================================
+
+function enterAdminView() {
+  state.adminLoggedIn = true;
+  document.getElementById('public-view').style.display = 'none';
+  document.getElementById('top-nav').style.display = 'none';
+  document.getElementById('bottom-nav').style.display = 'none';
+  document.getElementById('admin-view').classList.add('active');
+  // Reset to Matches panel on every login
+  adminShowPanel('matches', document.getElementById('atab-matches'));
+  renderAdminMatches();
+  renderStandings('admin-standings-table');
+  renderAdminAvatars();
+  window.scrollTo(0, 0);
+}
+
+function adminLogout() {
+  state.adminLoggedIn = false;
+  document.getElementById('admin-view').classList.remove('active');
+  document.getElementById('public-view').style.display = '';
+  document.getElementById('top-nav').style.display = '';
+  // Restore bottom-nav: only show on mobile (media query handles desktop)
+  const bn = document.getElementById('bottom-nav');
+  bn.style.display = '';  // let CSS media query take over
+  showSection('home');
+}
+
+/**
+ * adminShowPanel(id, triggerEl)
+ * Switches active panel and syncs BOTH sidebar items (desktop)
+ * and bottom tab buttons (mobile) to active state.
+ */
+function adminShowPanel(id, triggerEl) {
+  // Hide all panels
+  document.querySelectorAll('.admin-panel').forEach(p => p.classList.add('hidden'));
+  document.getElementById('admin-panel-' + id)?.classList.remove('hidden');
+
+  // Deactivate all sidebar items + tab buttons
+  document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.admin-tab').forEach(el => el.classList.remove('active'));
+
+  // Activate the clicked trigger (works for both sidebar & tab)
+  if (triggerEl) triggerEl.classList.add('active');
+
+  // Also sync the matching counterpart by panel id
+  const tabEl = document.getElementById('atab-' + id);
+  if (tabEl) tabEl.classList.add('active');
+
+  // Re-render based on active panel
+  if (id === 'standings') renderStandings('admin-standings-table');
+  if (id === 'matches') renderAdminMatches();
+  if (id === 'avatars') renderAdminAvatars();
+
+  // Scroll content to top on mobile
+  const wrap = document.getElementById('admin-content-wrap');
+  if (wrap) wrap.scrollTop = 0;
+}
+
+/**
+ * renderAdminMatches(): editable match list in admin
+ * Mobile-optimised: compact rows, touch-friendly tap targets,
+ * player names truncated, score prominent in centre.
+ * Also updates the progress bar strip.
+ */
+function renderAdminMatches() {
+  const el = document.getElementById('admin-matches-list');
+  if (!el) return;
+
+  // Update progress bar
+  const playedCount = state.matches.filter(m => m.played).length;
+  const total = state.matches.length || 18;
+  const pct = total > 0 ? Math.round((playedCount / total) * 100) : 0;
+  const pb = document.getElementById('admin-progress-bar');
+  const pl = document.getElementById('admin-progress-label');
+  if (pb) pb.style.width = pct + '%';
+  if (pl) pl.textContent = `${playedCount} / ${total}`;
+
+  el.innerHTML = state.matches.map((m, idx) => {
+    const g1 = m.played ? m.player1Goals : '–';
+    const g2 = m.played ? m.player2Goals : '–';
+    const c1 = PLAYER_COLORS[m.player1];
+    const c2 = PLAYER_COLORS[m.player2];
+    const rowBorder = m.played ? 'rgba(34,197,94,0.2)' : 'var(--border)';
+
+    return `<div class="admin-match-row flex items-center gap-2 glass rounded-2xl px-3 py-3 cursor-pointer fade-up"
+                 style="animation-delay:${idx * 0.018}s;border-color:${rowBorder};min-height:56px"
+                 onclick="openScoreModal(${m.id})">
+
+      <!-- Match number -->
+      <span class="font-display text-sm flex-shrink-0" style="color:var(--muted);width:22px;text-align:center">${m.id}</span>
+
+      <!-- Player 1 -->
+      <div class="flex items-center gap-1.5 flex-1 min-w-0 justify-end">
+        <span class="admin-match-name font-semibold text-sm truncate" style="max-width:70px">${m.player1}</span>
+${avatarHTML(m.player1, 32)}
+      </div>
+
+      <!-- Score -->
+      <div class="admin-match-score flex items-center gap-1 flex-shrink-0 rounded-xl px-3 py-1.5"
+           style="background:${m.played ? 'rgba(99,102,241,0.12)' : 'rgba(255,255,255,0.05)'};min-width:72px;justify-content:center">
+        <span class="font-display text-base" style="color:${m.played ? 'var(--white)' : 'var(--muted)'}">${g1}</span>
+        <span style="color:var(--muted);font-size:0.75rem">:</span>
+        <span class="font-display text-base" style="color:${m.played ? 'var(--white)' : 'var(--muted)'}">${g2}</span>
+      </div>
+
+      <!-- Player 2 -->
+      <div class="flex items-center gap-1.5 flex-1 min-w-0 justify-start">
+${avatarHTML(m.player2, 32)}
+        <span class="admin-match-name font-semibold text-sm truncate" style="max-width:70px">${m.player2}</span>
+      </div>
+
+      <!-- Status dot -->
+      <div class="flex-shrink-0 w-2 h-2 rounded-full" style="background:${m.played ? 'var(--success)' : 'var(--muted)'}"></div>
+    </div>`;
+  }).join('');
+}
+
+// ============================================================
+// ADMIN — SCORE MODAL
+// ============================================================
+
+function openScoreModal(matchId) {
+  const m = state.matches.find(x => x.id === matchId);
+  if (!m) return;
+  currentScoreMatchId = matchId;
+  const c1 = PLAYER_COLORS[m.player1];
+  const c2 = PLAYER_COLORS[m.player2];
+  const p1El = document.getElementById('score-modal-p1');
+  const p2El = document.getElementById('score-modal-p2');
+  p1El.textContent = m.player1.toUpperCase();
+  p1El.style.color = c1.dot;
+  p2El.textContent = m.player2.toUpperCase();
+  p2El.style.color = c2.dot;
+  document.getElementById('score-modal-match').textContent = `Match #${m.id}`;
+  document.getElementById('score-p1').value = m.played ? m.player1Goals : '';
+  document.getElementById('score-p2').value = m.played ? m.player2Goals : '';
+  // Show/hide clear button based on whether match has been played
+  const clearBtn = document.getElementById('score-clear-btn');
+  if (clearBtn) clearBtn.style.display = m.played ? '' : 'none';
+  document.getElementById('score-modal').classList.add('open');
+  setTimeout(() => document.getElementById('score-p1').focus(), 100);
+}
+function closeScoreModal() {
+  document.getElementById('score-modal').classList.remove('open');
+  currentScoreMatchId = null;
+}
+
+/** saveScore(): writes goals to state and persists */
+function saveScore() {
+  if (!currentScoreMatchId) return;
+  const g1Raw = document.getElementById('score-p1').value;
+  const g2Raw = document.getElementById('score-p2').value;
+  const g1 = parseInt(g1Raw);
+  const g2 = parseInt(g2Raw);
+  if (g1Raw === '' || g2Raw === '' || isNaN(g1) || isNaN(g2) || g1 < 0 || g2 < 0) {
+    showToast('Enter valid scores!', 'error'); return;
+  }
+  const m = state.matches.find(x => x.id === currentScoreMatchId);
+  m.player1Goals = g1;
+  m.player2Goals = g2;
+  m.played = true;
+  saveState();
+  closeScoreModal();
+  renderAdminMatches();
+  renderStandings('admin-standings-table');
+  showToast('✓ Score saved!', 'success');
+}
+
+/** clearScore(): removes result from a match */
+function clearScore() {
+  if (!currentScoreMatchId) return;
+  const m = state.matches.find(x => x.id === currentScoreMatchId);
+  m.player1Goals = null; m.player2Goals = null; m.played = false;
+  saveState();
+  closeScoreModal();
+  renderAdminMatches();
+  renderStandings('admin-standings-table');
+  showToast('Result cleared', 'default');
+}
+
+// ============================================================
+// ADMIN — TOOLS
+// ============================================================
+
+/** confirmReset(): two-step confirmation before reset */
+function confirmReset() {
+  if (!confirm('⚠️ Reset all results?\n\nThis will clear every score but keep the fixture list.\nThis cannot be undone.')) return;
+  state.matches.forEach(m => { m.played = false; m.player1Goals = null; m.player2Goals = null; });
+  saveState();
+  renderAdminMatches();
+  renderStandings('admin-standings-table');
+  showToast('Tournament reset!', 'error');
+}
+
+/** exportData(): downloads full state as JSON */
+function exportData() {
+  const blob = new Blob([JSON.stringify({ matches: state.matches }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'ratataa-league-data.json';
+  a.click();
+  showToast('✓ Exported!', 'success');
+}
+
+/** importData(): reads JSON file and restores state */
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.matches && Array.isArray(data.matches)) {
+        state.matches = data.matches;
+        saveState();
+        renderAdminMatches();
+        renderStandings('admin-standings-table');
+        renderAll(); // keep public view in sync too
+        showToast('✓ Imported!', 'success');
+      } else {
+        showToast('Invalid file format', 'error');
+      }
+    } catch { showToast('Parse error', 'error'); }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+/** revealDebug(): shows hidden debug tools on second click */
+function revealDebug(btn) {
+  const tools = document.getElementById('debug-tools');
+  if (tools.classList.contains('hidden')) {
+    tools.classList.remove('hidden');
+    btn.textContent = 'Hide';
+  } else {
+    tools.classList.add('hidden');
+    btn.textContent = 'Reveal';
+  }
+}
+
+/** markAllPlayed(): debug — randomizes all scores 0–5 */
+function markAllPlayed() {
+  const total = state.matches.length;
+  if (!confirm(`Mark all ${total} matches as played with random scores?`)) return;
+  state.matches.forEach(m => {
+    m.player1Goals = Math.floor(Math.random() * 6);
+    m.player2Goals = Math.floor(Math.random() * 6);
+    m.played = true;
+  });
+  saveState();
+  renderAdminMatches();
+  renderStandings('admin-standings-table');
+  showToast('✓ All matches marked played!', 'success');
+}
+
+// ============================================================
+// MODAL BACKDROP CLICK — close on outside click
+// ============================================================
+// Close share overlay on backdrop click
+document.getElementById('share-overlay')?.addEventListener('click', function(e) {
+  if (e.target === this) closeShareOverlay();
+});
+
+['report-modal', 'player-modal', 'score-modal', 'login-modal', 'avatar-modal'].forEach(id => {
+  document.getElementById(id)?.addEventListener('click', function(e) {
+    if (e.target === this) {
+      this.classList.remove('open');
+      if (id === 'score-modal') { currentScoreMatchId = null; }
+      if (id === 'login-modal') {
+        document.getElementById('login-error').classList.add('hidden');
+        document.getElementById('login-user').value = '';
+        document.getElementById('login-pass').value = '';
+      }
+    }
+  });
+});
+
+
+// ============================================================
+// SKELETON SCREENS — shown before Firebase data arrives
+// ============================================================
+
+function renderSkeletonStandings(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const rows = Array(4).fill(0).map((_, i) => `
+    <div class="skel-row">
+      <div class="skel skel-circle" style="width:22px;height:22px;flex-shrink:0"></div>
+      <div class="skel skel-circle" style="width:28px;height:28px;flex-shrink:0"></div>
+      <div class="skel" style="width:${60 + i * 10}px;height:13px"></div>
+      <div style="flex:1"></div>
+      <div class="skel" style="width:18px;height:13px"></div>
+      <div class="skel" style="width:18px;height:13px;margin-left:8px"></div>
+      <div class="skel" style="width:18px;height:13px;margin-left:8px"></div>
+      <div class="skel" style="width:24px;height:16px;margin-left:12px"></div>
+    </div>`).join('');
+  el.innerHTML = `<div style="padding:0.5rem 0.75rem">${rows}</div>`;
+}
+
+function renderSkeletonFixtures(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = Array(6).fill(0).map((_, i) => `
+    <div class="glass rounded-xl p-4 fade-up" style="animation-delay:${i*0.05}s">
+      <div style="display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1rem">
+        <div class="flex items-center gap-2 justify-end">
+          <div class="skel" style="width:55px;height:13px"></div>
+          <div class="skel skel-circle" style="width:36px;height:36px;flex-shrink:0"></div>
+        </div>
+        <div class="flex flex-col items-center gap-1.5">
+          <div class="skel" style="width:70px;height:22px;border-radius:8px"></div>
+          <div class="skel" style="width:56px;height:16px;border-radius:20px"></div>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="skel skel-circle" style="width:36px;height:36px;flex-shrink:0"></div>
+          <div class="skel" style="width:55px;height:13px"></div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function renderSkeletonScorers(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = Array(4).fill(0).map((_, i) => `
+    <div class="glass rounded-xl p-5 flex items-center gap-4 fade-up" style="animation-delay:${i*0.06}s">
+      <div class="skel skel-circle" style="width:36px;height:36px;flex-shrink:0"></div>
+      <div class="skel skel-circle" style="width:48px;height:48px;flex-shrink:0"></div>
+      <div class="flex-1">
+        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+          <div class="skel" style="width:70px;height:14px"></div>
+          <div class="skel" style="width:28px;height:22px"></div>
+        </div>
+        <div class="skel" style="width:100%;height:4px;border-radius:2px"></div>
+        <div style="display:flex;gap:12px;margin-top:8px">
+          <div class="skel" style="width:40px;height:11px"></div>
+          <div class="skel" style="width:40px;height:11px"></div>
+          <div class="skel" style="width:40px;height:11px"></div>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+// ============================================================
+// SHARE AS IMAGE — canvas-based image generation (no library)
+// ============================================================
+
+let _shareImageDataUrl = null;
+
+// ============================================================
+// SHARE AS IMAGE — Pure Canvas 2D with full avatar support
+// Works on Android Chrome, iOS Safari, all modern browsers.
+// Photo/emoji/initials/letter avatars all supported.
+// No SVG foreignObject. No external libraries.
+// ============================================================
+
+
+function _loadImg(src) {
+  return new Promise(function(res) {
+    var img = new Image();
+    img.onload = function() { res(img); };
+    img.onerror = function() { res(null); };
+    img.src = src;
+  });
+}
+
+async function _drawAv(ctx, name, cx, cy, r) {
+  var av = avatarState[name];
+  var pc = PLAYER_COLORS[name];
+
+  if (av && av.type === 'photo' && av.value) {
+    var img = await _loadImg(av.value);
+    if (img) {
+      ctx.save();
+      ctx.beginPath(); ctx.arc(cx, cy, r + 1.5, 0, Math.PI * 2);
+      ctx.strokeStyle = pc.border; ctx.lineWidth = 2; ctx.stroke();
+      ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.clip();
+      ctx.drawImage(img, cx - r, cy - r, r * 2, r * 2);
+      ctx.restore(); return;
+    }
+  }
+  if (av && av.type === 'emoji' && av.value) {
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.fillStyle = pc.bg; ctx.fill();
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.strokeStyle = pc.border; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.font = Math.round(r * 1.1) + 'px system-ui';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#fff'; ctx.fillText(av.value, cx, cy + 1); return;
+  }
+  var letter = (av && av.type === 'initials' && av.value) ? av.value.slice(0, 2) : name[0];
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = pc.bg; ctx.fill();
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.strokeStyle = pc.border; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.font = '700 ' + Math.round(r * 0.88) + 'px DM Sans, system-ui';
+  ctx.fillStyle = pc.dot; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(letter, cx, cy + 1);
+}
+
+async function buildStandingsCanvas() {
+  var rows = computeStandings();
+  var ls = computeLeagueStats();
+  var SC = 2, W = 400, ROW_H = 62, HDR_H = 76, FTR_H = 36;
+  var H = HDR_H + rows.length * ROW_H + FTR_H;
+  var cv = document.createElement('canvas');
+  cv.width = W * SC; cv.height = H * SC;
+  var ctx = cv.getContext('2d');
+  ctx.scale(SC, SC);
+
+  ctx.fillStyle = '#080810'; ctx.fillRect(0, 0, W, H);
+  var hg = ctx.createLinearGradient(0, 0, 0, HDR_H);
+  hg.addColorStop(0, '#0f0f1a'); hg.addColorStop(1, '#080810');
+  ctx.fillStyle = hg; ctx.fillRect(0, 0, W, HDR_H);
+  ctx.fillStyle = 'rgba(255,255,255,0.07)'; ctx.fillRect(0, HDR_H - 1, W, 1);
+
+  ctx.font = '700 8px DM Sans, system-ui'; ctx.fillStyle = '#6366f1';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText('LIVE TABLE', 16, 20);
+  ctx.font = '900 30px DM Sans, system-ui'; ctx.fillStyle = '#f8fafc'; ctx.fillText('STANDINGS', 16, 52);
+  ctx.font = '500 9px DM Sans, system-ui'; ctx.fillStyle = '#64748b';
+  ctx.textAlign = 'right'; ctx.fillText('RATATAA LEAGUE', W - 16, 28);
+  ctx.font = '700 12px DM Sans, system-ui'; ctx.fillStyle = '#eab308'; ctx.fillText('Season 2026', W - 16, 52);
+
+  var hdCols = [{l:'P',x:W-218},{l:'W',x:W-188},{l:'D',x:W-160},{l:'L',x:W-132},{l:'GF',x:W-104},{l:'GA',x:W-76},{l:'GD',x:W-46},{l:'PTS',x:W-14}];
+  var hdY = HDR_H - 9;
+  ctx.font = '700 7.5px DM Sans, system-ui'; ctx.fillStyle = '#475569';
+  hdCols.forEach(function(h) { ctx.textAlign = h.l === 'PTS' ? 'right' : 'center'; ctx.fillText(h.l, h.x, hdY); });
+
+  for (var i = 0; i < rows.length; i++) {
+    var r = rows[i], pc = PLAYER_COLORS[r.name];
+    var ry = HDR_H + i * ROW_H, cy = ry + ROW_H / 2;
+    var isLeader = i === 0 && r.pts > 0;
+
+    if (isLeader) {
+      var lg = ctx.createLinearGradient(0, ry, W, ry);
+      lg.addColorStop(0, 'rgba(234,179,8,0.13)'); lg.addColorStop(0.6, 'rgba(234,179,8,0.05)'); lg.addColorStop(1, 'transparent');
+      ctx.fillStyle = lg; ctx.fillRect(0, ry, W, ROW_H);
+      ctx.fillStyle = '#eab308'; ctx.fillRect(0, ry, 3, ROW_H);
+    }
+    ctx.fillStyle = 'rgba(255,255,255,0.05)'; ctx.fillRect(0, ry + ROW_H - 1, W, 1);
+
+    var medals = ['\ud83e\udd47', '\ud83e\udd48', '\ud83e\udd49'];
+    ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
+    if (i < 3) { ctx.font = '14px system-ui'; ctx.fillStyle = '#fff'; ctx.fillText(medals[i], 20, cy); }
+    else { ctx.font = '600 11px DM Sans, system-ui'; ctx.fillStyle = '#64748b'; ctx.fillText('4', 20, cy); }
+
+    await _drawAv(ctx, r.name, 50, cy, 16);
+
+    ctx.font = isLeader ? '700 14px DM Sans, system-ui' : '600 13px DM Sans, system-ui';
+    ctx.fillStyle = isLeader ? '#eab308' : '#f8fafc';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText(r.name + (isLeader ? ' \ud83d\udc51' : ''), 74, cy);
+
+    var sCols = [
+      {v:r.played,x:W-218,col:'#94a3b8'},{v:r.won,x:W-188,col:'#22c55e'},{v:r.drawn,x:W-160,col:'#64748b'},
+      {v:r.lost,x:W-132,col:'#ef4444'},{v:r.gf,x:W-104,col:'#f8fafc'},{v:r.ga,x:W-76,col:'#f8fafc'},
+      {v:(r.gd>0?'+':'')+r.gd,x:W-46,col:r.gd>0?'#22c55e':r.gd<0?'#ef4444':'#64748b'}
+    ];
+    ctx.font = '500 11px DM Sans, system-ui'; ctx.textBaseline = 'middle';
+    sCols.forEach(function(s){ ctx.fillStyle=s.col; ctx.textAlign='center'; ctx.fillText(String(s.v),s.x,cy); });
+    ctx.font = '800 ' + (isLeader ? 16 : 14) + 'px DM Sans, system-ui';
+    ctx.fillStyle = isLeader ? '#eab308' : '#6366f1';
+    ctx.textAlign = 'right'; ctx.fillText(String(r.pts), W - 14, cy);
+  }
+
+  var fy = HDR_H + rows.length * ROW_H;
+  ctx.fillStyle = 'rgba(255,255,255,0.06)'; ctx.fillRect(0, fy, W, 1);
+  ctx.font = '500 9.5px DM Sans, system-ui'; ctx.fillStyle = '#64748b';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillText(ls.played + '/' + ls.total + ' played  \u00b7  ' + ls.totalGoals + ' goals', 16, fy + FTR_H / 2);
+
+  return cv.toDataURL('image/png');
+}
+
+async function buildMatchCanvas(matchId) {
+  var m = state.matches.find(function(x){ return x.id === matchId; });
+  if (!m || !m.played) return null;
+  var g1 = Number(m.player1Goals), g2 = Number(m.player2Goals);
+  var winner = g1 > g2 ? m.player1 : g2 > g1 ? m.player2 : null;
+  var isDraw = g1 === g2;
+  var SC = 2, W = 400, H = 260;
+  var cv = document.createElement('canvas');
+  cv.width = W * SC; cv.height = H * SC;
+  var ctx = cv.getContext('2d'); ctx.scale(SC, SC);
+
+  var bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, '#0f0f1a'); bg.addColorStop(1, '#080810');
+  ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+  ctx.fillStyle = 'rgba(99,102,241,0.1)'; ctx.fillRect(0, 0, W, 38);
+  ctx.fillStyle = 'rgba(255,255,255,0.06)'; ctx.fillRect(0, 38, W, 1);
+  ctx.font = '700 8.5px DM Sans, system-ui'; ctx.fillStyle = '#6366f1';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillText('MATCH REPORT \u00b7 #' + m.id, 16, 19);
+  ctx.font = '500 8.5px DM Sans, system-ui'; ctx.fillStyle = '#64748b';
+  ctx.textAlign = 'right'; ctx.fillText('RATATAA LEAGUE 2026', W - 16, 19);
+
+  await _drawAv(ctx, m.player1, 90, 112, 30);
+  await _drawAv(ctx, m.player2, W - 90, 112, 30);
+
+  function drawName(name, cx, isWin) {
+    ctx.font = (isWin ? '700' : '600') + ' 14px DM Sans, system-ui';
+    ctx.fillStyle = isWin ? '#eab308' : '#f8fafc';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(name, cx, 156);
+    if (isWin) { ctx.font = '700 8px DM Sans, system-ui'; ctx.fillStyle = '#eab308'; ctx.fillText('WINNER', cx, 172); }
+  }
+  drawName(m.player1, 90, winner === m.player1);
+  drawName(m.player2, W - 90, winner === m.player2);
+
+  ctx.textBaseline = 'middle'; ctx.textAlign = 'center';
+  ctx.font = '900 54px DM Sans, system-ui'; ctx.fillStyle = '#f8fafc';
+  ctx.fillText(String(g1), W / 2 - 28, 108);
+  ctx.font = '300 30px DM Sans, system-ui'; ctx.fillStyle = '#475569';
+  ctx.fillText('\u2013', W / 2, 108);
+  ctx.font = '900 54px DM Sans, system-ui'; ctx.fillStyle = '#f8fafc';
+  ctx.fillText(String(g2), W / 2 + 28, 108);
+  ctx.font = '800 10px DM Sans, system-ui';
+  ctx.fillStyle = isDraw ? '#94a3b8' : '#eab308';
+  ctx.fillText(isDraw ? 'DRAW' : winner.toUpperCase() + ' WINS', W / 2, 140);
+
+  ctx.fillStyle = 'rgba(255,255,255,0.06)'; ctx.fillRect(0, H - 30, W, 1);
+  ctx.font = '500 9.5px DM Sans, system-ui'; ctx.fillStyle = '#64748b';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillText('GD ' + (!isDraw ? '+' : '') + Math.abs(g1 - g2), 16, H - 15);
+
+  return cv.toDataURL('image/png');
+}
+
+async function shareStandingsAsImage() {
+  showToast('Generating image...', '');
+  try {
+    var dataUrl = await buildStandingsCanvas();
+    if (!dataUrl) { showToast('Image failed', 'error'); return; }
+    openShareOverlay(dataUrl);
+  } catch(e) { console.error(e); showToast('Image failed', 'error'); }
+}
+
+async function shareMatchAsImage(matchId) {
+  showToast('Generating image...', '');
+  try {
+    var dataUrl = await buildMatchCanvas(matchId);
+    if (!dataUrl) { showToast('Image failed', 'error'); return; }
+    openShareOverlay(dataUrl);
+  } catch(e) { console.error(e); showToast('Image failed', 'error'); }
+}
+
+function openShareOverlay(dataUrl) {
+  _shareImageDataUrl = dataUrl;
+  document.getElementById('share-preview-img').src = dataUrl;
+  document.getElementById('share-overlay').classList.add('open');
+}
+
+function closeShareOverlay() {
+  document.getElementById('share-overlay').classList.remove('open');
+  _shareImageDataUrl = null;
+}
+
+function downloadShareImage() {
+  if (!_shareImageDataUrl) return;
+  var a = document.createElement('a');
+  a.href = _shareImageDataUrl; a.download = 'ratataa-league.png'; a.click();
+  showToast('Downloaded!', 'success');
+}
+
+function shareToWhatsApp() {
+  if (!_shareImageDataUrl) return;
+  if (navigator.share) {
+    fetch(_shareImageDataUrl).then(function(r){ return r.blob(); }).then(function(blob) {
+      var file = new File([blob], 'ratataa-league.png', { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file], title: 'Ratataa League', text: '\ud83c\udfc6 Ratataa League \u2014 Season 2026' })
+          .catch(function(){ waFallback(); });
+      } else { waFallback(); }
+    }).catch(function(){ waFallback(); });
+  } else { waFallback(); }
+}
+
+function waFallback() {
+  downloadShareImage();
+  setTimeout(function() {
+    window.open('https://wa.me/?text=' + encodeURIComponent('\ud83c\udfc6 Ratataa League \u2014 Season 2026\nCheck the latest standings!'), '_blank');
+  }, 700);
+}
+
+
+
+// ============================================================
+// BOOT
+// ============================================================
+
+/** init(): load state and render everything */
+function init() {
+  loadState();
+  loadAvatars();
+  renderAll();
+  showSection('home');
+  initRealAppFeel();
+  checkForUpdate();
+}
+
+// ============================================================
+// REAL APP FEEL — Scroll-safe
+// ============================================================
+function initRealAppFeel() {
+  // Block right-click
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  // Haptic on buttons only
+  document.addEventListener('touchstart', e => {
+    if (e.target.closest('button, .sidebar-item, .admin-tab, .bnav-item, .nav-link')) {
+      if (navigator.vibrate) navigator.vibrate(8);
+    }
+  }, { passive: true });
+
+  // Block double-tap zoom (but allow normal scrolling)
+  let lastTap = 0;
+  document.addEventListener('touchend', e => {
+    // Only block double-tap on non-input elements
+    if (e.target.closest('input, textarea')) return;
+    const now = Date.now();
+    if (now - lastTap < 280) e.preventDefault();
+    lastTap = now;
+  }, { passive: false });
+}
+
+// ============================================================
+// AUTO UPDATE
+// ============================================================
+const CURRENT_VERSION = document.querySelector('meta[name="app-version"]')?.content || '1.0.0';
+const VERSION_KEY = 'ratataa_app_version';
+
+function checkForUpdate() {
+  const saved = localStorage.getItem(VERSION_KEY);
+  if (!saved) { localStorage.setItem(VERSION_KEY, CURRENT_VERSION); return; }
+  if (saved !== CURRENT_VERSION) {
+    setTimeout(() => document.getElementById('update-banner')?.classList.add('show'), 1500);
+  }
+}
+
+function applyUpdate() {
+  localStorage.setItem(VERSION_KEY, CURRENT_VERSION);
+  window.location.reload(true);
+}
+
+function dismissUpdate(e) {
+  e?.stopPropagation();
+  localStorage.setItem(VERSION_KEY, CURRENT_VERSION);
+  document.getElementById('update-banner')?.classList.remove('show');
+}
+
+init();
+</script>
+  <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCxrnnqhwYwjpO0-UMKJvwmjz_d4P9Dx3nY",
+  authDomain: "ratataa-league.firebaseapp.com",
+  databaseURL: "https://ratataa-league-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "ratataa-league",
+  storageBucket: "ratataa-league.firebasestorage.app",
+  messagingSenderId: "546435389017",
+  appId: "1:546435389017:web:ce21f836942c46134e8348"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const matchesRef = ref(db, "matches");
+const avatarsRef = ref(db, "avatars");
+
+// ── Matches sync ──
+onValue(matchesRef, (snapshot) => {
+  const data = snapshot.val();
+  if (data && Array.isArray(data) && data.length > 0) {
+    state.matches = data.map((m, idx) => ({ id: m.id ?? idx + 1, ...m }));
+  } else {
+    state.matches = generateFixtures();
+    set(matchesRef, state.matches);
+  }
+  try { localStorage.setItem('ratataaLeagueData', JSON.stringify({ matches: state.matches })); } catch(e) {}
+  clearTimeout(window._fbTimer);
+  window._fbTimer = setTimeout(() => {
+    renderAll();
+    if (document.getElementById('admin-view').classList.contains('active')) {
+      renderAdminMatches();
+      renderStandings('admin-standings-table');
+    }
+  }, 80);
+});
+
+// ── Avatars sync ──
+onValue(avatarsRef, (snapshot) => {
+  const data = snapshot.val();
+  if (data && typeof data === 'object') {
+    avatarState = data;
+    try { localStorage.setItem('ratataaAvatars', JSON.stringify(avatarState)); } catch(e) {}
+    renderAll();
+    if (document.getElementById('admin-panel-avatars') &&
+        !document.getElementById('admin-panel-avatars').classList.contains('hidden')) {
+      renderAdminAvatars();
+    }
+  }
+});
+
+window.saveState = function() {
+  set(matchesRef, state.matches);
+  try { localStorage.setItem('ratataaLeagueData', JSON.stringify({ matches: state.matches })); } catch(e) {}
+};
+
+window.saveAvatarsToFirebase = function() {
+  set(avatarsRef, avatarState);
+};
 </script>
 
 </body>
