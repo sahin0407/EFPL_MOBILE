@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <title>RATATAA LEAGUE</title>
 
 <style>
@@ -16,6 +17,16 @@ h1 {
   padding:20px;
 }
 
+button {
+  padding:10px 20px;
+  border:none;
+  border-radius:8px;
+  background:#22c55e;
+  color:white;
+  cursor:pointer;
+  margin-bottom:20px;
+}
+
 .players {
   display:grid;
   grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
@@ -27,14 +38,26 @@ h1 {
   background:rgba(255,255,255,0.1);
   padding:20px;
   border-radius:10px;
+  transition:0.3s;
 }
 
+.card:hover {
+  transform:scale(1.05);
+}
+
+ul {
+  list-style:none;
+  padding:0;
+}
 </style>
+
 </head>
 
 <body>
 
 <h1>RATATAA 🔥</h1>
+
+<button onclick="showMessage()">Click Me 🔥</button>
 
 <h2>Players</h2>
 
@@ -49,6 +72,10 @@ h1 {
 <ul id="board"></ul>
 
 <script>
+function showMessage(){
+  alert("Welcome to RATATAA LEAGUE 🔥");
+}
+
 const players = [
   {name:"Sahin", score:120},
   {name:"Mahashin", score:95},
