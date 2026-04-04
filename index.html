@@ -502,7 +502,7 @@ body { background: var(--bg-base); min-height: 100vh; overflow-x: clip; }
   position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(16px);
   background: #12121e; border: 1px solid var(--indigo); color: var(--white);
   padding: 0.7rem 1.5rem; border-radius: 8px; font-size: 0.8rem; font-weight: 600;
-  z-index: 800; opacity: 0; transition: all 0.35s; pointer-events: none; white-space: nowrap;
+  z-index: 500; opacity: 0; transition: all 0.35s; pointer-events: none; white-space: nowrap;
   box-shadow: 0 4px 24px rgba(220,38,38,0.2);
 }
 #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -571,60 +571,6 @@ body { background: var(--bg-base); min-height: 100vh; overflow-x: clip; }
   padding: 1.25rem; display: flex; align-items: center; gap: 1rem; transition: border-color 0.25s;
 }
 .avatar-admin-card:hover { border-color: var(--border-hover); }
-
-/* Login shake animation */
-@keyframes shake {
-  0%,100%{transform:scale(1) translateX(0);}
-  15%{transform:scale(1) translateX(-7px);}
-  30%{transform:scale(1) translateX(7px);}
-  45%{transform:scale(1) translateX(-5px);}
-  60%{transform:scale(1) translateX(5px);}
-  75%{transform:scale(1) translateX(-3px);}
-  90%{transform:scale(1) translateX(3px);}
-}
-.modal-box.shake { animation: shake 0.5s cubic-bezier(0.36,0.07,0.19,0.97) both; }
-
-/* Password toggle button */
-.pass-toggle {
-  position:absolute; right:10px; top:50%; transform:translateY(-50%);
-  background:none; border:none; cursor:pointer; color:var(--muted);
-  padding:4px; line-height:1; display:flex; align-items:center;
-  transition:color 0.2s;
-}
-.pass-toggle:hover { color:var(--white); }
-
-/* Score modal +/- stepper */
-.score-stepper {
-  display:flex; align-items:center; justify-content:center; gap:0; width:100%;
-}
-.score-stepper .step-btn {
-  width:38px; height:38px; border-radius:8px; font-size:1.4rem; font-weight:700;
-  background:rgba(255,255,255,0.06); border:1px solid var(--border); color:var(--white);
-  cursor:pointer; display:flex; align-items:center; justify-content:center;
-  transition:all 0.2s; flex-shrink:0; line-height:1;
-  touch-action:manipulation; user-select:none;
-}
-.score-stepper .step-btn:hover { background:rgba(255,255,255,0.12); border-color:var(--indigo); }
-.score-stepper .step-btn:active { transform:scale(0.9); }
-.score-stepper input.input-field {
-  text-align:center; width:70px; margin:0 6px; font-size:1.8rem !important;
-  padding:0.45rem 0.4rem !important;
-}
-
-/* Custom confirm dialog */
-#confirm-dialog {
-  position:fixed; inset:0; z-index:999; background:rgba(0,0,0,0.85);
-  backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:center;
-  padding:1rem; opacity:0; pointer-events:none; transition:opacity 0.25s;
-}
-#confirm-dialog.open { opacity:1; pointer-events:all; }
-#confirm-dialog .confirm-box {
-  background:#0d0d18; border:1px solid var(--border); border-radius:16px;
-  padding:1.75rem; max-width:360px; width:100%;
-  transform:scale(0.94) translateY(12px);
-  transition:transform 0.3s cubic-bezier(0.25,0.46,0.45,0.94);
-}
-#confirm-dialog.open .confirm-box { transform:scale(1) translateY(0); }
 
 body, p, h1, h2, h3, h4, h5, h6, span, div, label, li {
   -webkit-user-select: none; user-select: none;
@@ -833,16 +779,10 @@ input[type=number]::-webkit-inner-spin-button { opacity: 1; }
           <h2 class="font-display text-5xl" style="color:var(--white)">STANDINGS</h2>
           <div style="position:absolute;bottom:-6px;left:0;width:40px;height:2px;background:var(--indigo);border-radius:1px"></div>
         </div>
-        <div class="flex items-center gap-2">
-          <button onclick="copyStandings()" class="btn-ghost flex items-center gap-1.5 rounded-lg text-xs font-bold flex-shrink-0" style="padding:0.45rem 0.85rem;border-color:rgba(255,255,255,0.1);color:var(--muted)" title="Copy standings to clipboard">
-            <svg style="width:13px;height:13px;flex-shrink:0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
-            Copy
-          </button>
-          <button onclick="shareStandingsAsImage()" class="btn-ghost flex items-center gap-1.5 rounded-lg text-xs font-bold flex-shrink-0" style="padding:0.45rem 0.85rem;border-color:rgba(220,38,38,0.25);color:var(--indigo)">
-            <svg style="width:13px;height:13px;flex-shrink:0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
-            Share
-          </button>
-        </div>
+        <button onclick="shareStandingsAsImage()" class="btn-ghost flex items-center gap-1.5 rounded-lg text-xs font-bold flex-shrink-0" style="padding:0.45rem 0.85rem;border-color:rgba(220,38,38,0.25);color:var(--indigo)">
+          <svg style="width:13px;height:13px;flex-shrink:0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+          Share
+        </button>
       </div>
       <div class="glass rounded-2xl overflow-hidden" id="standings-table"></div>
       <div class="mt-12">
@@ -990,18 +930,6 @@ input[type=number]::-webkit-inner-spin-button { opacity: 1; }
 
 </main>
 
-<!-- CUSTOM CONFIRM DIALOG -->
-<div id="confirm-dialog">
-  <div class="confirm-box">
-    <p id="confirm-title" class="font-display text-xl mb-2" style="color:var(--white)">CONFIRM</p>
-    <p id="confirm-msg" class="text-sm mb-6" style="color:var(--muted)"></p>
-    <div class="flex gap-3">
-      <button id="confirm-ok" class="flex-1 py-2.5 rounded-lg text-sm font-bold" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);color:var(--danger);cursor:pointer;transition:all 0.2s" onmouseover="this.style.background='rgba(239,68,68,0.22)'" onmouseout="this.style.background='rgba(239,68,68,0.1)'">Confirm</button>
-      <button onclick="closeConfirmDialog()" class="btn-ghost flex-1 py-2.5 rounded-lg text-sm font-bold">Cancel</button>
-    </div>
-  </div>
-</div>
-
 <!-- LOGIN MODAL -->
 <div id="login-modal" class="modal-backdrop">
   <div class="modal-box p-8 max-w-sm" style="text-align:center">
@@ -1010,16 +938,11 @@ input[type=number]::-webkit-inner-spin-button { opacity: 1; }
     <div class="space-y-3 text-left">
       <div>
         <label class="block text-xs font-bold tracking-wider uppercase mb-1.5" style="color:var(--muted)">Username</label>
-        <input id="login-user" type="text" class="input-field" placeholder="Username" autocomplete="username" onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()" />
+        <input id="login-user" type="text" class="input-field" placeholder="Username" autocomplete="off" onkeydown="if(event.key==='Enter')document.getElementById('login-pass').focus()" />
       </div>
       <div>
         <label class="block text-xs font-bold tracking-wider uppercase mb-1.5" style="color:var(--muted)">Password</label>
-        <div style="position:relative">
-          <input id="login-pass" type="password" class="input-field" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()" style="padding-right:2.5rem" />
-          <button class="pass-toggle" type="button" onclick="togglePassVis()" id="pass-eye" tabindex="-1" aria-label="Show/hide password">
-            <svg id="pass-eye-icon" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-          </button>
-        </div>
+        <input id="login-pass" type="password" class="input-field" placeholder="Password" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()" />
       </div>
       <p id="login-error" class="text-xs hidden" style="color:var(--danger)">Invalid credentials</p>
       <button onclick="doLogin()" class="btn-indigo w-full py-3 rounded-lg text-sm font-bold tracking-wider uppercase mt-2">Enter</button>
@@ -1222,28 +1145,22 @@ input[type=number]::-webkit-inner-spin-button { opacity: 1; }
     <p id="score-modal-match" class="text-sm mb-6 font-bold text-center" style="color:var(--muted)"></p>
     <div class="grid grid-cols-3 items-center gap-4 mb-6">
       <div class="text-center">
-        <p id="score-modal-p1" class="font-display text-xl mb-3"></p>
-        <div class="score-stepper">
-          <button class="step-btn" onclick="stepScore('score-p1',-1)" type="button">−</button>
-          <input id="score-p1" type="number" min="0" max="99" step="1" class="input-field" placeholder="0"
-                 onfocus="this.select()"
-                 onkeydown="if(event.key==='Enter')document.getElementById('score-p2').focus()" />
-          <button class="step-btn" onclick="stepScore('score-p1',1)" type="button">+</button>
-        </div>
+        <p id="score-modal-p1" class="font-display text-xl mb-2"></p>
+        <input id="score-p1" type="number" min="0" max="99" step="1" class="input-field text-center text-2xl font-display" placeholder="0"
+               oninput="this.value=Math.max(0,parseInt(this.value)||0)"
+               onfocus="this.select()"
+               onkeydown="if(event.key==='Enter')document.getElementById('score-p2').focus()" />
       </div>
       <div class="text-center font-display text-2xl" style="color:var(--muted)">VS</div>
       <div class="text-center">
-        <p id="score-modal-p2" class="font-display text-xl mb-3"></p>
-        <div class="score-stepper">
-          <button class="step-btn" onclick="stepScore('score-p2',-1)" type="button">−</button>
-          <input id="score-p2" type="number" min="0" max="99" step="1" class="input-field" placeholder="0"
-                 onfocus="this.select()"
-                 onkeydown="if(event.key==='Enter')saveScore()" />
-          <button class="step-btn" onclick="stepScore('score-p2',1)" type="button">+</button>
-        </div>
+        <p id="score-modal-p2" class="font-display text-xl mb-2"></p>
+        <input id="score-p2" type="number" min="0" max="99" step="1" class="input-field text-center text-2xl font-display" placeholder="0"
+               oninput="this.value=Math.max(0,parseInt(this.value)||0)"
+               onfocus="this.select()"
+               onkeydown="if(event.key==='Enter')saveScore()" />
       </div>
     </div>
-    <button onclick="saveScore()" class="btn-indigo w-full py-3 rounded-lg text-sm font-bold tracking-wider uppercase">💾 Save Score</button>
+    <button onclick="saveScore()" class="btn-indigo w-full py-3 rounded-lg text-sm font-bold tracking-wider uppercase">Save Score</button>
     <button id="score-clear-btn" onclick="clearScore()" class="btn-ghost w-full py-2.5 rounded-lg text-sm tracking-wider mt-2" style="display:none">Clear Result</button>
   </div>
 </div>
@@ -1435,8 +1352,8 @@ function showSection(id) {
       target.style.animation = '';
       target.classList.add('active');
       if (id === 'graph') {
-        // Double-rAF: first makes section visible, second measures real width
-        requestAnimationFrame(() => requestAnimationFrame(() => renderPerformanceGraph()));
+        // Section just became visible — redraw canvas now that it has real width
+        requestAnimationFrame(() => renderPerformanceGraph());
       }
     });
   }
@@ -1447,12 +1364,6 @@ function showSection(id) {
   renderAll();
 }
 
-let _winProbTimer = null;
-function renderWinProbabilityDebounced() {
-  clearTimeout(_winProbTimer);
-  _winProbTimer = setTimeout(renderWinProbability, 120);
-}
-
 function renderAll() {
   renderHeroStats();
   renderStandings('standings-table');
@@ -1461,7 +1372,7 @@ function renderAll() {
   renderResults();
   renderTopScorers();
   renderPlayers();
-  renderWinProbabilityDebounced();
+  renderWinProbability();
   renderPerformanceGraph();
 }
 
@@ -1470,21 +1381,21 @@ function avatarHTML(name, size = 42) {
   const av = avatarState[name];
   const fontSize = size * 0.38;
   if (av && av.type === 'photo' && av.value) {
-    return `<div class="player-avatar" style="width:${size}px;height:${size}px;border-radius:50%;border:2px solid ${c.border};overflow:hidden;flex-shrink:0">
-      <img src="${av.value}" alt="${name}" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:50%;" />
+    return `<div class="player-avatar" style="width:${size}px;height:${size}px;border:2px solid ${c.border};overflow:hidden;flex-shrink:0">
+      <img src="${av.value}" alt="${name}" style="width:100%;height:100%;object-fit:cover;display:block" />
     </div>`;
   }
   if (av && av.type === 'emoji' && av.value) {
-    return `<div class="player-avatar" style="width:${size}px;height:${size}px;border-radius:50%;background:${c.bg};border:1px solid ${c.border};flex-shrink:0">
+    return `<div class="player-avatar" style="width:${size}px;height:${size}px;background:${c.bg};border:1px solid ${c.border};flex-shrink:0">
       <span style="font-size:${size * 0.52}px;line-height:1">${av.value}</span>
     </div>`;
   }
   if (av && av.type === 'initials' && av.value) {
-    return `<div class="player-avatar" style="width:${size}px;height:${size}px;border-radius:50%;background:${c.bg};border:1px solid ${c.border};flex-shrink:0">
+    return `<div class="player-avatar" style="width:${size}px;height:${size}px;background:${c.bg};border:1px solid ${c.border};flex-shrink:0">
       <span style="color:${c.dot};font-size:${size * 0.32}px;font-weight:700;letter-spacing:-0.02em">${av.value.toUpperCase().slice(0,2)}</span>
     </div>`;
   }
-  return `<div class="player-avatar" style="width:${size}px;height:${size}px;border-radius:50%;background:${c.bg};border:1px solid ${c.border};flex-shrink:0">
+  return `<div class="player-avatar" style="width:${size}px;height:${size}px;background:${c.bg};border:1px solid ${c.border};flex-shrink:0">
     <span style="color:${c.dot};font-size:${fontSize}px">${name[0]}</span>
   </div>`;
 }
@@ -1634,11 +1545,7 @@ function renderResults() {
   const rl = document.getElementById('results-list');
   const nr = document.getElementById('no-results');
   if (!rl) return;
-  if (played.length === 0) {
-    rl.innerHTML = '';
-    if (nr) nr.classList.remove('hidden');
-    return;
-  }
+  if (played.length === 0) { rl.innerHTML = ''; if (nr) nr.classList.remove('hidden'); return; }
   if (nr) nr.classList.add('hidden');
   const playedDesc = [...played].reverse();
   rl.innerHTML = playedDesc.map((m, idx) => {
@@ -1659,7 +1566,7 @@ function renderResults() {
           </div>
           ${isDraw
             ? '<span class="pill" style="background:rgba(100,116,139,0.15);color:#94a3b8;white-space:nowrap">DRAW</span>'
-            : `<span class="pill pill-played" style="white-space:nowrap">${winner ? winner + ' wins' : 'Played'}</span>`}
+            : '<span class="pill pill-played" style="white-space:nowrap">Played</span>'}
         </div>
         <div class="fixture-player-right">
           ${avatarHTML(m.player2)}
@@ -1907,12 +1814,7 @@ function updateAvatarPreview() {
   if (!emojiVal && !initialsVal) avatarState[avatarEditingPlayer] = original;
 }
 
-function selectEmojiPreset(emoji) {
-  document.getElementById('avatar-emoji-input').value = emoji;
-  updateAvatarPreview();
-  // Small delay so user sees the preview before closing
-  setTimeout(() => applyEmoji(), 180);
-}
+function selectEmojiPreset(emoji) { document.getElementById('avatar-emoji-input').value = emoji; updateAvatarPreview(); applyEmoji(); }
 
 function applyEmoji() {
   const val = document.getElementById('avatar-emoji-input').value.trim();
@@ -1920,7 +1822,6 @@ function applyEmoji() {
   avatarState[avatarEditingPlayer] = { type: 'emoji', value: val };
   saveAvatars(); refreshAvatarPreview(); renderAdminAvatars(); renderAll();
   showToast('Emoji set!', 'success');
-  closeAvatarModal();
 }
 
 function applyInitials() {
@@ -1929,7 +1830,6 @@ function applyInitials() {
   avatarState[avatarEditingPlayer] = { type: 'initials', value: val };
   saveAvatars(); refreshAvatarPreview(); renderAdminAvatars(); renderAll();
   showToast('Initials set!', 'success');
-  closeAvatarModal();
 }
 
 function handleAvatarPhotoUpload(event) {
@@ -1989,8 +1889,7 @@ function fallbackCopy(txt) {
 function showToast(msg, type = '') {
   const t = document.getElementById('toast');
   t.textContent = msg;
-  const safeType = (type && type !== 'default') ? ' toast-' + type : '';
-  t.className = 'show' + safeType;
+  t.className = 'show' + (type ? ' toast-' + type : '');
   clearTimeout(t._timer);
   t._timer = setTimeout(() => { t.className = ''; }, 2800);
 }
@@ -2004,7 +1903,7 @@ document.addEventListener('keydown', e => {
     }
   }
   if (e.key === 'Escape') {
-    closeLoginModal(); closeScoreModal(); closeReportModal(); closePlayerModal(); closeAvatarModal(); closeShareOverlay(); closeConfirmDialog();
+    closeLoginModal(); closeScoreModal(); closeReportModal(); closePlayerModal(); closeAvatarModal(); closeShareOverlay();
   }
 });
 
@@ -2017,9 +1916,6 @@ function closeLoginModal() {
   document.getElementById('login-error').classList.add('hidden');
   document.getElementById('login-user').value = '';
   document.getElementById('login-pass').value = '';
-  // Reset password visibility
-  const passInput = document.getElementById('login-pass');
-  if (passInput.type === 'text') togglePassVis();
 }
 
 function doLogin() {
@@ -2032,12 +1928,6 @@ function doLogin() {
     document.getElementById('login-error').classList.remove('hidden');
     document.getElementById('login-pass').value = '';
     document.getElementById('login-pass').focus();
-    // Shake animation
-    const box = document.querySelector('#login-modal .modal-box');
-    box.classList.remove('shake');
-    void box.offsetWidth; // force reflow
-    box.classList.add('shake');
-    setTimeout(() => box.classList.remove('shake'), 550);
   }
 }
 
@@ -2061,20 +1951,15 @@ function adminLogout() {
   document.getElementById('top-nav').style.display = '';
   const bn = document.getElementById('bottom-nav');
   bn.style.display = '';
-  renderAll();
   showSection('home');
 }
 
 function adminShowPanel(id, triggerEl) {
   document.querySelectorAll('.admin-panel').forEach(p => p.classList.add('hidden'));
   document.getElementById('admin-panel-' + id)?.classList.remove('hidden');
-  // Clear all active states
   document.querySelectorAll('.sidebar-item').forEach(el => el.classList.remove('active'));
   document.querySelectorAll('.admin-tab').forEach(el => el.classList.remove('active'));
-  // Set active on trigger and its pair
   if (triggerEl) triggerEl.classList.add('active');
-  const sideEl = document.querySelector(`.sidebar-item[onclick*="'${id}'"]`);
-  if (sideEl) sideEl.classList.add('active');
   const tabEl = document.getElementById('atab-' + id);
   if (tabEl) tabEl.classList.add('active');
   if (id === 'standings') renderStandings('admin-standings-table');
@@ -2136,36 +2021,26 @@ function openScoreModal(matchId) {
   p2El.textContent = m.player2.toUpperCase();
   p2El.style.color = c2.dot;
   document.getElementById('score-modal-match').textContent = `Match #${m.id}`;
-  document.getElementById('score-p1').value = m.played ? m.player1Goals : 0;
-  document.getElementById('score-p2').value = m.played ? m.player2Goals : 0;
+  document.getElementById('score-p1').value = m.played ? m.player1Goals : '';
+  document.getElementById('score-p2').value = m.played ? m.player2Goals : '';
   const clearBtn = document.getElementById('score-clear-btn');
   if (clearBtn) clearBtn.style.display = m.played ? '' : 'none';
   document.getElementById('score-modal').classList.add('open');
-  setTimeout(() => { const el = document.getElementById('score-p1'); el.focus(); el.select(); }, 150);
+  setTimeout(() => document.getElementById('score-p1').focus(), 100);
 }
 function closeScoreModal() {
   document.getElementById('score-modal').classList.remove('open');
   currentScoreMatchId = null;
 }
 
-function stepScore(inputId, delta) {
-  const el = document.getElementById(inputId);
-  const curr = parseInt(el.value) || 0;
-  el.value = Math.max(0, Math.min(99, curr + delta));
-}
-
 function saveScore() {
   if (!currentScoreMatchId) return;
-  const g1Raw = document.getElementById('score-p1').value.trim();
-  const g2Raw = document.getElementById('score-p2').value.trim();
+  const g1Raw = document.getElementById('score-p1').value;
+  const g2Raw = document.getElementById('score-p2').value;
   const g1 = parseInt(g1Raw);
   const g2 = parseInt(g2Raw);
   if (g1Raw === '' || g2Raw === '' || isNaN(g1) || isNaN(g2) || g1 < 0 || g2 < 0) {
-    showToast('Enter valid scores!', 'error');
-    const box = document.querySelector('#score-modal .modal-box');
-    box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake');
-    setTimeout(() => box.classList.remove('shake'), 550);
-    return;
+    showToast('Enter valid scores!', 'error'); return;
   }
   const m = state.matches.find(x => x.id === currentScoreMatchId);
   m.player1Goals = g1;
@@ -2189,44 +2064,13 @@ function clearScore() {
   showToast('Result cleared', 'default');
 }
 
-let _confirmCallback = null;
-function showConfirmDialog(title, msg, onOk) {
-  document.getElementById('confirm-title').textContent = title;
-  document.getElementById('confirm-msg').textContent = msg;
-  _confirmCallback = onOk;
-  document.getElementById('confirm-ok').onclick = () => { closeConfirmDialog(); if (_confirmCallback) _confirmCallback(); };
-  document.getElementById('confirm-dialog').classList.add('open');
-}
-function closeConfirmDialog() {
-  document.getElementById('confirm-dialog').classList.remove('open');
-  _confirmCallback = null;
-}
-document.getElementById('confirm-dialog')?.addEventListener('click', function(e) {
-  if (e.target === this) closeConfirmDialog();
-});
-
-function togglePassVis() {
-  const input = document.getElementById('login-pass');
-  const icon  = document.getElementById('pass-eye-icon');
-  const show  = input.type === 'password';
-  input.type  = show ? 'text' : 'password';
-  icon.innerHTML = show
-    ? '<path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>'
-    : '<path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>';
-}
-
 function confirmReset() {
-  showConfirmDialog(
-    'RESET TOURNAMENT',
-    'This will clear every score but keep the fixture list. This cannot be undone.',
-    () => {
-      state.matches.forEach(m => { m.played = false; m.player1Goals = null; m.player2Goals = null; });
-      saveState();
-      renderAdminMatches();
-      renderStandings('admin-standings-table');
-      showToast('Tournament reset!', 'error');
-    }
-  );
+  if (!confirm('Reset all results?\n\nThis will clear every score but keep the fixture list.\nThis cannot be undone.')) return;
+  state.matches.forEach(m => { m.played = false; m.player1Goals = null; m.player2Goals = null; });
+  saveState();
+  renderAdminMatches();
+  renderStandings('admin-standings-table');
+  showToast('Tournament reset!', 'error');
 }
 
 function exportData() {
@@ -2241,7 +2085,6 @@ function exportData() {
 function importData(event) {
   const file = event.target.files[0];
   if (!file) return;
-  event.target.value = ''; // reset immediately to allow re-importing same file
   const reader = new FileReader();
   reader.onload = e => {
     try {
@@ -2259,6 +2102,7 @@ function importData(event) {
     } catch { showToast('Parse error', 'error'); }
   };
   reader.readAsText(file);
+  event.target.value = '';
 }
 
 function revealDebug(btn) {
@@ -2274,21 +2118,16 @@ function revealDebug(btn) {
 
 function markAllPlayed() {
   const total = state.matches.length;
-  showConfirmDialog(
-    'MARK ALL PLAYED',
-    `Mark all ${total} matches as played with random scores? This will overwrite existing results.`,
-    () => {
-      state.matches.forEach(m => {
-        m.player1Goals = Math.floor(Math.random() * 6);
-        m.player2Goals = Math.floor(Math.random() * 6);
-        m.played = true;
-      });
-      saveState();
-      renderAdminMatches();
-      renderStandings('admin-standings-table');
-      showToast('All matches marked played!', 'success');
-    }
-  );
+  if (!confirm(`Mark all ${total} matches as played with random scores?`)) return;
+  state.matches.forEach(m => {
+    m.player1Goals = Math.floor(Math.random() * 6);
+    m.player2Goals = Math.floor(Math.random() * 6);
+    m.played = true;
+  });
+  saveState();
+  renderAdminMatches();
+  renderStandings('admin-standings-table');
+  showToast('All matches marked played!', 'success');
 }
 
 document.getElementById('share-overlay')?.addEventListener('click', function(e) {
@@ -2304,8 +2143,6 @@ document.getElementById('share-overlay')?.addEventListener('click', function(e) 
         document.getElementById('login-error').classList.add('hidden');
         document.getElementById('login-user').value = '';
         document.getElementById('login-pass').value = '';
-        const passInput = document.getElementById('login-pass');
-        if (passInput && passInput.type === 'text') togglePassVis();
       }
     }
   });
@@ -2527,7 +2364,7 @@ async function buildMatchCanvas(matchId) {
 }
 
 async function shareStandingsAsImage() {
-  showToast('Generating image…', '');
+  showToast('Generating image...', '');
   try {
     var dataUrl = await buildStandingsCanvas();
     if (!dataUrl) { showToast('Image failed', 'error'); return; }
@@ -2536,7 +2373,7 @@ async function shareStandingsAsImage() {
 }
 
 async function shareMatchAsImage(matchId) {
-  showToast('Generating image…', '');
+  showToast('Generating image...', '');
   try {
     var dataUrl = await buildMatchCanvas(matchId);
     if (!dataUrl) { showToast('Image failed', 'error'); return; }
@@ -2678,13 +2515,6 @@ function computeWinProbability(simCount = 10000) {
   }
   const probs = {};
   PLAYERS.forEach(p => { probs[p] = Math.round((wins[p] / simCount) * 100); });
-  // Ensure sum = 100 (fix rounding drift)
-  const total = PLAYERS.reduce((s, p) => s + probs[p], 0);
-  if (total !== 100 && total > 0) {
-    const diff = 100 - total;
-    const topPlayer = [...PLAYERS].sort((a, b) => probs[b] - probs[a])[0];
-    probs[topPlayer] += diff;
-  }
   return probs;
 }
 
@@ -2704,13 +2534,10 @@ function computeMatchupProbability(p1, p2) {
   const drawBase = 0.18 + (Math.abs(s1 - s2) < 0.05 ? 0.07 : 0);
   const p1raw = (s1 / total) * (1 - drawBase);
   const p2raw = (s2 / total) * (1 - drawBase);
-  const p1w = Math.round(p1raw * 100);
-  const drawPct = Math.round(drawBase * 100);
-  const p2w = 100 - p1w - drawPct;
   return {
-    p1win: Math.max(0, p1w),
-    draw:  Math.max(0, drawPct),
-    p2win: Math.max(0, p2w)
+    p1win: Math.round(p1raw * 100),
+    draw: Math.round(drawBase * 100),
+    p2win: Math.round(p2raw * 100)
   };
 }
 
@@ -3155,9 +2982,7 @@ function _drawPerfCanvas(wrapper, timeline, matchCount) {
     }).join('');
     tooltip.innerHTML = `<div style="font-size:0.6rem;font-weight:700;letter-spacing:0.12em;color:var(--muted);text-transform:uppercase;margin-bottom:2px">${label}</div>${rows}`;
     let tx = xPos(idx) + 14;
-    const tipW = 174;
-    if (tx + tipW > W) tx = xPos(idx) - tipW - 4;
-    if (tx < 0) tx = 2;
+    if (tx + 170 > W) tx = xPos(idx) - 174;
     tooltip.style.left = tx + 'px';
     tooltip.style.top  = (PAD.top + 4) + 'px';
     tooltip.style.opacity = '1';
@@ -3217,14 +3042,11 @@ onValue(avatarsRef, (snapshot) => {
   if (data && typeof data === 'object') {
     avatarState = data;
     try { localStorage.setItem('ratataaAvatars', JSON.stringify(avatarState)); } catch(e) {}
-    clearTimeout(window._fbAvatarTimer);
-    window._fbAvatarTimer = setTimeout(() => {
-      renderAll();
-      if (document.getElementById('admin-panel-avatars') &&
-          !document.getElementById('admin-panel-avatars').classList.contains('hidden')) {
-        renderAdminAvatars();
-      }
-    }, 80);
+    renderAll();
+    if (document.getElementById('admin-panel-avatars') &&
+        !document.getElementById('admin-panel-avatars').classList.contains('hidden')) {
+      renderAdminAvatars();
+    }
   }
 });
 
