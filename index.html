@@ -244,6 +244,49 @@ body { background: var(--bg-base); min-height: 100vh; overflow-x: clip; }
   transition: all 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
   border: 1px solid var(--border); background: var(--bg-card);
 }
+.fixture-player-left {
+  display: flex; align-items: center; gap: 0.625rem;
+  justify-content: flex-end; min-width: 0; overflow: hidden;
+}
+.fixture-player-right {
+  display: flex; align-items: center; gap: 0.625rem;
+  justify-content: flex-start; min-width: 0; overflow: hidden;
+}
+.fixture-player-name {
+  font-weight: 600; font-size: 0.875rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  flex-shrink: 1; min-width: 0;
+}
+.fixture-player-left .fixture-player-name { text-align: right; }
+.fixture-player-right .fixture-player-name { text-align: left; }
+.fixture-player-left .player-avatar { flex-shrink: 0; }
+.fixture-player-right .player-avatar { flex-shrink: 0; }
+
+/* Scorers alignment */
+.scorer-card-inner {
+  display: grid;
+  grid-template-columns: 36px 48px 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+}
+.scorer-name-row {
+  display: flex; align-items: center; gap: 0.4rem; min-width: 0; flex-wrap: nowrap;
+}
+.scorer-name {
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; flex-shrink: 1;
+}
+.scorer-goals {
+  font-family: var(--font-display); font-size: 1.75rem; letter-spacing: 0.04em;
+  line-height: 1; flex-shrink: 0; text-align: right; min-width: 32px;
+}
+.scorer-stats {
+  display: flex; gap: 0.65rem; margin-top: 0.35rem;
+  font-size: 0.7rem; color: var(--muted); align-items: center;
+}
+.scorer-stat-chip {
+  display: inline-flex; align-items: center; gap: 0.2rem; white-space: nowrap;
+}
 .fixture-card:hover { border-color: var(--border-hover); background: var(--bg-card-hover); transform: translateY(-2px); }
 .fixture-card-played:hover { border-color: rgba(201,168,76,0.2); box-shadow: 0 6px 24px rgba(201,168,76,0.05); }
 .fixture-card-upcoming { cursor: default !important; }
@@ -515,7 +558,9 @@ input[type=number]::-webkit-inner-spin-button { opacity: 1; }
 
 @media(max-width:640px) {
   .hide-mobile { display: none !important; }
-  .fixture-card { grid-template-columns: 1fr auto 1fr; gap: 0.5rem; padding: 0.75rem; }
+  .fixture-card { grid-template-columns: 1fr auto 1fr; gap: 0.4rem; padding: 0.65rem 0.75rem; }
+  .scorer-card-inner { grid-template-columns: 28px 40px 1fr auto; gap: 0.6rem; }
+  .scorer-goals { font-size: 1.5rem; min-width: 26px; }
 }
 @media(min-width:768px) { #bottom-nav { display: none; } #hero-section { padding-top: 64px; } }
 @media(max-width:767px) { #top-nav .nav-links { display: none; } main { padding-bottom: 80px; } }
@@ -1379,17 +1424,17 @@ function renderFixtures() {
     const hoverClass = m.played ? 'fixture-card-played' : 'fixture-card-upcoming';
     return `
       <div class="fixture-card ${hoverClass} fade-up" style="animation-delay:${idx * 0.03}s;${m.played ? 'cursor:pointer' : 'cursor:default'}" ${clickHandler}>
-        <div class="flex items-center gap-2.5 justify-end">
-          <span class="font-semibold text-sm text-right" style="white-space:nowrap">${m.player1}</span>
+        <div class="fixture-player-left">
+          <span class="fixture-player-name">${m.player1}</span>
           ${avatarHTML(m.player1)}
         </div>
         <div class="fixture-center">
           ${scoreHTML}
           ${label}
         </div>
-        <div class="flex items-center gap-2.5 justify-start">
+        <div class="fixture-player-right">
           ${avatarHTML(m.player2)}
-          <span class="font-semibold text-sm" style="white-space:nowrap">${m.player2}</span>
+          <span class="fixture-player-name">${m.player2}</span>
         </div>
       </div>`;
   }).join('');
@@ -1409,8 +1454,8 @@ function renderResults() {
     const isDraw = g1 === g2;
     return `
       <div class="fixture-card fade-up" style="animation-delay:${idx * 0.03}s;cursor:pointer" onclick="openReportModal(${m.id})">
-        <div class="flex items-center gap-2.5 justify-end">
-          <span class="font-semibold text-sm text-right ${!winner ? '' : winner === m.player1 ? '' : 'opacity-40'}" style="white-space:nowrap">${m.player1}</span>
+        <div class="fixture-player-left">
+          <span class="fixture-player-name ${!winner ? '' : winner === m.player1 ? '' : 'opacity-40'}">${m.player1}</span>
           ${avatarHTML(m.player1)}
         </div>
         <div class="fixture-center">
@@ -1423,9 +1468,9 @@ function renderResults() {
             ? '<span class="pill" style="background:rgba(100,116,139,0.15);color:#94a3b8;white-space:nowrap">DRAW</span>'
             : '<span class="pill pill-played" style="white-space:nowrap">Played</span>'}
         </div>
-        <div class="flex items-center gap-2.5 justify-start">
+        <div class="fixture-player-right">
           ${avatarHTML(m.player2)}
-          <span class="font-semibold text-sm ${!winner ? '' : winner === m.player2 ? '' : 'opacity-40'}" style="white-space:nowrap">${m.player2}</span>
+          <span class="fixture-player-name ${!winner ? '' : winner === m.player2 ? '' : 'opacity-40'}">${m.player2}</span>
         </div>
       </div>`;
   }).join('');
@@ -1442,25 +1487,33 @@ function renderTopScorers() {
     const c = PLAYER_COLORS[s.name];
     const pct = Math.round((s.gf / maxGF) * 100);
     const isTopScorer = i === 0 && s.gf > 0;
+    const rankLabel = medals[i] || `#${i + 1}`;
+    const rankColor = i === 0 ? 'var(--gold)' : i === 1 ? '#7a7a88' : i === 2 ? '#8b6341' : 'var(--muted)';
+    const gdColor = s.gd > 0 ? 'var(--success)' : s.gd < 0 ? 'var(--danger)' : 'var(--muted)';
     return `
-      <div class="${isTopScorer ? 'top-scorer-card' : 'glass'} rounded-xl p-5 flex items-center gap-4 fade-up" style="animation-delay:${i * 0.07}s">
-        <span class="font-display text-2xl" style="min-width:36px;color:${i === 0 ? 'var(--gold)' : i < 3 ? 'var(--muted)' : 'var(--muted)'}">${medals[i] || i + 1}</span>
-        ${avatarHTML(s.name, 48)}
-        <div class="flex-1 min-w-0">
-          <div class="flex items-baseline justify-between gap-2 mb-1.5">
-            <div class="flex items-center gap-1.5 flex-wrap" style="row-gap:3px">
-              <span class="font-semibold${isTopScorer ? ' gold-shimmer' : ''}">${s.name}</span>
-              ${isTopScorer ? '<span class="fire-badge">Top Scorer</span>' : ''}
+      <div class="${isTopScorer ? 'top-scorer-card' : 'glass'} rounded-xl p-4 fade-up" style="animation-delay:${i * 0.07}s">
+        <div class="scorer-card-inner">
+          <span class="font-display text-xl text-center" style="color:${rankColor};line-height:1">${rankLabel}</span>
+          <div style="flex-shrink:0">${avatarHTML(s.name, 46)}</div>
+          <div style="min-width:0">
+            <div class="scorer-name-row">
+              <span class="scorer-name font-semibold${isTopScorer ? ' gold-shimmer' : ''}" style="${isTopScorer ? '' : 'color:var(--white)'}">${s.name}</span>
+              ${isTopScorer ? '<span class="fire-badge" style="flex-shrink:0">🔥 Top</span>' : ''}
             </div>
-            <span class="font-display text-2xl" style="color:${isTopScorer ? 'var(--gold)' : c.dot};${isTopScorer ? 'text-shadow:0 0 14px rgba(201,168,76,0.4)' : ''}">${s.gf}</span>
+            <div class="prog-bar" style="margin-top:0.45rem">
+              <div class="prog-fill" style="width:${pct}%;background:${isTopScorer ? 'linear-gradient(90deg,var(--indigo),var(--gold))' : c.dot}"></div>
+            </div>
+            <div class="scorer-stats">
+              <span class="scorer-stat-chip"><span style="color:var(--indigo);font-weight:700">${s.pts}</span><span>pts</span></span>
+              <span style="color:var(--border);font-size:0.6rem">|</span>
+              <span class="scorer-stat-chip"><span>GD</span><span style="color:${gdColor};font-weight:700">${s.gd > 0 ? '+' : ''}${s.gd}</span></span>
+              <span style="color:var(--border);font-size:0.6rem">|</span>
+              <span class="scorer-stat-chip"><span style="font-weight:600;color:var(--white)">${s.played}</span><span>played</span></span>
+            </div>
           </div>
-          <div class="prog-bar">
-            <div class="prog-fill" style="width:${pct}%;background:${isTopScorer ? 'linear-gradient(90deg,var(--indigo),var(--gold))' : c.dot}"></div>
-          </div>
-          <div class="flex gap-3 mt-1.5 text-xs" style="color:var(--muted)">
-            <span>${s.pts} pts</span>
-            <span>GD ${s.gd > 0 ? '+' : ''}${s.gd}</span>
-            <span>${s.played} played</span>
+          <div class="text-right" style="flex-shrink:0">
+            <div class="scorer-goals" style="color:${isTopScorer ? 'var(--gold)' : c.dot};${isTopScorer ? 'text-shadow:0 0 14px rgba(201,168,76,0.4)' : ''}">${s.gf}</div>
+            <div style="font-size:0.58rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-top:2px">goals</div>
           </div>
         </div>
       </div>`;
